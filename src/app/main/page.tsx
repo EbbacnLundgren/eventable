@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/client"
 import { useRouter } from "next/navigation"
 import Header from "@/components/header"
-import { Button } from "@mui/material"
+import UpcomingEvents from "@/components/upcomingevents"
 
 interface Event {
   id: number
@@ -11,6 +11,7 @@ interface Event {
   location: string
   date: string
   time: number
+  image?: string
   //participants: Users
 }
 
@@ -39,14 +40,21 @@ export default function MainPage() {
 
         <h1 className="text-2xl font-bold mb-4">Welcome</h1>
 
+        {/* Use UpcomingEvents component instead of <ul> */}
+        <UpcomingEvents events={events} />
+        
+        {/* 
         <h2 className="text-xl font-semibold mb-2">Upcoming Events</h2>
+
         <ul>
           {events.map((event) => (
             <li key={event.id}>
               {event.name} - {event.date} - {event.location}
             </li>
           ))}
-        </ul>
+        </ul> */}
+
+
       </div>
     </main>
 
