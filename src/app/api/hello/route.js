@@ -1,4 +1,4 @@
-import { supabase } from '../../../client'; // justera path om client.js inte ligger i src/
+import { supabase } from 'eventable/client.js'; // justera path om client.js inte ligger i src/
 
 export async function GET() {
   const { data, error } = await supabase.from('test_table').select('*').limit(1);
