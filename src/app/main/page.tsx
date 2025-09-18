@@ -14,28 +14,21 @@ interface Event {
 
 export default function MainPage() {
   const [events, setEvents] = useState<Event[]>([])
-  const [user, setUser] = useState<{ email: string } | null>(null)
   const router = useRouter()
 
   useEffect(() => {
-    const fetchUserAndEvents = async () => {
-      const { data: { user }, error: userError } = await supabase.auth.getUser()
-      if (!user || userError) {
-        router.push("/") // redirect to login if not logged in
-        return
-      }
-      setUser(user)
+    const fetchEvents = async () => {
 
       const { data: eventsData, error: eventsError } = await supabase.from("events").select("*")
       if (eventsData) setEvents(eventsData)
     }
 
-    fetchUserAndEvents()
+    fetchEvents()
   }, [router])
 
   return (
     <main className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Welcome, {user?.email}</h1>
+      <h1 className="text-2xl font-bold mb-4">Welcome</h1>
 
       <button
         className="mb-6 bg-red-500 text-white p-2 rounded"
