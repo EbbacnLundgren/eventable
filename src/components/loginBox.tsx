@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 interface SupabaseUser {
   id: string
   email: string | null
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export default function LoginBox() {
@@ -31,8 +31,9 @@ export default function LoginBox() {
         if (error) setMessage(error.message)
         else setMessage("Konto skapat! Kolla mailen för verifiering.")
       }
-    } catch (err: any) {
-      setMessage(err.message)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      setMessage(msg)
     }
   }
 
