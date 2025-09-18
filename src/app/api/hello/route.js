@@ -1,6 +1,5 @@
 import { supabase } from '@/lib/client';
 
-
 export async function GET() {
   const { data, error } = await supabase.from('test_table').select('*').limit(1);
 
