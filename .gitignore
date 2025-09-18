@@ -1,0 +1,20 @@
+# Ignorera byggfiler
+build/
+dist/
+
+# Ignorera loggar
+*.log
+
+# Ignorera systemfiler
+.DS_Store
+Thumbs.db
+
+# Ignorera Python-cache
+__pycache__/
+*.pyc
+
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
