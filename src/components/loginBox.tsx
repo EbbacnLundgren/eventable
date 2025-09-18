@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 interface SupabaseUser {
   id: string
   email: string | null
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export default function LoginBox() {
