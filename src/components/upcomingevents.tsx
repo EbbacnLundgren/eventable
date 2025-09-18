@@ -23,20 +23,20 @@ const UpcomingEvents = ({ events = [] }: UpcomingEventsProps) => {
           date: "Sep 18, 2025",
           image: "/images/winetasting.jpg",
         },
-      {
-        id: 1,
-        name: "Pottery",
-        location: "Malmö, Sweden",
-        date: "Oct 5, 2025",
-        image: "/images/pottery.jpg",
-      },
-      {
-        id: 2,
-        name: "Music Festival",
-        location: "Gothenburg, Sweden",
-        date: "Nov 12, 2025",
-        image: "/images/musicfestival.jpg", 
-      },
+        {
+          id: 1,
+          name: "Pottery",
+          location: "Malmö, Sweden",
+          date: "Oct 5, 2025",
+          image: "/images/pottery.jpg",
+        },
+        {
+          id: 2,
+          name: "Music Festival",
+          location: "Gothenburg, Sweden",
+          date: "Nov 12, 2025",
+          image: "/images/musicfestival.jpg", 
+        },
       ]
 
   return (
@@ -47,7 +47,7 @@ const UpcomingEvents = ({ events = [] }: UpcomingEventsProps) => {
         {displayedEvents.map((event) => (
           <div
             key={event.id}
-            className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow text-gray-900"
+            className="bg-white/30 border border-white/20 rounded-2xl shadow-lg overflow-hidden backdrop-blur-md hover:shadow-xl transition-shadow text-gray-900"
           >
             {event.image && (
               <img
@@ -57,9 +57,9 @@ const UpcomingEvents = ({ events = [] }: UpcomingEventsProps) => {
               />
             )}
             <div className="p-4">
-              <h3 className="text-lg font-semibold">{event.name}</h3>
-              <p className="text-sm text-gray-500">{event.date}</p>
-              <p className="text-sm text-gray-600">{event.location}</p>
+              <h3 className="text-lg font-semibold text-white drop-shadow-md">{event.name}</h3>
+              <p className="text-sm text-white/80 drop-shadow">{event.date}</p>
+              <p className="text-sm text-white/90 drop-shadow">{event.location}</p>
               <button className="mt-3 inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-400 to-yellow-400 rounded-lg hover:opacity-90">
                 View Details
               </button>
