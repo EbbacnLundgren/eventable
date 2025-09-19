@@ -125,6 +125,13 @@ const EventsSection = ({ events }: EventsSectionProps) => {
               <p className="text-sm text-white/80 drop-shadow">
                 {new Date(event.date).toLocaleDateString()}
               </p>
+
+              {event.time !== undefined && (
+                <p className="text-sm text-white/80 drop-shadow">
+                Time: {event.time}:00
+                </p>
+               )}
+
               <p className="text-sm text-white/90 drop-shadow">
                 {event.location}
               </p>
