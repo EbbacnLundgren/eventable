@@ -105,10 +105,7 @@ export default function LoginBox() {
 
       <hr className="my-4" />
 
-      <button
-        onClick={() => signIn("google")}
-        className="px-4 py-2 bg-blue-500 text-white rounded w-full"
-      >
+      <button onClick={() => signIn("google", { callbackUrl: "http://localhost:3000" })} className="px-4 py-2 bg-blue-500 text-white rounded w-full">
         Logga in med Google
       </button>
 
