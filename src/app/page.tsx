@@ -4,12 +4,36 @@ import LoginBox from "@/components/loginBox";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white">
-      <h1 className="text-5xl font-bold mb-8">Eventable</h1>
-    
-      <LoginBox/>
+    <div className="flex flex-col min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white relative">
 
-      {/*
+      {/* Top right buttons */}
+      <div className="absolute top-0 right-0 m-5 flex flex-wrap gap-2">
+        <Link href="/events" className="p-2 w-20 bg-white text-pink-600 font-semibold rounded shadow hover:bg-gray-100 transition text-center">
+          Login
+        </Link>
+
+        <Link href="/signup" className="p-2 w-20 bg-white text-pink-600 font-semibold rounded shadow hover:bg-gray-100 transition text-center">
+          Signup
+        </Link>
+      </div>
+
+      {/* Main content */}
+      <div className="flex flex-col items-start justify-start flex-1 pl-10 sm:pl-20 pt-20 sm:pt-32">
+        <h1 className="text-7xl sm:text-8xl font-bold mb-4">Eventable</h1>
+        <h2 className="text-3xl sm:text-4xl">Välkommen till Eventable!</h2>
+      </div>
+
+    </div>
+  )
+}
+/*
+
+
+    //Login component, temporarily hidden, just copy paste this
+        <LoginBox/>
+
+
+
       ------------------------
       OLD NEXT.JS STARTER CODE
       ------------------------
@@ -111,7 +135,4 @@ export default function Home() {
           </a>
         </footer>
       </div>
-      */}
-    </div>
-  );
-}
+      */
