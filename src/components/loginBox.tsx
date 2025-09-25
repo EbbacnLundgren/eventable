@@ -112,7 +112,7 @@ export default function LoginBox({ startInSignup = false }: { startInSignup?: bo
       <hr className="my-4" />
 
       <button
-        onClick={() => signIn("google")}
+        onClick={() => signIn("google", { callbackUrl: "/main" })}
         className="px-4 py-2 bg-blue-500 text-white rounded w-full"
       >
         Log in with Google
