@@ -5,19 +5,21 @@ import { supabase } from "@/lib/client";
 import { useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 
+
+
 interface SupabaseUser {
   id: string;
   email: string | null;
   [key: string]: unknown;
 }
 
-export default function LoginBox() {
+export default function LoginBox({ startInSignup = false }: { startInSignup?: boolean }) {
   const router = useRouter();
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(!startInSignup);
   const [user, setUser] = useState<SupabaseUser | null>(null);
 
   // Kontrollera om användare är inloggad via Supabase

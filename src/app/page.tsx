@@ -8,10 +8,9 @@ export default function Home() {
 
       {/* Top right buttons */}
       <div className="absolute top-0 right-0 m-5 flex flex-wrap gap-2">
-        <Link href="/events" className="p-2 w-20 bg-white text-pink-600 font-semibold rounded shadow hover:bg-gray-100 transition text-center">
+        <Link href="/login"  className="p-2 w-20 bg-white text-pink-600 font-semibold rounded shadow hover:bg-gray-100 transition text-center">
           Login
         </Link>
-
         <Link href="/signup" className="p-2 w-20 bg-white text-pink-600 font-semibold rounded shadow hover:bg-gray-100 transition text-center">
           Signup
         </Link>
