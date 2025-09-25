@@ -58,7 +58,7 @@ export default function LoginBox() {
             href="/"
             className="inline-block px-3 py-1.5 rounded border border-white/40 bg-white/20 text-sm text-white hover:bg-white/30"
           >
-            ← Till startsidan
+            ← Back
           </Link>
         </div>
         <p className="text-lg font-bold mb-4">Hello, {user.email}!</p>
@@ -76,15 +76,8 @@ export default function LoginBox() {
 
   return (
     <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
-      {/* Tillbaka-knapp */}
-      <div className="mb-4">
-        <Link
-          href="/"
-          className="inline-block px-3 py-1.5 rounded border border-white/40 bg-white/20 text-sm text-white hover:bg-white/30"
-        >
-          ← Till startsidan
-        </Link>
-      </div>
+      
+      
 
       <h2 className="text-xl font-bold mb-4">Log in</h2>
 
