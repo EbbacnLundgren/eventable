@@ -11,16 +11,22 @@ export default function SignupBox() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage("");
+    setStatus("idle");
+
     const { error } = await supabase.auth.signUp({ email, password });
-    if (error) return setMessage(error.message);
-    // om du vill direkt vidare till main:
-    // router.push("/main");
-    // eller bekräftelsemail:
-    setMessage("Konto skapat. Kolla din e-post för verifikation.");
+    if (error) {
+      setMessage(error.message);
+      setStatus("error");
+      return;
+    }
+    setMessage("Account created. Check your email for verification.");
+    setStatus("success");
+    // router.push("/main"); // om du vill redirecta direkt
   };
 
   return (
@@ -44,7 +50,10 @@ export default function SignupBox() {
           className="border p-2 rounded text-black"
           required
         />
-        <button type="submit" className="p-2 rounded text-white bg-[#1B0D6B]/50 hover:bg-[#1B0D6B]/70">
+        <button
+          type="submit"
+          className="p-2 rounded text-white bg-[#1B0D6B]/50 hover:bg-[#1B0D6B]/70"
+        >
           Create account
         </button>
       </form>
@@ -60,12 +69,24 @@ export default function SignupBox() {
 
       <p className="mt-3 text-sm text-black">
         Already have an account?{" "}
-        <Link href="/login" className="text-blue-600 hover:text-blue-700 underline font-semibold">
-            Log in
+        <Link
+          href="/login"
+          className="text-blue-600 hover:text-blue-700 underline font-semibold"
+        >
+          Log in
         </Link>
-        </p>
+      </p>
 
-      {message && <p className="mt-2 text-red-500">{message}</p>}
+      {message && (
+        <p
+          className={`mt-2 ${
+            status === "success" ? "text-green-600" : "text-red-500"
+          }`}
+          aria-live="polite"
+        >
+          {message}
+        </p>
+      )}
     </div>
   );
 }
