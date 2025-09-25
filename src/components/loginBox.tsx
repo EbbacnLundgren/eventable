@@ -4,6 +4,7 @@ import { useState, FormEvent, useEffect } from "react";
 import { supabase } from "@/lib/client";
 import { useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
 
 
@@ -19,7 +20,7 @@ export default function LoginBox({ startInSignup = false }: { startInSignup?: bo
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [isLogin, setIsLogin] = useState(!startInSignup);
+  const [isLogin] = useState(true);
   const [user, setUser] = useState<SupabaseUser | null>(null);
 
   // Kontrollera om användare är inloggad via Supabase
@@ -40,7 +41,7 @@ export default function LoginBox({ startInSignup = false }: { startInSignup?: bo
           onClick={() => signOut()}
           className="px-4 py-2 bg-red-500 text-white rounded"
         >
-          Logga ut
+          Log out
         </button>
       </div>
     );
@@ -50,7 +51,7 @@ export default function LoginBox({ startInSignup = false }: { startInSignup?: bo
   if (user) {
     return (
       <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
-        <p className="text-lg font-bold mb-4">Hej, {user.email}!</p>
+        <p className="text-lg font-bold mb-4">Hello, {user.email}!</p>
       </div>
     );
   }
@@ -101,14 +102,20 @@ export default function LoginBox({ startInSignup = false }: { startInSignup?: bo
         </button>
       </form>
 
-      <button onClick={() => setIsLogin(!isLogin)} className="mt-3 text-sm text-black">
-        {isLogin ? "Don't have an account? Create one!" : "Already have an account? Log in!"}
-      </button>
+      <p className="mt-3 text-sm text-black">
+        Don’t have an account?{" "}
+        <Link href="/signup" className="text-blue-600 hover:text-blue-700 underline font-semibold">
+          Create one
+        </Link>
+      </p>
 
       <hr className="my-4" />
 
-      <button onClick={() => signIn("google", { callbackUrl: "http://localhost:3000" })} className="px-4 py-2 bg-blue-500 text-white rounded w-full">
-        Logga in med Google
+      <button
+        onClick={() => signIn("google", { callbackUrl: "/main" })}
+        className="px-4 py-2 bg-blue-500 text-white rounded w-full"
+      >
+        Log in with Google
       </button>
 
       {message && <p className="mt-2 text-red-500">{message}</p>}
