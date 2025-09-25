@@ -6,24 +6,20 @@ import { useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
-
-
 interface SupabaseUser {
   id: string;
   email: string | null;
   [key: string]: unknown;
 }
 
-export default function LoginBox({ startInSignup = false }: { startInSignup?: boolean }) {
+export default function LoginBox() {
   const router = useRouter();
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [isLogin] = useState(true);
   const [user, setUser] = useState<SupabaseUser | null>(null);
 
-  // Kontrollera om användare är inloggad via Supabase
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -32,10 +28,17 @@ export default function LoginBox({ startInSignup = false }: { startInSignup?: bo
     fetchUser();
   }, []);
 
-  // Om användare är inloggad via NextAuth (Google)
   if (session) {
     return (
       <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
+        <div className="mb-4">
+          <Link
+            href="/"
+            className="inline-block px-3 py-1.5 rounded border border-white/40 bg-white/20 text-sm text-white hover:bg-white/30"
+          >
+            ← Back
+          </Link>
+        </div>
         <p className="text-lg font-bold mb-4">Hej, {session.user?.name}!</p>
         <button
           onClick={() => signOut()}
@@ -47,38 +50,43 @@ export default function LoginBox({ startInSignup = false }: { startInSignup?: bo
     );
   }
 
-  // Om användare är inloggad via Supabase
   if (user) {
     return (
       <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
+        <div className="mb-4">
+          <Link
+            href="/"
+            className="inline-block px-3 py-1.5 rounded border border-white/40 bg-white/20 text-sm text-white hover:bg-white/30"
+          >
+            ← Till startsidan
+          </Link>
+        </div>
         <p className="text-lg font-bold mb-4">Hello, {user.email}!</p>
       </div>
     );
   }
 
-  // Hantera e-mail/password login
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage("");
-
-    try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) setMessage(error.message);
-        else router.push("/main");
-      } else {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) setMessage(error.message);
-        else setMessage("Account created! Check your email for verification.");
-      }
-    } catch (err: unknown) {
-      setMessage(err instanceof Error ? err.message : String(err));
-    }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) setMessage(error.message);
+    else router.push("/main");
   };
 
   return (
     <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
-      <h2 className="text-xl font-bold mb-4">{isLogin ? "Log in" : "Create an account"}</h2>
+      {/* Tillbaka-knapp */}
+      <div className="mb-4">
+        <Link
+          href="/"
+          className="inline-block px-3 py-1.5 rounded border border-white/40 bg-white/20 text-sm text-white hover:bg-white/30"
+        >
+          ← Till startsidan
+        </Link>
+      </div>
+
+      <h2 className="text-xl font-bold mb-4">Log in</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
@@ -97,14 +105,20 @@ export default function LoginBox({ startInSignup = false }: { startInSignup?: bo
           className="border p-2 rounded text-black"
           required
         />
-        <button type="submit" className="p-2 rounded text-white bg-[#1B0D6B]/50 hover:bg-[#1B0D6B]/70">
-          {isLogin ? "Log in" : "Create an account"}
+        <button
+          type="submit"
+          className="p-2 rounded text-white bg-[#1B0D6B]/50 hover:bg-[#1B0D6B]/70"
+        >
+          Log in
         </button>
       </form>
 
       <p className="mt-3 text-sm text-black">
         Don’t have an account?{" "}
-        <Link href="/signup" className="text-blue-600 hover:text-blue-700 underline font-semibold">
+        <Link
+          href="/signup"
+          className="text-blue-600 hover:text-blue-700 underline font-semibold"
+        >
           Create one
         </Link>
       </p>

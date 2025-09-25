@@ -17,7 +17,6 @@ export default function SignupBox() {
     e.preventDefault();
     setMessage("");
     setStatus("idle");
-
     const { error } = await supabase.auth.signUp({ email, password });
     if (error) {
       setMessage(error.message);
@@ -26,11 +25,21 @@ export default function SignupBox() {
     }
     setMessage("Account created. Check your email for verification.");
     setStatus("success");
-    // router.push("/main"); // om du vill redirecta direkt
+    // router.push("/main");
   };
 
   return (
     <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
+      {/* Tillbaka-knapp */}
+      <div className="mb-4">
+        <Link
+          href="/"
+          className="inline-block px-3 py-1.5 rounded border border-white/40 bg-white/20 text-sm text-white hover:bg-white/30"
+        >
+          ← Till startsidan
+        </Link>
+      </div>
+
       <h2 className="text-xl font-bold mb-4">Create an account</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
