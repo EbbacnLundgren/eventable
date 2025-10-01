@@ -31,14 +31,7 @@ export default function LoginBox() {
   if (session) {
     return (
       <div className="border p-6 rounded shadow-md w-80 bg-pink-100 backdrop-blur-md border-white/30">
-        <div className="mb-4">
-          <Link
-            href="/"
-            className="inline-block px-3 py-1.5 rounded border border-white/40 bg-white/20 text-sm text-white hover:bg-white/30"
-          >
-            ← Back
-          </Link>
-        </div>
+        
         <p className="text-lg font-bold mb-4">Hej, {session.user?.name}!</p>
         <button
           onClick={() => signOut({ callbackUrl: "/" })}

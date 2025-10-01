@@ -31,14 +31,6 @@ export default function SignupBox() {
   return (
     <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
       
-      <div className="mb-4">
-        <Link
-          href="/"
-          className="inline-block px-3 py-1.5 rounded border border-white/40 bg-white/20 text-sm text-white hover:bg-white/30"
-        >
-          ← Back
-        </Link>
-      </div>
 
       <h2 className="text-xl font-bold mb-4">Create an account</h2>
 
