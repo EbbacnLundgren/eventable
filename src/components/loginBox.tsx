@@ -30,7 +30,7 @@ export default function LoginBox() {
 
   if (session) {
     return (
-      <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
+      <div className="border p-6 rounded shadow-md w-80 bg-pink-100 backdrop-blur-md border-white/30">
         <div className="mb-4">
           <Link
             href="/"

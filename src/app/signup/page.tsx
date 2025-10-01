@@ -11,8 +11,9 @@ export default function SignupPage() {
       >
         ← Back
       </Link>
-
-      <SignupBox />
+      <div className="min-h-screen w-full flex items-center justify-center bg-pink-100">
+        <SignupBox />
+      </div>
     </main>
   );
 }
