@@ -41,7 +41,7 @@ export default function LoginBox() {
         </div>
         <p className="text-lg font-bold mb-4">Hej, {session.user?.name}!</p>
         <button
-          onClick={() => signOut()}
+          onClick={() => signOut({ callbackUrl: "/" })}
           className="px-4 py-2 bg-red-500 text-white rounded"
         >
           Log out
