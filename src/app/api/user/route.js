@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/client'
+/*import { supabase } from '@/lib/client'
 
 export async function GET(req) {
   // Vi hämtar session från Supabase klienten
@@ -21,3 +21,4 @@ export async function GET(req) {
 
   return new Response(JSON.stringify({ user }), { status: 200 })
 }
+*/
