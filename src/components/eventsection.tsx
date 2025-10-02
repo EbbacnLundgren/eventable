@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { useState } from "react"
+import { useState } from 'react'
 
 interface Event {
   id: number
@@ -16,7 +16,7 @@ interface EventsSectionProps {
 }
 
 const EventsSection = ({ events }: EventsSectionProps) => {
-  const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming")
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
 
   const today = new Date()
 
@@ -24,85 +24,75 @@ const EventsSection = ({ events }: EventsSectionProps) => {
   const fallbackUpcoming: Event[] = [
     {
       id: 0,
-      name: "Wine tasting",
-      location: "Lund, Sweden",
-      date: "2025-09-18",
-      image: "/images/winetasting.jpg",
+      name: 'Wine tasting',
+      location: 'Lund, Sweden',
+      date: '2025-09-18',
+      image: '/images/winetasting.jpg',
     },
     {
       id: 1,
-      name: "Pottery",
-      location: "Malmö, Sweden",
-      date: "2025-10-05",
-      image: "/images/pottery.jpg",
+      name: 'Pottery',
+      location: 'Malmö, Sweden',
+      date: '2025-10-05',
+      image: '/images/pottery.jpg',
     },
   ]
 
   const fallbackPast: Event[] = [
     {
       id: 2,
-      name: "Music Festival",
-      location: "Gothenburg, Sweden",
-      date: "2024-06-12",
-      image: "/images/musicfestival.jpg",
+      name: 'Music Festival',
+      location: 'Gothenburg, Sweden',
+      date: '2024-06-12',
+      image: '/images/musicfestival.jpg',
     },
   ]
 
   // --- Split real events into upcoming/past ---
-  const upcomingEvents = events.filter(
-    (event) => new Date(event.date) >= today
-  )
+  const upcomingEvents = events.filter((event) => new Date(event.date) >= today)
   const pastEvents = events.filter((event) => new Date(event.date) < today)
 
   // --- Use Supabase events if available, otherwise fallback demo events ---
   const displayedEvents =
-    activeTab === "upcoming"
+    activeTab === 'upcoming'
       ? upcomingEvents.length > 0
         ? upcomingEvents
         : fallbackUpcoming
       : pastEvents.length > 0
-      ? pastEvents
-      : fallbackPast
+        ? pastEvents
+        : fallbackPast
 
   return (
     <section className="p-6 w-full">
+      {/* Tabs */}
+      <div className="relative flex bg-white/20 rounded-md p-1 mb-6 w-full max-w-md">
+        {/* Active background "slider" */}
+        <div
+          className={`absolute top-1 bottom-1 left-0 w-1/2 rounded-sm bg-pink-500 transition-all duration-300 ease-in-out ${
+            activeTab === 'upcoming' ? 'left-0' : 'left-1/2'
+          }`}
+        ></div>
 
-        {/* Tabs */}
-<div className="relative flex bg-white/20 rounded-md p-1 mb-6 w-full max-w-md">
-  
-  {/* Active background "slider" */}
-<div
-  className={`absolute top-1 bottom-1 left-0 w-1/2 rounded-sm bg-pink-500 transition-all duration-300 ease-in-out ${
-    activeTab === "upcoming" ? "left-0" : "left-1/2"
-  }`}
-></div>
+        {/* Upcoming tab */}
+        <button
+          onClick={() => setActiveTab('upcoming')}
+          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
+            activeTab === 'upcoming' ? 'text-white' : 'text-black bg-gray-200'
+          }`}
+        >
+          Upcoming Events
+        </button>
 
-
-  {/* Upcoming tab */}
-<button
-  onClick={() => setActiveTab("upcoming")}
-  className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
-    activeTab === "upcoming"
-      ? "text-white"
-      : "text-black bg-gray-200"
-  }`}
->
-  Upcoming Events
-</button>
-
-{/* Past tab */}
-<button
-  onClick={() => setActiveTab("past")}
-  className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
-    activeTab === "past"
-      ? "text-white"
-      : "text-black bg-gray-200"
-  }`}
->
-  Past Events
-</button>
-
-</div>
+        {/* Past tab */}
+        <button
+          onClick={() => setActiveTab('past')}
+          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
+            activeTab === 'past' ? 'text-white' : 'text-black bg-gray-200'
+          }`}
+        >
+          Past Events
+        </button>
+      </div>
 
       {/* Events Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full">
@@ -128,9 +118,9 @@ const EventsSection = ({ events }: EventsSectionProps) => {
 
               {event.time !== undefined && (
                 <p className="text-sm text-white/80 drop-shadow">
-                Time: {event.time}:00
+                  Time: {event.time}:00
                 </p>
-               )}
+              )}
 
               <p className="text-sm text-white/90 drop-shadow">
                 {event.location}
