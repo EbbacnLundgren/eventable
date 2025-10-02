@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { uploadEventImage } from '@/lib/uploadEventImage'
 import { supabase } from '@/lib/client'
-import { useRouter } from 'next/navigation'
+//import { useRouter } from 'next/navigation'
 
 interface Event {
   id: number
@@ -9,6 +9,7 @@ interface Event {
   location: string
   date: string
   time: number
+  description?: string
   image?: string
   //participants: Users
 }
@@ -29,6 +30,7 @@ export default function CreateEventForm({
     location: '',
     date: '',
     time: '',
+    description: '',
     image: null as File | null,
   })
 
@@ -52,7 +54,8 @@ export default function CreateEventForm({
       name: formData.name,
       location: formData.location,
       date: formData.date,
-      time: formData.time ? Number(formData.time) : null,
+      time: formData.time !== '' ? Number(formData.time) : null,
+      description: formData.description,
       image: imageUrl,
     }
 
@@ -74,7 +77,14 @@ export default function CreateEventForm({
       addEvent(data as Event)
     }
 
-    setFormData({ name: '', location: '', date: '', time: '', image: null })
+    setFormData({
+      name: '',
+      location: '',
+      date: '',
+      time: '',
+      description: '',
+      image: null,
+    })
     setShowForm(false)
   }
 
@@ -119,19 +129,32 @@ export default function CreateEventForm({
               className="border p-2 rounded"
               required
             />
+            <div className="flex gap-2">
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleInputChange}
+                className="border p-2 rounded flex-1"
+                required
+              />
+              <input
+                type="number"
+                name="time"
+                inputMode="numeric"
+                placeholder="Time (hour)"
+                value={formData.time}
+                onChange={handleInputChange}
+                className="border p-2 rounded flex-1"
+                min={0}
+                max={23}
+              />
+            </div>
             <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleInputChange}
-              className="border p-2 rounded"
-              required
-            />
-            <input
-              type="number"
-              name="time"
-              placeholder="Time (hour)"
-              value={formData.time}
+              type="text"
+              name="description"
+              placeholder="Description"
+              value={formData.description}
               onChange={handleInputChange}
               className="border p-2 rounded"
               min={0}
