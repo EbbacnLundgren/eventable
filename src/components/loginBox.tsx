@@ -1,46 +1,45 @@
-"use client";
+'use client'
 
-import { useState, FormEvent, useEffect } from "react";
-import { supabase } from "@/lib/client";
-import { useRouter } from "next/navigation";
-import { signIn, signOut, useSession } from "next-auth/react";
-import Link from "next/link";
+import { useState, FormEvent, useEffect } from 'react'
+import { supabase } from '@/lib/client'
+import { useRouter } from 'next/navigation'
+import { signIn, signOut, useSession } from 'next-auth/react'
+import Link from 'next/link'
 
 interface SupabaseUser {
-  id: string;
-  email: string | null;
-  [key: string]: unknown;
+  id: string
+  email: string | null
+  [key: string]: unknown
 }
 
 export default function LoginBox() {
-  const router = useRouter();
-  const { data: session } = useSession();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const router = useRouter()
+  const { data: session } = useSession()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [message, setMessage] = useState('')
+  const [user, setUser] = useState<SupabaseUser | null>(null)
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data.user) setUser(data.user as unknown as SupabaseUser);
-    };
-    fetchUser();
-  }, []);
+      const { data } = await supabase.auth.getUser()
+      if (data.user) setUser(data.user as unknown as SupabaseUser)
+    }
+    fetchUser()
+  }, [])
 
   if (session) {
     return (
       <div className="border p-6 rounded shadow-md w-80 bg-pink-100 backdrop-blur-md border-white/30">
-        
         <p className="text-lg font-bold mb-4">Hej, {session.user?.name}!</p>
         <button
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={() => signOut({ callbackUrl: '/' })}
           className="px-4 py-2 bg-red-500 text-white rounded"
         >
           Log out
         </button>
       </div>
-    );
+    )
   }
 
   if (user) {
@@ -56,22 +55,22 @@ export default function LoginBox() {
         </div>
         <p className="text-lg font-bold mb-4">Hello, {user.email}!</p>
       </div>
-    );
+    )
   }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setMessage("");
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setMessage(error.message);
-    else router.push("/main");
-  };
+    e.preventDefault()
+    setMessage('')
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    if (error) setMessage(error.message)
+    else router.push('/main')
+  }
 
   return (
     <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
-      
-      
-
       <h2 className="text-xl font-bold mb-4">Log in</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -100,7 +99,7 @@ export default function LoginBox() {
       </form>
 
       <p className="mt-3 text-sm text-black">
-        Don’t have an account?{" "}
+        Don’t have an account?{' '}
         <Link
           href="/signup"
           className="text-blue-600 hover:text-blue-700 underline font-semibold"
@@ -112,7 +111,7 @@ export default function LoginBox() {
       <hr className="my-4" />
 
       <button
-        onClick={() => signIn("google", { callbackUrl: "/main" })}
+        onClick={() => signIn('google', { callbackUrl: '/main' })}
         className="px-4 py-2 bg-blue-500 text-white rounded w-full"
       >
         Log in with Google
@@ -120,5 +119,5 @@ export default function LoginBox() {
 
       {message && <p className="mt-2 text-red-500">{message}</p>}
     </div>
-  );
+  )
 }

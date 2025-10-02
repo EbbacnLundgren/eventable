@@ -1,0 +1,27 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnType": false, // required
+
+  //"editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+  //"editor.formatOnPaste": true, // optional
+  //"[aspnetcorerazor]": "file", // required to format on save
+  //"files.autoSave": "onFocusChange", // optional but recommended
+  //"vs-code-prettier-eslint.prettierLast": false // set as "true" to run 'prettier' last not first
+
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  }
+}
