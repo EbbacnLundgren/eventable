@@ -1,17 +1,22 @@
-import Link from "next/link";
-import LoginBox from "@/components/loginBox";
+import Link from 'next/link'
+//import LoginBox from '@/components/loginBox'
 // import Image from "next/image";  // old code uses this, but new code doesn’t need it
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white relative">
-
       {/* Top right buttons */}
       <div className="absolute top-0 right-0 m-5 flex flex-wrap gap-2">
-        <Link href="/login"  className="p-2 w-20 bg-white text-pink-600 font-semibold rounded shadow hover:bg-gray-100 transition text-center">
+        <Link
+          href="/login"
+          className="p-2 w-20 bg-white text-pink-600 font-semibold rounded shadow hover:bg-gray-100 transition text-center"
+        >
           Login
         </Link>
-        <Link href="/signup" className="p-2 w-20 bg-white text-pink-600 font-semibold rounded shadow hover:bg-gray-100 transition text-center">
+        <Link
+          href="/signup"
+          className="p-2 w-20 bg-white text-pink-600 font-semibold rounded shadow hover:bg-gray-100 transition text-center"
+        >
           Signup
         </Link>
       </div>
@@ -21,7 +26,6 @@ export default function Home() {
         <h1 className="text-7xl sm:text-8xl font-bold mb-4">Eventable</h1>
         <h2 className="text-3xl sm:text-4xl">Welcome to Eventable!</h2>
       </div>
-
     </div>
   )
 }
