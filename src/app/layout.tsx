@@ -17,6 +17,10 @@ export const metadata: Metadata = {
   title: 'Eventable',
   description: 'Plan your next event',
   keywords: ['events', 'calendar', 'event planner'],
+  icons: [
+    { rel: 'icon', url: '/favicon.ico' },
+    { rel: 'apple-touch-icon', url: '/favicon.ico' },
+  ],
   openGraph: {
     title: 'Eventable',
     description: 'The best event planner website',
