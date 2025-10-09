@@ -28,12 +28,6 @@ export default function LoginBox() {
     fetchUser()
   }, [])
 
-  useEffect(() => {
-    if (session || user) {
-      router.push('/main')
-    }
-  }, [session, user, router])
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setMessage('')
