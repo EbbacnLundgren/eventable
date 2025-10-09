@@ -28,35 +28,11 @@ export default function LoginBox() {
     fetchUser()
   }, [])
 
-  if (session) {
-    return (
-      <div className="border p-6 rounded shadow-md w-80 bg-pink-100 backdrop-blur-md border-white/30">
-        <p className="text-lg font-bold mb-4">Hej, {session.user?.name}!</p>
-        <button
-          onClick={() => signOut({ callbackUrl: '/' })}
-          className="px-4 py-2 bg-red-500 text-white rounded"
-        >
-          Log out
-        </button>
-      </div>
-    )
-  }
-
-  if (user) {
-    return (
-      <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
-        <div className="mb-4">
-          <Link
-            href="/"
-            className="inline-block px-3 py-1.5 rounded border border-white/40 bg-white/20 text-sm text-white hover:bg-white/30"
-          >
-            ← Back
-          </Link>
-        </div>
-        <p className="text-lg font-bold mb-4">Hello, {user.email}!</p>
-      </div>
-    )
-  }
+  useEffect(() => {
+    if (session || user) {
+      router.push('/main')
+    }
+  }, [session, user, router])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -70,8 +46,8 @@ export default function LoginBox() {
   }
 
   return (
-    <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
-      <h2 className="text-xl font-bold mb-4">Log in</h2>
+    <div className="border p-6 rounded shadow-md w-80 bg-white/70 backdrop-blur-md border-pink-200">
+      <h2 className="text-xl font-bold mb-4 text-gray-800">Log in</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
@@ -92,27 +68,27 @@ export default function LoginBox() {
         />
         <button
           type="submit"
-          className="p-2 rounded text-white bg-[#1B0D6B]/50 hover:bg-[#1B0D6B]/70"
+          className="p-2 rounded text-white bg-[#1B0D6B]/70 hover:bg-[#1B0D6B]/90"
         >
           Log in
         </button>
       </form>
 
-      <p className="mt-3 text-sm text-black">
+      <p className="mt-3 text-sm text-gray-800">
         Don’t have an account?{' '}
         <Link
           href="/signup"
-          className="text-blue-600 hover:text-blue-700 underline font-semibold"
+          className="text-pink-600 hover:text-pink-700 underline font-semibold"
         >
           Create one
         </Link>
       </p>
 
-      <hr className="my-4" />
+      <hr className="my-4 border-pink-200" />
 
       <button
         onClick={() => signIn('google', { callbackUrl: '/main' })}
-        className="px-4 py-2 bg-blue-500 text-white rounded w-full"
+        className="px-4 py-2 bg-blue-500 text-white rounded w-full hover:bg-blue-600 transition"
       >
         Log in with Google
       </button>
