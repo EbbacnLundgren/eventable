@@ -4,12 +4,14 @@ import { useState, FormEvent } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/client'
 import { signIn } from 'next-auth/react'
+import { Eye, EyeOff } from 'lucide-react'
 
 export default function SignupBox() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -52,14 +54,23 @@ export default function SignupBox() {
         <label className="text-sm font-semibold text-gray-700 mt-2">
           Choose a password
         </label>
-        <input
-          type="password"
-          placeholder="At least 6 characters"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400"
-          required
-        />
+        <div className="relative">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="At least 6 characters"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400 w-full"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
 
         <button
           type="submit"
