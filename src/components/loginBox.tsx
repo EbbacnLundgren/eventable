@@ -73,6 +73,15 @@ export default function LoginBox() {
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
         </div>
+
+        <div className="text-center mt-1">
+          <Link
+            href="/reset-password"
+            className="text-sm text-pink-600 hover:text-pink-700 underline center"
+          >
+            Forgot your password?
+          </Link>
+        </div>
       </form>
 
       <p className="mt-3 text-sm text-gray-800">
