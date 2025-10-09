@@ -34,7 +34,7 @@ export default function TimePicker({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Validera manuell inmatning (HH:mm)
+  // Validera manuell inmatning, funkar inte (?)
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value
     const match = input.match(/^([01]?\d|2[0-3]):([0-5]\d)?$/)
