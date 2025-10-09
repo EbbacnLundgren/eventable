@@ -2,17 +2,7 @@
 
 import { useState } from 'react'
 import EventDetails from '@/components/eventDetails'
-
-interface Event {
-  id: number
-  name: string
-  location: string
-  date: string
-  time?: number
-  description?: string
-  participants?: string[]
-  image?: string
-}
+import type { Event } from '@/types/event'
 
 interface EventsSectionProps {
   events: Event[]

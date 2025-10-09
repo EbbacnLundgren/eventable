@@ -2,17 +2,7 @@
 import { useEffect } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-
-interface Event {
-  id: number
-  name: string
-  location: string
-  date: string
-  time?: number
-  description?: string
-  participants?: string[]
-  image?: string
-}
+import type { Event } from '@/types/event'
 
 interface EventDetailsModalProps {
   event: Event | null
