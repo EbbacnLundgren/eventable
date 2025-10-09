@@ -3,6 +3,7 @@
 import { useState, FormEvent } from 'react'
 import { supabase } from '@/lib/client'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState('')
@@ -29,6 +30,14 @@ export default function ResetPasswordPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-pink-100">
+      <Image
+        src="/images/icon.png"
+        alt="Eventable logo"
+        width={200}
+        height={200}
+        unoptimized
+        className="mb-4 mix-blend-multiply rounded-full drop-shadow-[0_0_35px_rgba(255,192,203,0.7)]"
+      />
       <div className="border p-6 rounded-xl shadow-md w-80 bg-white/80 backdrop-blur-md border-pink-200 text-gray-800">
         <h2 className="text-xl font-bold mb-2 text-center text-pink-700">
           Reset your password
