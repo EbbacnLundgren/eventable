@@ -3,7 +3,7 @@
 import { useState, FormEvent, useEffect } from 'react'
 import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
-import { signIn, signOut, useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 interface SupabaseUser {
@@ -18,20 +18,15 @@ export default function LoginBox() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
 
-  // --- Redirect if already logged in (Supabase or NextAuth) ---
   useEffect(() => {
-    const checkUser = async () => {
+    const fetchUser = async () => {
       const { data } = await supabase.auth.getUser()
-      if (data.user || session) {
-        router.push('/main')
-      } else {
-        setLoading(false)
-      }
+      if (data.user) setUser(data.user as unknown as SupabaseUser)
     }
-    checkUser()
-  }, [router, session])
+    fetchUser()
+  }, [])
 
   useEffect(() => {
     if (session || user) {
@@ -46,12 +41,8 @@ export default function LoginBox() {
       email,
       password,
     })
-
-    if (error) {
-      setMessage(error.message)
-    } else {
-      router.push('/main')
-    }
+    if (error) setMessage(error.message)
+    else router.push('/main')
   }
 
   return (
@@ -101,6 +92,8 @@ export default function LoginBox() {
       >
         Log in with Google
       </button>
+
+      {message && <p className="mt-2 text-red-500">{message}</p>}
     </div>
   )
 }
