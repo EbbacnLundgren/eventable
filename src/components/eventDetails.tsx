@@ -62,7 +62,7 @@ export default function EventDetailsModal({
         {/* Event details */}
         <div className="space-y-4">
           {event.description && (
-            <p className="text-gray-800 text-sm">{event.description}</p>
+            <p className="text-white-800 text-sm">{event.description}</p>
           )}
 
           <div className="flex items-center gap-2">
@@ -82,7 +82,14 @@ export default function EventDetailsModal({
               width={24}
               height={24}
             />
-            <span>{event.date}</span>
+            <span>
+              {new Date(event.date).toLocaleDateString('sv-SE', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">

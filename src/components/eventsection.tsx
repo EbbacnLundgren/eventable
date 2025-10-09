@@ -9,6 +9,8 @@ interface Event {
   location: string
   date: string
   time?: number
+  description?: string
+  participants?: string[]
   image?: string
 }
 
@@ -127,7 +129,12 @@ const EventsSection = ({ events }: EventsSectionProps) => {
                 {event.location}
               </p>
               <button
-                onClick={() => setSelectedEvent(event)}
+                onClick={() =>
+                  setSelectedEvent({
+                    ...event,
+                    participants: ['Alice', 'Bob', 'Charlie'],
+                  })
+                }
                 className="mt-3 inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-400 to-yellow-400 rounded-lg hover:opacity-90"
               >
                 View Details
