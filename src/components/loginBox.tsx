@@ -33,16 +33,12 @@ export default function LoginBox() {
     checkUser()
   }, [router, session])
 
-  // --- Loading state while checking user ---
-  if (loading) {
-    return (
-      <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30 text-center text-white">
-        Checking session...
-      </div>
-    )
-  }
+  useEffect(() => {
+    if (session || user) {
+      router.push('/main')
+    }
+  }, [session, user, router])
 
-  // --- Handle manual login ---
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setMessage('')
@@ -59,8 +55,8 @@ export default function LoginBox() {
   }
 
   return (
-    <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
-      <h2 className="text-xl font-bold mb-4 text-white">Log in</h2>
+    <div className="border p-6 rounded shadow-md w-80 bg-white/70 backdrop-blur-md border-pink-200">
+      <h2 className="text-xl font-bold mb-4 text-gray-800">Log in</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
@@ -81,25 +77,23 @@ export default function LoginBox() {
         />
         <button
           type="submit"
-          className="p-2 rounded text-white bg-[#1B0D6B]/50 hover:bg-[#1B0D6B]/70"
+          className="p-2 rounded text-white bg-[#1B0D6B]/70 hover:bg-[#1B0D6B]/90"
         >
           Log in
         </button>
       </form>
 
-      {message && <p className="mt-2 text-red-500">{message}</p>}
-
-      <p className="mt-3 text-sm text-white">
+      <p className="mt-3 text-sm text-gray-800">
         Don’t have an account?{' '}
         <Link
           href="/signup"
-          className="text-blue-200 hover:text-blue-300 underline font-semibold"
+          className="text-pink-600 hover:text-pink-700 underline font-semibold"
         >
           Create one
         </Link>
       </p>
 
-      <hr className="my-4 border-white/40" />
+      <hr className="my-4 border-pink-200" />
 
       <button
         onClick={() => signIn('google', { callbackUrl: '/main' })}
