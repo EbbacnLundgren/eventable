@@ -7,17 +7,24 @@ import Link from 'next/link'
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
   const handleReset = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setMessage('')
+    setStatus('idle')
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/update-password`,
     })
 
-    if (error) setMessage(error.message)
-    else setMessage('Check your email for a password reset link.')
+    if (error) {
+      setMessage(error.message)
+      setStatus('error')
+    } else {
+      setMessage('Check your email for a password reset link.')
+      setStatus('success')
+    }
   }
 
   return (
@@ -48,7 +55,13 @@ export default function ResetPasswordPage() {
         </form>
 
         {message && (
-          <p className="mt-3 text-center text-sm text-gray-700">{message}</p>
+          <p
+            className={`mt-3 text-center text-sm ${
+              status === 'success' ? 'text-green-600' : 'text-red-500'
+            }`}
+          >
+            {message}
+          </p>
         )}
 
         <p className="mt-4 text-sm text-center text-gray-800">
