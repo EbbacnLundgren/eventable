@@ -14,10 +14,12 @@ interface SupabaseUser {
 
 export default function LoginBox() {
   const router = useRouter()
-  const { data: session } = useSession()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data: session } = useSession()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [user, setUser] = useState<SupabaseUser | null>(null)
 
   useEffect(() => {
