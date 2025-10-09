@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 //import LoginBox from '@/components/loginBox'
 // import Image from "next/image";  // old code uses this, but new code doesn’t need it
 
@@ -23,7 +24,14 @@ export default function Home() {
 
       {/* Main content */}
       <div className="flex flex-col items-start justify-start flex-1 pl-10 sm:pl-20 pt-20 sm:pt-32">
-        <h1 className="text-7xl sm:text-8xl font-bold mb-4">Eventable</h1>
+        <Image
+          src="/wholelogo.png"
+          alt="Eventable logo"
+          width={600}
+          height={600}
+          priority
+          className="drop-shadow-lg"
+        />
         <h2 className="text-3xl sm:text-4xl">Welcome to Eventable!</h2>
       </div>
     </div>
