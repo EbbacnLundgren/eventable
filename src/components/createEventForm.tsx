@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { uploadEventImage } from '@/lib/uploadEventImage'
 import { supabase } from '@/lib/client'
+import TimePicker from './timePicker'
 //import { useRouter } from 'next/navigation'
 
 interface Event {
@@ -20,6 +21,15 @@ interface props {
   addEvent: (event: Event) => void
 }
 
+function getNearestHour() {
+  const now = new Date()
+  now.setMinutes(0)
+  now.setSeconds(0)
+  now.setMilliseconds(0)
+  now.setHours(now.getHours() + 1)
+  return now.toTimeString().slice(0, 5)
+}
+
 export default function CreateEventForm({
   showForm,
   setShowForm,
@@ -29,7 +39,7 @@ export default function CreateEventForm({
     name: '',
     location: '',
     date: '',
-    time: '',
+    time: getNearestHour(),
     description: '',
     image: null as File | null,
   })
@@ -138,16 +148,9 @@ export default function CreateEventForm({
                 className="border p-2 rounded flex-1"
                 required
               />
-              <input
-                type="number"
-                name="time"
-                inputMode="numeric"
-                placeholder="Time (hour)"
+              <TimePicker
                 value={formData.time}
-                onChange={handleInputChange}
-                className="border p-2 rounded flex-1"
-                min={0}
-                max={23}
+                onChange={(v) => setFormData((prev) => ({ ...prev, time: v }))}
               />
             </div>
             <input
