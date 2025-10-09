@@ -32,6 +32,13 @@ export default function LoginBox() {
     fetchUser()
   }, [])
 
+  useEffect(() => {
+    const currentPath = window.location.pathname
+    if ((session || user) && currentPath !== '/update-password') {
+      router.push('/main')
+    }
+  }, [session, user, router])
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setMessage('')
