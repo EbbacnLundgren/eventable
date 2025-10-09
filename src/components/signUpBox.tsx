@@ -21,69 +21,86 @@ export default function SignupBox() {
       setStatus('error')
       return
     }
-    setMessage('Account created. Check your email for verification.')
+    setMessage(
+      'Account created. Please check your email to verify your account.'
+    )
     setStatus('success')
-    // router.push("/main");
   }
 
   return (
-    <div className="border p-6 rounded shadow-md w-80 bg-white/30 backdrop-blur-md border-white/30">
-      <h2 className="text-xl font-bold mb-4">Create an account</h2>
+    <div className="border p-6 rounded-xl shadow-md w-80 bg-white/80 backdrop-blur-md border-pink-200 text-gray-800">
+      <h2 className="text-2xl font-bold mb-2 text-center text-pink-700">
+        Create your Eventable account
+      </h2>
+      <p className="text-sm text-gray-700 text-center mb-4">
+        Sign up to start planning, sharing, and celebrating events with friends.
+      </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <label className="text-sm font-semibold text-gray-700">
+          Email address
+        </label>
         <input
           type="email"
-          placeholder="E-mail"
+          placeholder="example@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 rounded text-black"
+          className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400"
           required
         />
+
+        <label className="text-sm font-semibold text-gray-700 mt-2">
+          Choose a password
+        </label>
         <input
           type="password"
-          placeholder="Password"
+          placeholder="At least 6 characters"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 rounded text-black"
+          className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400"
           required
         />
+
         <button
           type="submit"
-          className="p-2 rounded text-white bg-[#1B0D6B]/50 hover:bg-[#1B0D6B]/70"
+          className="p-2 mt-2 rounded text-white bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 transition font-semibold"
         >
-          Create account
+          Sign up
         </button>
       </form>
 
-      <hr className="my-4" />
-
-      <button
-        onClick={() => signIn('google', { callbackUrl: '/main' })}
-        className="px-4 py-2 bg-blue-500 text-white rounded w-full"
-      >
-        Sign up with Google
-      </button>
-
-      <p className="mt-3 text-sm text-black">
-        Already have an account?{' '}
-        <Link
-          href="/login"
-          className="text-blue-600 hover:text-blue-700 underline font-semibold"
-        >
-          Log in
-        </Link>
-      </p>
-
       {message && (
         <p
-          className={`mt-2 ${
+          className={`mt-3 text-sm text-center ${
             status === 'success' ? 'text-green-600' : 'text-red-500'
           }`}
-          aria-live="polite"
         >
           {message}
         </p>
       )}
+
+      <div className="flex items-center my-4">
+        <hr className="flex-grow border-pink-200" />
+        <span className="mx-2 text-sm text-gray-500">or</span>
+        <hr className="flex-grow border-pink-200" />
+      </div>
+
+      <button
+        onClick={() => signIn('google', { callbackUrl: '/main' })}
+        className="px-4 py-2 bg-blue-500 text-white rounded w-full hover:bg-blue-600 transition font-medium"
+      >
+        Sign up with Google
+      </button>
+
+      <p className="mt-4 text-sm text-center text-gray-800">
+        Already have an account?{' '}
+        <Link
+          href="/login"
+          className="text-pink-600 hover:text-pink-700 underline font-semibold"
+        >
+          Log in
+        </Link>
+      </p>
     </div>
   )
 }
