@@ -5,6 +5,7 @@ import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { Eye, EyeOff } from 'lucide-react'
 
 interface SupabaseUser {
   id: string
@@ -21,6 +22,7 @@ export default function LoginBox() {
   const { data: session } = useSession()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -54,20 +56,23 @@ export default function LoginBox() {
           className="border p-2 rounded text-black"
           required
         />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 rounded text-black"
-          required
-        />
-        <button
-          type="submit"
-          className="p-2 rounded text-white bg-[#1B0D6B]/70 hover:bg-[#1B0D6B]/90"
-        >
-          Log in
-        </button>
+        <div className="relative">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border p-2 rounded text-black w-full"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
       </form>
 
       <p className="mt-3 text-sm text-gray-800">
