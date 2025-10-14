@@ -1,9 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/client'
 import { Camera, Bell, Shield, Globe, LogOut, Trash2 } from "lucide-react"
 
 export default function ProfileSettingsPage() {
+  const router = useRouter()
   const [profileImage, setProfileImage] = useState<string>("/placeholder.svg")
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
@@ -158,12 +161,16 @@ export default function ProfileSettingsPage() {
 
         {/* Logout */}
         <div className="bg-white shadow rounded-lg p-6">
+          
           <button
-            onClick={handleLogout}
-            className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200 transition flex items-center justify-center gap-2"
-          >
-            <LogOut /> Log Out
-          </button>
+          className="bg-red-500 text-white px-4 py-2 rounded"
+          onClick={async () => {
+            await supabase.auth.signOut()
+            router.push('/')
+          }}
+        >
+          Logout
+        </button>
         </div>
       </div>
     </div>

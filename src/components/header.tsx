@@ -1,23 +1,18 @@
-'use client' // behövs för interaktivitet
-
-import { useRouter } from 'next/navigation'
+'use client'
+import { useState } from 'react'
 import ProfileButton from './ProfileButton'
 
 export default function Header() {
-  const router = useRouter()
+  const [profileImage, setProfileImage] = useState<string | undefined>(undefined)
+  const [color, setColor] = useState('bg-purple-500')
 
   return (
     <header className="w-full flex justify-between items-center p-4 bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white">
-      {/* Klickbar titel som leder till main */}
-      <button
-        onClick={() => router.push('/main')}
-        className="text-2xl font-bold bg-transparent hover:underline"
-      >
+      <h1 className="text-2xl font-bold cursor-pointer" onClick={() => window.location.href = '/main'}>
         Eventable!
-      </button>
+      </h1>
 
-      {/* Profile-knapp */}
-      <ProfileButton color="bg-purple-500" />
+      <ProfileButton color={color} image={profileImage} />
     </header>
   )
 }
