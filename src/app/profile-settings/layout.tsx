@@ -10,11 +10,11 @@ export default function ProfileSettingsLayout({
 }) {
   return (
     <div className="flex min-h-screen">
-          <Sidebar />
-          <div className="flex flex-col flex-1 ml-20">
-            <Header />
-            <main className="flex-1">{children}</main>
-          </div>
-        </div>
+      <Sidebar />
+      <div className="flex flex-col flex-1 ml-20">
+        <Header />
+        <main className="flex-1">{children}</main>
+      </div>
+    </div>
   )
 }

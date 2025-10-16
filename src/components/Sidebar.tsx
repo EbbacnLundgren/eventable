@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/client'
-import { House, UserStar, Sparkles, CalendarDays, Calendar, User } from 'lucide-react'
+import { House, UserStar, CalendarDays, User } from 'lucide-react'
 
 export default function Sidebar() {
   const router = useRouter()
@@ -14,25 +14,26 @@ export default function Sidebar() {
     <aside className="fixed left-0 top-0 h-screen w-20 bg-white shadow-lg flex flex-col items-center justify-between py-6 border-r border-gray-200 z-50">
       {/* Logo */}
       <div className="flex flex-col items-center">
-        
-        <img src="/favicon.ico" alt="Logo" className="h-15 w-15 object-contain" />
-        
+        <img
+          src="/favicon.ico"
+          alt="Logo"
+          className="h-15 w-15 object-contain"
+        />
 
         {/* Nav icons */}
         <nav className="flex flex-col items-center gap-8 mt-20">
-        <Link href="/main" className="text-gray-500 hover:text-pink-500">
+          <Link href="/main" className="text-gray-500 hover:text-pink-500">
             <House className="h-8 w-8" />
-        </Link>
+          </Link>
 
-        <Link href="/my-events" className="text-gray-500 hover:text-pink-500">
+          <Link href="/my-events" className="text-gray-500 hover:text-pink-500">
             <UserStar className="h-8 w-8" />
-        </Link>
+          </Link>
 
-        <Link href="/calendar" className="text-gray-500 hover:text-pink-500">
+          <Link href="/calendar" className="text-gray-500 hover:text-pink-500">
             <CalendarDays className="h-8 w-8" />
-        </Link>
+          </Link>
         </nav>
-
       </div>
 
       {/* Profile Icon + Popup */}
