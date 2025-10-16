@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/client'
-import { Camera, Bell, Shield, Globe, LogOut, Trash2 } from 'lucide-react'
+import { Camera, Bell, Shield, Globe} from 'lucide-react'
+import Image from 'next/image';
+
 
 export default function ProfileSettingsPage() {
   const router = useRouter()
@@ -32,7 +34,6 @@ export default function ProfileSettingsPage() {
   const handleSaveProfile = () => alert('Profile saved!')
   const handleChangePassword = () => alert('Password reset requested')
   const handleDeleteAccount = () => alert('Account deletion initiated')
-  const handleLogout = () => alert('Logged out')
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-pink-50 py-8">
@@ -48,9 +49,11 @@ export default function ProfileSettingsPage() {
         <div className="bg-white shadow rounded-lg p-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="relative group">
-              <img
+              <Image
                 src={profileImage}
                 alt="Profile"
+                width={40} 
+                height={40}
                 className="w-24 h-24 rounded-full object-cover ring-4 ring-pink-200 group-hover:ring-pink-400 transition-all"
               />
               <label
