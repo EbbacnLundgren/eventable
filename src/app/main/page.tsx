@@ -63,14 +63,6 @@ export default function MainPage() {
         + Create Event Page
       </Link>
 
-      <button
-        type="button"
-        onClick={() => setShowForm(true)}
-        className="w-fit text-gray-900 bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-red-100 dark:focus:ring-red-400 font-medium rounded-lg text-sm px-2 py-2.5 text-center mb-4"
-      >
-        + Create Event Pop-up
-      </button>
-
       <EventSection events={events} />
     </div>
   )
