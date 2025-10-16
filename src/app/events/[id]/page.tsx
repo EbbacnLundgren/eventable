@@ -36,7 +36,7 @@ export default async function EventDetailsPage({
             href="/main"
             className="inline-block mb-6 text-sm text-pink-200 hover:underline"
           >
-            ← Back to events
+            ← Back
           </Link>
 
           <h1 className="text-4xl font-extrabold mb-4 text-center">
