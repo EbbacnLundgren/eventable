@@ -13,7 +13,7 @@ export default function EventDetailsModal({
   event,
   onClose,
 }: EventDetailsModalProps) {
-  // Close modal when clicking outside the content
+  // Close pop-up when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const modalContent = document.getElementById('modal-content')
