@@ -4,6 +4,7 @@ import { supabase } from '@/lib/client'
 import EventSection from '@/components/eventsection'
 import CreateEventForm from '@/components/createEventForm'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 interface Event {
   id: number
@@ -17,32 +18,51 @@ interface Event {
 export default function MainPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [showForm, setShowForm] = useState(false)
+  const { data: session } = useSession()
 
   useEffect(() => {
     const fetchEvents = async () => {
-      // Hämta aktuell användare
       const {
-        data: { user },
+        data: { user: supabaseUser },
       } = await supabase.auth.getUser()
 
-      if (!user) return // användaren är inte inloggad
+      let query = supabase.from('events').select('*')
 
-      // Hämta bara events skapade av denna användare
-      const { data: eventsData, error } = await supabase
-        .from('events')
-        .select('*')
-        .eq('user_id', user.id)
+      if (supabaseUser?.id) {
+        // Supabase-auth user
+        query = query.eq('user_id', supabaseUser.id)
+      } else if (session?.user?.email) {
+        // Google-auth user
+        const { data: googleUser, error } = await supabase
+          .from('google_users')
+          .select('id')
+          .eq('email', session.user.email)
+          .single()
 
-      if (error) {
-        console.error('Error fetching events:', error)
+        if (error || !googleUser) {
+          console.warn('Google user not found', session.user?.email)
+          setEvents([])
+          return
+        }
+
+        query = query.eq('user_id', googleUser.id)
+      } else {
+        // No user logged in
+        setEvents([])
         return
       }
 
+      const { data: eventsData, error } = await query.order('date', {
+        ascending: true,
+      })
+
+      if (error) console.error('Error fetching events:', error)
       if (eventsData) setEvents(eventsData)
     }
 
     fetchEvents()
-  }, [])
+  }, [session])
+
 
   const addEvent = (event: Event) => setEvents((prev) => [...prev, event])
 

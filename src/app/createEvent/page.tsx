@@ -5,6 +5,7 @@ import { uploadEventImage } from '@/lib/uploadEventImage'
 import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import TimePicker from '@/components/timePicker'
+import { useSession } from 'next-auth/react'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -18,27 +19,48 @@ export default function CreateEventPage() {
   })
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
+  const { data: session } = useSession()
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setMessage('')
     setStatus('idle')
 
-    // 1. Hämta användare
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser()
+    let userId: string | null = null
 
-    // debug: log user/session state so we can see why auth may be missing
-    try {
-      const session = await supabase.auth.getSession()
-      console.log('DEBUG supabase.getUser ->', { user, userError, session })
-    } catch (e) {
-      console.error('DEBUG supabase.getUser error', e)
+    if (session?.user?.email) {
+      const { data: googleUser, error } = await supabase
+        .from('google_users')
+        .select('id')
+        .eq('email', session.user.email)
+        .single()
+
+      if (googleUser) {
+        userId = googleUser.id
+      } else {
+        setMessage('You must be logged in to create an event.')
+        setStatus('error')
+        return
+      }
+    }
+    // Om användaren är inloggad via Supabase (t.ex. email/password)
+    else {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser()
+
+      if (userError || !user) {
+        setMessage('You must be logged in to create an event.')
+        setStatus('error')
+        return
+      }
+
+      userId = user.id
     }
 
-    if (userError || !user) {
+    // Om ingen giltig användare hittades
+    if (!userId) {
       setMessage('You must be logged in to create an event.')
       setStatus('error')
       return
@@ -65,7 +87,7 @@ export default function CreateEventPage() {
       time: formData.time !== '' ? Number(formData.time) : null,
       description: formData.description,
       image: imageUrl,
-      user_id: user.id, // ← användarens UID
+      user_id: userId, // ← användarens UID
     }
 
     // 4. Spara i databasen
@@ -165,9 +187,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
