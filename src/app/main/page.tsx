@@ -20,9 +20,27 @@ export default function MainPage() {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const { data: eventsData } = await supabase.from('events').select('*')
+      // Hämta aktuell användare
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (!user) return // användaren är inte inloggad
+
+      // Hämta bara events skapade av denna användare
+      const { data: eventsData, error } = await supabase
+        .from('events')
+        .select('*')
+        .eq('user_id', user.id)
+
+      if (error) {
+        console.error('Error fetching events:', error)
+        return
+      }
+
       if (eventsData) setEvents(eventsData)
     }
+
     fetchEvents()
   }, [])
 

@@ -1,18 +1,9 @@
 'use client'
+
 import { useState, FormEvent, ChangeEvent } from 'react'
 import { uploadEventImage } from '@/lib/uploadEventImage'
 import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
-
-interface Event {
-  id: number
-  name: string
-  location: string
-  date: string
-  time: number | null
-  description?: string
-  image?: string
-}
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -23,7 +14,6 @@ export default function CreateEventPage() {
     time: '',
     description: '',
     image: null as File | null,
-    user_id: '',
   })
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
@@ -33,9 +23,28 @@ export default function CreateEventPage() {
     setMessage('')
     setStatus('idle')
 
-    let imageUrl: string | null = null
+    // 1. Hämta användare
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser()
 
-    // Ladda upp bild om vald
+    // debug: log user/session state so we can see why auth may be missing
+    try {
+      const session = await supabase.auth.getSession()
+      console.log('DEBUG supabase.getUser ->', { user, userError, session })
+    } catch (e) {
+      console.error('DEBUG supabase.getUser error', e)
+    }
+
+    if (userError || !user) {
+      setMessage('You must be logged in to create an event.')
+      setStatus('error')
+      return
+    }
+
+    // 2. Ladda upp bild om vald
+    let imageUrl: string | null = null
     if (formData.image) {
       try {
         imageUrl = await uploadEventImage(formData.image, Date.now())
@@ -47,7 +56,7 @@ export default function CreateEventPage() {
       }
     }
 
-    // Förbered data för insert
+    // 3. Förbered data för insert
     const insertData = {
       name: formData.name,
       location: formData.location,
@@ -55,21 +64,20 @@ export default function CreateEventPage() {
       time: formData.time !== '' ? Number(formData.time) : null,
       description: formData.description,
       image: imageUrl,
+      user_id: user.id, // ← användarens UID
     }
 
-    const { error } = await supabase
-      .from('events')
-      .insert([insertData])
-      .select()
-      .single<Event>()
+    // 4. Spara i databasen
+    const { error } = await supabase.from('events').insert([insertData])
 
     if (error) {
       console.error('Error creating event:', error)
-      setMessage('Failed to create event. Check console for details.')
+      setMessage('Failed to create event.')
       setStatus('error')
       return
     }
 
+    // 5. Om lyckat
     setStatus('success')
     setMessage('Event created successfully! Redirecting...')
     setTimeout(() => router.push('/main'), 1500)
@@ -104,6 +112,7 @@ export default function CreateEventPage() {
           className="border p-2 rounded"
           required
         />
+
         <input
           type="text"
           name="location"
@@ -113,6 +122,7 @@ export default function CreateEventPage() {
           className="border p-2 rounded"
           required
         />
+
         <div className="flex gap-2">
           <input
             type="date"
@@ -134,6 +144,7 @@ export default function CreateEventPage() {
             max={23}
           />
         </div>
+
         <input
           type="text"
           name="description"
@@ -142,6 +153,7 @@ export default function CreateEventPage() {
           onChange={handleInputChange}
           className="border p-2 rounded"
         />
+
         <input
           type="file"
           name="image"
