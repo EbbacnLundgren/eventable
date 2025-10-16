@@ -29,7 +29,7 @@ export default function CreateEventPage() {
     let userId: string | null = null
 
     if (session?.user?.email) {
-      const { data: googleUser, error } = await supabase
+      const { data: googleUser } = await supabase
         .from('google_users')
         .select('id')
         .eq('email', session.user.email)
