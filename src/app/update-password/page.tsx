@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -9,6 +9,18 @@ export default function UpdatePasswordPage() {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const router = useRouter()
+
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash.includes('access_token')) {
+      const params = new URLSearchParams(hash.substring(1))
+      const access_token = params.get('access_token')
+      const refresh_token = params.get('refresh_token') || access_token
+      if (access_token && refresh_token) {
+        supabase.auth.setSession({ access_token, refresh_token })
+      }
+    }
+  }, [])
 
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
