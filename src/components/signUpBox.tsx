@@ -4,6 +4,7 @@ import { useState, FormEvent } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/client'
 import { Eye, EyeOff } from 'lucide-react'
+import { signIn } from 'next-auth/react'
 
 export default function SignupBox() {
   const [email, setEmail] = useState('')
@@ -130,7 +131,7 @@ export default function SignupBox() {
       </div>
 
       <button
-        onClick={async () => {
+        /*onClick={async () => {
           await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
@@ -140,7 +141,8 @@ export default function SignupBox() {
                   : 'https://eventableproject.vercel.app/',
             },
           })
-        }}
+        }}*/
+        onClick={() => signIn('google', { callbackUrl: '/main' })}
         className="px-4 py-2 bg-blue-500 text-white rounded w-full hover:bg-blue-600 transition font-medium"
       >
         Sign up with Google
