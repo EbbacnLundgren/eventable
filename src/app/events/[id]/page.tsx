@@ -4,18 +4,31 @@ import Link from 'next/link'
 import { Camera, Music } from 'lucide-react'
 import { ArrowLeft } from 'lucide-react'
 
-type Props = {
-  params: {
-    id: string
+export default async function EventDetailsPage({
+  params,
+}: {
+  // Next's PageProps in this Next version expect `params` to be a Promise or undefined.
+  params?: Promise<{ id: string }>
+}) {
+  // Await params if provided; if not, treat as missing.
+  // Await works for both Promise and non-Promise values at runtime.
+  const resolvedParams = params ? await params : undefined
+  const id = resolvedParams?.id
+  if (!id) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-white">
+        <h1 className="text-2xl font-bold">Event not found</h1>
+        <Link href="/main" className="mt-4 underline text-pink-200">
+          ← Back
+        </Link>
+      </div>
+    )
   }
-}
-
-export default async function EventDetailsPage({ params }: Props) {
   // Fetch event data from Supabase using the dynamic route param
   const { data: event, error } = await supabase
     .from('events')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (error || !event) {
