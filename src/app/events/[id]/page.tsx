@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/client'
 import Image from 'next/image'
 import Link from 'next/link'
-// @ts-expect-error: Lucide Music icon works at runtime, this removes the red squiggly line
 import { Camera, Music } from 'lucide-react'
 import { ArrowLeft } from 'lucide-react'
 
