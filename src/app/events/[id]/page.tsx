@@ -33,7 +33,7 @@ export default async function EventDetailsPage({
           href="/main"
           className="inline-block mb-6 text-sm text-pink-200 hover:underline"
         >
-          ← Back to events
+          ← Back
         </Link>
 
         {/* Event title */}
