@@ -43,8 +43,6 @@ export default function MainPage() {
         + Create Event
       </button>
 
-      <h1 className="text-2xl font-bold mb-4">Welcome</h1>
-
       <EventSection events={events} />
     </div>
   )

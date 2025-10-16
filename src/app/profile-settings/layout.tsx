@@ -1,5 +1,6 @@
 // app/profile-settings/layout.tsx
 import Header from '@/components/header'
+import Sidebar from '@/components/Sidebar'
 import { ReactNode } from 'react'
 
 export default function ProfileSettingsLayout({
@@ -8,9 +9,12 @@ export default function ProfileSettingsLayout({
   children: ReactNode
 }) {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1">{children}</main>
-    </div>
+    <div className="flex min-h-screen">
+          <Sidebar />
+          <div className="flex flex-col flex-1 ml-20">
+            <Header />
+            <main className="flex-1">{children}</main>
+          </div>
+        </div>
   )
 }
