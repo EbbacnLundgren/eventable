@@ -21,22 +21,28 @@ export default function LoginBox() {
       if (!session?.user?.email) return
 
       // Kontrollera om användaren redan finns i Users-tabellen
-      const { data: existing } = await supabase
-        .from('users')
+      const { data: existing, error } = await supabase
+        .from('google_users')
         .select('id')
         .eq('email', session.user.email)
         .single()
 
+      if (error && error.code !== 'PGRST116') {
+        console.error('Unexpected error checking google_users:', error)
+        return
+      }
+
       if (!existing) {
-        await supabase.from('users').insert({
+        await supabase.from('google_users').insert({
           email: session.user.email,
           created_at: new Date().toISOString(),
           first_name: session.user.name?.split(' ')[0] || '',
           last_name: session.user.name?.split(' ')[1] || '',
           avatar_url: session.user.image || '',
-          phone_number: '',
+          phone_nbr: ''
         })
       }
+
     }
 
     createUserIfNotExists()
