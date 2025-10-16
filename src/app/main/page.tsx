@@ -63,7 +63,6 @@ export default function MainPage() {
     fetchEvents()
   }, [session])
 
-
   const addEvent = (event: Event) => setEvents((prev) => [...prev, event])
 
   return (
