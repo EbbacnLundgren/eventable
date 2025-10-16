@@ -76,12 +76,10 @@ export default function LoginBox() {
         <div className="text-center mt-1 flex flex-col items-center gap-2">
           <button
             type="submit"
-            onClick={() => router.push('/main')}
             className="p-2 mt-2 rounded text-white bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 transition font-semibold"
           >
             Log in
           </button>
-
           <Link
             href="/reset-password"
             className="text-sm text-pink-600 hover:text-pink-700 underline center"
