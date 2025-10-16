@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/client'
 import Image from 'next/image'
 import Link from 'next/link'
-// @ts-expect-error: Lucide Music icon works at runtime
+// @ts-expect-error: Lucide Music icon works at runtime, this removes the red squiggly line
 import { Camera, Music } from 'lucide-react'
 
 export default async function EventDetailsPage({
@@ -30,7 +30,7 @@ export default async function EventDetailsPage({
   return (
     <main className="min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white py-10 px-6">
       <div className="max-w-5xl mx-auto flex gap-6 items-start">
-        {/* --- Left: Event details box --- */}
+        {/* --- Left: Box containing event details --- */}
         <div className="flex-1 bg-white/20 backdrop-blur-md rounded-3xl p-8 shadow-lg border border-white/30">
           <Link
             href="/main"
@@ -79,7 +79,7 @@ export default async function EventDetailsPage({
           </div>
         </div>
 
-        {/* --- Right: Placeholder icon(s) --- */}
+        {/* --- Right: Placeholder icons --- */}
         <div className="flex flex-col items-center gap-6">
           {/* Music playlist icon (placeholder) */}
           <a
