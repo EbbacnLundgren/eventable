@@ -34,7 +34,7 @@ export default function LoginBox() {
           first_name: session.user.name?.split(' ')[0] || '',
           last_name: session.user.name?.split(' ')[1] || '',
           avatar_url: session.user.image || '',
-          phone_number: ''
+          phone_number: '',
         })
       }
     }
