@@ -4,11 +4,8 @@ import Link from 'next/link'
 import { Camera, Music } from 'lucide-react'
 import { ArrowLeft } from 'lucide-react'
 
-export default async function EventDetailsPage({
-  params,
-}: {
-  params: { id: string }
-}) {
+export default async function EventDetailsPage(props: any) {
+  const { params } = props as { params: { id: string } }
   // Fetch event data from Supabase using the dynamic route param
   const { data: event, error } = await supabase
     .from('events')
