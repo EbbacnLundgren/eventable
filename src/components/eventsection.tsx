@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import EventDetails from '@/components/eventDetails'
 import type { Event } from '@/types/event'
+import Link from 'next/link'
 
 interface EventsSectionProps {
   events: Event[]
@@ -90,47 +91,51 @@ const EventsSection = ({ events }: EventsSectionProps) => {
       {/* Events Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full">
         {displayedEvents.map((event) => (
-          <div
+          <Link
+            href={`/events/${event.id}`}
             key={event.id}
-            className="bg-white/30 border border-white/20 rounded-2xl shadow-lg overflow-hidden backdrop-blur-md hover:shadow-xl transition-shadow"
+            className="block transform hover:scale-[1.02] transition-transform cursor-pointer"
           >
-            {event.image && (
-              <img
-                src={event.image}
-                alt={event.name}
-                className="h-40 w-full object-cover"
-              />
-            )}
-            <div className="p-4">
-              <h3 className="text-lg font-semibold text-white drop-shadow-md">
-                {event.name}
-              </h3>
-              <p className="text-sm text-white/80 drop-shadow">
-                {new Date(event.date).toLocaleDateString()}
-              </p>
-
-              {event.time !== undefined && (
-                <p className="text-sm text-white/80 drop-shadow">
-                  Time: {event.time}:00
-                </p>
+            <div className="bg-white/30 border border-white/20 rounded-2xl shadow-lg overflow-hidden backdrop-blur-md hover:shadow-xl transition-shadow">
+              {event.image && (
+                <img
+                  src={event.image}
+                  alt={event.name}
+                  className="h-40 w-full object-cover"
+                />
               )}
+              <div className="p-4">
+                <h3 className="text-lg font-semibold text-white drop-shadow-md">
+                  {event.name}
+                </h3>
+                <p className="text-sm text-white/80 drop-shadow">
+                  {new Date(event.date).toLocaleDateString()}
+                </p>
 
-              <p className="text-sm text-white/90 drop-shadow">
-                {event.location}
-              </p>
-              <button
-                onClick={() =>
-                  setSelectedEvent({
-                    ...event,
-                    participants: ['Alice', 'Bob', 'Charlie'],
-                  })
-                }
-                className="mt-3 inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-400 to-yellow-400 rounded-lg hover:opacity-90"
-              >
-                View Details
-              </button>
+                {event.time !== undefined && (
+                  <p className="text-sm text-white/80 drop-shadow">
+                    Time: {event.time}:00
+                  </p>
+                )}
+
+                <p className="text-sm text-white/90 drop-shadow">
+                  {event.location}
+                </p>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault() // prevent navigation when opening modal
+                    setSelectedEvent({
+                      ...event,
+                      participants: ['Alice', 'Bob', 'Charlie'],
+                    })
+                  }}
+                  className="mt-3 inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-400 to-yellow-400 rounded-lg hover:opacity-90"
+                >
+                  View Details
+                </button>
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
       {selectedEvent && (
