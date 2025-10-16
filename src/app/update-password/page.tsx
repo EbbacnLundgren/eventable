@@ -29,6 +29,7 @@ export default function UpdatePasswordPage() {
     const { error } = await supabase.auth.updateUser({ password })
     if (error) setMessage(error.message)
     else {
+      await supabase.auth.signOut()
       setMessage('Password updated successfully! Redirecting to login...')
       setTimeout(() => router.push('/login'), 2000)
     }
