@@ -1,10 +1,18 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/client'
-import { House, UserStar, CalendarDays, User, UserCog, LogOut } from 'lucide-react'
+import {
+  House,
+  UserStar,
+  CalendarDays,
+  User,
+  UserCog,
+  LogOut,
+} from 'lucide-react'
 
 export default function Sidebar() {
   const router = useRouter()
@@ -14,10 +22,12 @@ export default function Sidebar() {
     <aside className="fixed left-0 top-0 h-screen w-20 bg-white shadow-lg flex flex-col items-center justify-between py-6 border-r border-gray-200 z-50">
       {/* Logo */}
       <div className="flex flex-col items-center">
-        <img
+        <Image
           src="/favicon.ico"
           alt="Logo"
-          className="h-15 w-15 object-contain"
+          width={60}
+          height={60}
+          className="object-contain"
         />
 
         {/* Nav icons */}

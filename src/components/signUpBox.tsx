@@ -63,7 +63,7 @@ export default function SignupBox() {
       first_name: '',
       last_name: '',
       avatar_url: '',
-      phone_number: ''
+      phone_number: '',
     })
 
     if (insertError) {
@@ -72,7 +72,9 @@ export default function SignupBox() {
       return
     }
 
-    setMessage('Account created. Please check your email to verify your account.')
+    setMessage(
+      'Account created. Please check your email to verify your account.'
+    )
     setStatus('success')
   }
 
@@ -133,10 +135,24 @@ export default function SignupBox() {
         Sign up with Google
       </button>
 
-      {message && <p className={`mt-3 text-sm text-center ${status === 'success' ? 'text-green-600' : 'text-red-500'}`}>{message}</p>}
+      {message && (
+        <p
+          className={`mt-3 text-sm text-center ${
+            status === 'success' ? 'text-green-600' : 'text-red-500'
+          }`}
+        >
+          {message}
+        </p>
+      )}
 
       <p className="mt-4 text-sm text-center text-gray-800">
-        Already have an account? <Link href="/login" className="text-pink-600 hover:text-pink-700 underline font-semibold">Log in</Link>
+        Already have an account?{' '}
+        <Link
+          href="/login"
+          className="text-pink-600 hover:text-pink-700 underline font-semibold"
+        >
+          Log in
+        </Link>
       </p>
     </div>
   )
