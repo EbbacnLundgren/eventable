@@ -1,15 +1,8 @@
 'use client'
 /* eslint-disable @next/next/no-img-element */
 import { useState } from 'react'
-
-interface Event {
-  id: number
-  name: string
-  location: string
-  date: string
-  time?: number
-  image?: string
-}
+import EventDetails from '@/components/eventDetails'
+import type { Event } from '@/types/event'
 
 interface EventsSectionProps {
   events: Event[]
@@ -17,7 +10,7 @@ interface EventsSectionProps {
 
 const EventsSection = ({ events }: EventsSectionProps) => {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
-
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const today = new Date()
 
   // --- Fallback demo events, if there are no events in supabase these are used as examples  ---
@@ -125,13 +118,27 @@ const EventsSection = ({ events }: EventsSectionProps) => {
               <p className="text-sm text-white/90 drop-shadow">
                 {event.location}
               </p>
-              <button className="mt-3 inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-400 to-yellow-400 rounded-lg hover:opacity-90">
+              <button
+                onClick={() =>
+                  setSelectedEvent({
+                    ...event,
+                    participants: ['Alice', 'Bob', 'Charlie'],
+                  })
+                }
+                className="mt-3 inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-400 to-yellow-400 rounded-lg hover:opacity-90"
+              >
                 View Details
               </button>
             </div>
           </div>
         ))}
       </div>
+      {selectedEvent && (
+        <EventDetails
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+        />
+      )}
     </section>
   )
 }
