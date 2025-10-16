@@ -7,12 +7,6 @@ import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 
-interface SupabaseUser {
-  id: string
-  email: string | null
-  [key: string]: unknown
-}
-
 export default function LoginBox() {
   const router = useRouter()
   const [email, setEmail] = useState('')
