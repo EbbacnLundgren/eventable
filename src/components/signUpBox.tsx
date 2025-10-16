@@ -43,7 +43,7 @@ export default function SignupBox() {
     }
 
     // Skapa användaren via Supabase Auth
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    const { error } = await supabase.auth.signUp({ email, password })
     if (error) {
       setMessage(error.message)
       setStatus('error')

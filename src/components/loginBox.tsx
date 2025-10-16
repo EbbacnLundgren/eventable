@@ -5,7 +5,7 @@ import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
-import { signIn, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 
 interface SupabaseUser {
   id: string

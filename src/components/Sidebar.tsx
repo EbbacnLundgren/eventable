@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/client'
-import { House, UserStar, CalendarDays, User, UserCog, LogOut} from 'lucide-react'
+import { House, UserStar, CalendarDays, User, UserCog, LogOut } from 'lucide-react'
 
 export default function Sidebar() {
   const router = useRouter()
@@ -46,28 +46,28 @@ export default function Sidebar() {
         </button>
 
         {showMenu && (
-        <div className="absolute left-14 bottom-2 w-48 bg-white shadow-md rounded-lg border border-gray-200 py-2 z-[1000]">
-          <Link
-            href="/profile-settings"
-            className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-pink-50"
-          >
-            <UserCog className="h-5 w-5" />
-            <span className="whitespace-nowrap">Account Settings</span>
-          </Link>
+          <div className="absolute left-14 bottom-2 w-48 bg-white shadow-md rounded-lg border border-gray-200 py-2 z-[1000]">
+            <Link
+              href="/profile-settings"
+              className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-pink-50"
+            >
+              <UserCog className="h-5 w-5" />
+              <span className="whitespace-nowrap">Account Settings</span>
+            </Link>
 
-          <button
-            className="flex items-center gap-3 w-full text-left px-4 py-2 text-red-500 hover:bg-red-50"
-            onClick={async () => {
-              await supabase.auth.signOut()
-              router.push('/')
-            }}
-          >
-            <LogOut className="h-5 w-5" />
-            <span className="whitespace-nowrap">Log out</span>
-          </button>
-        </div>
-      )}
-    </div>
+            <button
+              className="flex items-center gap-3 w-full text-left px-4 py-2 text-red-500 hover:bg-red-50"
+              onClick={async () => {
+                await supabase.auth.signOut()
+                router.push('/')
+              }}
+            >
+              <LogOut className="h-5 w-5" />
+              <span className="whitespace-nowrap">Log out</span>
+            </button>
+          </div>
+        )}
+      </div>
     </aside>
   )
 }
