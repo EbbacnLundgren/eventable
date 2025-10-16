@@ -25,11 +25,13 @@ export default function LoginBox() {
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
-    const fetchUser = async () => {
+    //ska tydligen helst bara användas under utveckling?
+    const resetSession = async () => {
+      await supabase.auth.signOut()
       const { data } = await supabase.auth.getUser()
       if (data.user) setUser(data.user as unknown as SupabaseUser)
     }
-    fetchUser()
+    resetSession()
   }, [])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

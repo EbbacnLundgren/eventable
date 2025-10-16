@@ -20,11 +20,23 @@ export default function SignupBox() {
 
     const { data: exists, error: existsError } = await supabase.rpc(
       //har lagt till sql kod i supabase för att få detta att fungera! Kolla sql editor på supabase för att ändra något
+      //det med rpc skyddar mot sql injection
       'user_exists',
       {
         email_input: email,
       }
     )
+
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/
+
+    if (!passwordRegex.test(password)) {
+      setMessage(
+        'Password must be at least 8 characters long and include a number, a letter, and a special character.'
+      )
+      setStatus('error')
+      return
+    }
 
     if (existsError) {
       console.error(existsError)
