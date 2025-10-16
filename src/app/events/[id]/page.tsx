@@ -19,7 +19,7 @@ export default async function EventDetailsPage({
       <div className="flex flex-col items-center justify-center h-screen text-white">
         <h1 className="text-2xl font-bold">Event not found</h1>
         <Link href="/main" className="mt-4 underline text-pink-200">
-          ← Back to events
+          ← Back
         </Link>
       </div>
     )
