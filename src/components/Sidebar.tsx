@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/client'
-import { Sparkles, CalendarDays, Calendar, User} from 'lucide-react'
+import { Sparkles, CalendarDays, Calendar, User } from 'lucide-react'
 
 export default function Sidebar() {
   const router = useRouter()
@@ -49,14 +49,13 @@ export default function Sidebar() {
             >
               Account Settings
             </Link>
-            
 
             <button
               className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50"
               onClick={async () => {
-                    await supabase.auth.signOut()
-                    router.push('/')
-                }}
+                await supabase.auth.signOut()
+                router.push('/')
+              }}
             >
               Log out
             </button>

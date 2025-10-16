@@ -3,9 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/client'
-import { Camera, Bell, Shield, Globe} from 'lucide-react'
-import Image from 'next/image';
-
+import { Camera, Bell, Shield, Globe } from 'lucide-react'
+import Image from 'next/image'
 
 export default function ProfileSettingsPage() {
   const router = useRouter()
@@ -52,7 +51,7 @@ export default function ProfileSettingsPage() {
               <Image
                 src={profileImage}
                 alt="Profile"
-                width={40} 
+                width={40}
                 height={40}
                 className="w-24 h-24 rounded-full object-cover ring-4 ring-pink-200 group-hover:ring-pink-400 transition-all"
               />
