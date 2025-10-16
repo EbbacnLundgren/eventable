@@ -3,9 +3,9 @@
 import { useState, FormEvent, useEffect } from 'react'
 import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
-import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
+import { signIn, useSession } from 'next-auth/react'
 
 interface SupabaseUser {
   id: string
@@ -18,6 +18,8 @@ export default function LoginBox() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [user, setUser] = useState<SupabaseUser | null>(null)
   const { data: session } = useSession()
   const [showPassword, setShowPassword] = useState(false)
 
@@ -99,7 +101,6 @@ export default function LoginBox() {
           >
             Log in
           </button>
-
           <Link
             href="/reset-password"
             className="text-sm text-pink-600 hover:text-pink-700 underline center"
@@ -122,7 +123,14 @@ export default function LoginBox() {
       <hr className="my-4 border-pink-200" />
 
       <button
-        onClick={() => signIn('google', { callbackUrl: '/main' })}
+        onClick={async () => {
+          // Use Supabase OAuth so the Supabase client has a session
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: `${window.location.origin}/main` },
+          })
+          if (error) setMessage(error.message)
+        }}
         className="px-4 py-2 bg-blue-500 text-white rounded w-full hover:bg-blue-600 transition"
       >
         Log in with Google
