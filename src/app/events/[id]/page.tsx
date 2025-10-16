@@ -2,7 +2,7 @@ import { supabase } from '@/lib/client'
 import Image from 'next/image'
 import Link from 'next/link'
 // @ts-expect-error: Lucide Music icon works at runtime
-import { Music } from 'lucide-react'
+import { Camera, Music } from 'lucide-react'
 
 export default async function EventDetailsPage({
   params,
@@ -92,10 +92,18 @@ export default async function EventDetailsPage({
             <Music size={36} className="text-white" />
           </a>
 
-          {/* Add more icons later, e.g. photo album */}
-          {/* <a href="#" className="p-4 bg-white/20 rounded-full">
-            <Camera size={36} className="text-white" />
-          </a> */}
+          {/* Photo album icon (placeholder) */}
+          {
+            <a
+              href="https://www.google.com/intl/en/photos/about/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 bg-white/20 hover:bg-white/30 rounded-full shadow-md transition transform hover:scale-105l"
+              title="Open Photo Album"
+            >
+              <Camera size={36} className="text-white" />
+            </a>
+          }
         </div>
       </div>
     </main>
