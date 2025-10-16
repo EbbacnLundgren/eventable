@@ -9,6 +9,7 @@ export default function UpdatePasswordPage() {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const router = useRouter()
+  const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
 
   useEffect(() => {
     const hash = window.location.hash
@@ -25,6 +26,18 @@ export default function UpdatePasswordPage() {
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setMessage('')
+    setStatus('idle')
+
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/
+
+    if (!passwordRegex.test(password)) {
+      setMessage(
+        'Password must be at least 8 characters long and include a number, a letter, and a special character.'
+      )
+      setStatus('error')
+      return
+    }
 
     const { error } = await supabase.auth.updateUser({ password })
     if (error) setMessage(error.message)
@@ -57,7 +70,7 @@ export default function UpdatePasswordPage() {
           <form onSubmit={handleUpdate} className="flex flex-col gap-3">
             <input
               type="password"
-              placeholder="New password"
+              placeholder="New password (min 8 chars, number, letter, special char)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400"
@@ -72,7 +85,13 @@ export default function UpdatePasswordPage() {
           </form>
 
           {message && (
-            <p className="mt-3 text-center text-sm text-gray-700">{message}</p>
+            <p
+              className={`mt-3 text-center text-sm ${
+                status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
+            >
+              {message}
+            </p>
           )}
         </div>
       </div>
