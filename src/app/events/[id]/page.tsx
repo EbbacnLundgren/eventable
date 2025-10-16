@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 // @ts-expect-error: Lucide Music icon works at runtime, this removes the red squiggly line
 import { Camera, Music } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
 export default async function EventDetailsPage({
   params,
@@ -36,7 +37,9 @@ export default async function EventDetailsPage({
             href="/main"
             className="inline-block mb-6 text-sm text-pink-200 hover:underline"
           >
-            ← Back
+            <ArrowLeft size={26} className="mr-2">
+              <title>Back to events</title>
+            </ArrowLeft>
           </Link>
 
           <h1 className="text-4xl font-extrabold mb-4 text-center">
