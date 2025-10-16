@@ -3,7 +3,6 @@
 import { useState, FormEvent } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/client'
-import { signIn } from 'next-auth/react'
 import { Eye, EyeOff } from 'lucide-react'
 
 export default function SignupBox() {
@@ -78,6 +77,8 @@ export default function SignupBox() {
     setStatus('success')
   }
 
+  const messageClass = status === 'success' ? 'text-green-600' : 'text-red-500'
+
   return (
     <div className="border p-6 rounded-xl shadow-md w-80 bg-white/80 backdrop-blur-md border-pink-200 text-gray-800">
       <h2 className="text-2xl font-bold mb-2 text-center text-pink-700">
@@ -129,20 +130,24 @@ export default function SignupBox() {
       </div>
 
       <button
-        onClick={() => signIn('google', { callbackUrl: '/main' })}
+        onClick={async () => {
+          await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo:
+                process.env.NODE_ENV === 'development'
+                  ? 'http://localhost:3000/'
+                  : 'https://eventableproject.vercel.app/',
+            },
+          })
+        }}
         className="px-4 py-2 bg-blue-500 text-white rounded w-full hover:bg-blue-600 transition font-medium"
       >
         Sign up with Google
       </button>
 
       {message && (
-        <p
-          className={`mt-3 text-sm text-center ${
-            status === 'success' ? 'text-green-600' : 'text-red-500'
-          }`}
-        >
-          {message}
-        </p>
+        <p className={`mt-3 text-sm text-center ${messageClass}`}>{message}</p>
       )}
 
       <p className="mt-4 text-sm text-center text-gray-800">
