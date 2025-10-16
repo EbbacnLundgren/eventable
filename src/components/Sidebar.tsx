@@ -1,0 +1,60 @@
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+import { Sparkles, CalendarDays, Calendar, User } from 'lucide-react'
+
+export default function Sidebar() {
+  const [showMenu, setShowMenu] = useState(false)
+
+  return (
+    <aside className="fixed left-0 top-0 h-screen w-20 bg-white shadow-lg flex flex-col items-center justify-between py-6 border-r border-gray-200 z-50">
+      {/* Logo */}
+      <div className="flex flex-col items-center">
+        <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 shadow-md mb-10">
+          <Sparkles className="h-6 w-6 text-white" />
+        </div>
+
+        {/* Nav icons */}
+        <nav className="flex flex-col items-center gap-6">
+          <Link href="/main" className="text-gray-500 hover:text-pink-500">
+            <Sparkles className="h-6 w-6" />
+          </Link>
+          <Link href="/my-events" className="text-gray-500 hover:text-pink-500">
+            <CalendarDays className="h-6 w-6" />
+          </Link>
+          <Link href="/calendar" className="text-gray-500 hover:text-pink-500">
+            <Calendar className="h-6 w-6" />
+          </Link>
+        </nav>
+      </div>
+
+      {/* Profile Icon + Popup */}
+      <div className="relative z-50">
+        <button
+          onClick={() => setShowMenu(!showMenu)}
+          className="h-12 w-12 flex items-center justify-center rounded-full bg-gray-100 hover:bg-pink-100 transition"
+        >
+          <User className="h-6 w-6 text-gray-600" />
+        </button>
+
+        {showMenu && (
+          <div className="absolute left-14 bottom-2 w-40 bg-white shadow-md rounded-lg border border-gray-200 py-2 z-[1000]">
+            <Link
+              href="/profile-settings"
+              className="block px-4 py-2 text-gray-700 hover:bg-pink-50"
+            >
+              Account Settings
+            </Link>
+            <button
+              onClick={() => alert('Logged out')}
+              className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50"
+            >
+              Log out
+            </button>
+          </div>
+        )}
+      </div>
+    </aside>
+  )
+}

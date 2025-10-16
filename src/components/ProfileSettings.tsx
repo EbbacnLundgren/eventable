@@ -8,7 +8,8 @@ import { Camera, Bell, Shield, Globe, LogOut, Trash2 } from "lucide-react"
 export default function ProfileSettingsPage() {
   const router = useRouter()
   const [profileImage, setProfileImage] = useState<string>("/placeholder.svg")
-  const [name, setName] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
   const [phone, setPhone] = useState("")
   const [email, setEmail] = useState("")
   const [language, setLanguage] = useState("en")
@@ -39,7 +40,7 @@ export default function ProfileSettingsPage() {
         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-pink-500 to-pink-700 bg-clip-text text-transparent">
           Profile Settings
         </h1>
-        <p className="text-gray-600">Manage your account settings and preferences</p>
+        <p className="text-gray-800">Manage your account settings and preferences</p>
 
         {/* Profilkort */}
         <div className="bg-white shadow rounded-lg p-6 space-y-6">
@@ -67,17 +68,26 @@ export default function ProfileSettingsPage() {
 
             <div className="flex-1 space-y-4 w-full">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-900">First Name</label>
                 <input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-pink-400 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-800">Last Name</label>
+                <input
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                   className="mt-1 w-full border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-pink-400 focus:outline-none"
                 />
               </div>
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-800">Phone</label>
                 <input
                   id="phone"
                   type="tel"
@@ -98,7 +108,7 @@ export default function ProfileSettingsPage() {
 
         {/* Notifications */}
         <div className="bg-white shadow rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2"><Bell /> Notifications</h2>
+          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2"><Bell /> Notifications</h2>
 
           {["email", "push", "sms"].map((type) => (
             <div key={type} className="flex items-center justify-between">
@@ -117,9 +127,9 @@ export default function ProfileSettingsPage() {
 
         {/* Account */}
         <div className="bg-white shadow rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2"><Shield /> Account Settings</h2>
+          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2"><Shield /> Account Settings</h2>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-800">Email</label>
             <input
               id="email"
               type="email"
@@ -130,7 +140,7 @@ export default function ProfileSettingsPage() {
           </div>
           <button
             onClick={handleChangePassword}
-            className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200 transition"
+            className="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition"
           >
             Change Password
           </button>
@@ -144,7 +154,7 @@ export default function ProfileSettingsPage() {
 
         {/* Language */}
         <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2"><Globe /> Language</h2>
+          <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2"><Globe /> Language</h2>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
