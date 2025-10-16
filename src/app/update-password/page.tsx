@@ -70,7 +70,7 @@ export default function UpdatePasswordPage() {
           <form onSubmit={handleUpdate} className="flex flex-col gap-3">
             <input
               type="password"
-              placeholder="Min 8 chars, number, letter, special char"
+              placeholder="Min 8 chars, incl. number, letter & symbol"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400"
