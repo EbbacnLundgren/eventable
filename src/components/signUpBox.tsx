@@ -17,12 +17,36 @@ export default function SignupBox() {
     e.preventDefault()
     setMessage('')
     setStatus('idle')
+
+    const { data: exists, error: existsError } = await supabase.rpc(
+      //har lagt till sql kod i supabase för att få detta att fungera! Kolla sql editor på supabase för att ändra något
+      'user_exists',
+      {
+        email_input: email,
+      }
+    )
+
+    if (existsError) {
+      console.error(existsError)
+      setMessage('An unexpected error occurred.')
+      setStatus('error')
+      return
+    }
+
+    if (exists) {
+      setMessage('This account already exists')
+      setStatus('error')
+      return
+    }
+
     const { error } = await supabase.auth.signUp({ email, password })
+
     if (error) {
       setMessage(error.message)
       setStatus('error')
       return
     }
+
     setMessage(
       'Account created. Please check your email to verify your account.'
     )
@@ -81,13 +105,24 @@ export default function SignupBox() {
       </form>
 
       {message && (
-        <p
-          className={`mt-3 text-sm text-center ${
-            status === 'success' ? 'text-green-600' : 'text-red-500'
-          }`}
-        >
-          {message}
-        </p>
+        <div className="mt-3 text-sm text-center">
+          <p
+            className={`${
+              status === 'success' ? 'text-green-600' : 'text-red-500'
+            }`}
+          >
+            {message}
+          </p>
+
+          {message.includes('already exists') && (
+            <Link
+              href="/reset-password"
+              className="text-pink-600 hover:text-pink-700 underline font-semibold block mt-1"
+            >
+              Forgot your password?
+            </Link>
+          )}
+        </div>
       )}
 
       <div className="flex items-center my-4">
