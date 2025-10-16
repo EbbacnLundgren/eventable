@@ -4,6 +4,7 @@ import { useState, FormEvent, ChangeEvent } from 'react'
 import { uploadEventImage } from '@/lib/uploadEventImage'
 import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
+import TimePicker from '@/components/timePicker'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -132,16 +133,9 @@ export default function CreateEventPage() {
             className="border p-2 rounded flex-1"
             required
           />
-          <input
-            type="number"
-            name="time"
-            inputMode="numeric"
-            placeholder="Hour (0–23)"
+          <TimePicker
             value={formData.time}
-            onChange={handleInputChange}
-            className="border p-2 rounded flex-1"
-            min={0}
-            max={23}
+            onChange={(v) => setFormData((prev) => ({ ...prev, time: v }))}
           />
         </div>
 
@@ -171,9 +165,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
