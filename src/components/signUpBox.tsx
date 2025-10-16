@@ -93,7 +93,7 @@ export default function SignupBox() {
         <div className="relative">
           <input
             type={showPassword ? 'text' : 'password'}
-            placeholder="At least 6 characters"
+            placeholder="Password must be at least 8 characters long and include a number, a letter, and a special character."
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400 w-full"
