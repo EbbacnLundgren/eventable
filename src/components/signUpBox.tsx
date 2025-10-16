@@ -18,14 +18,18 @@ export default function SignupBox() {
     setMessage('')
     setStatus('idle')
 
-    const { data: exists, error: existsError } = await supabase.rpc(
-      //har lagt till sql kod i supabase för att få detta att fungera! Kolla sql editor på supabase för att ändra något
-      //det med rpc skyddar mot sql injection
-      'user_exists',
-      {
-        email_input: email,
-      }
-    )
+    // Kontrollera om användaren redan finns i databasen
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', email)
+      .single()
+
+    if (existingUser) {
+      setMessage('This account already exists')
+      setStatus('error')
+      return
+    }
 
     const passwordRegex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/
@@ -38,30 +42,37 @@ export default function SignupBox() {
       return
     }
 
-    if (existsError) {
-      console.error(existsError)
-      setMessage('An unexpected error occurred.')
-      setStatus('error')
-      return
-    }
-
-    if (exists) {
-      setMessage('This account already exists')
-      setStatus('error')
-      return
-    }
-
-    const { error } = await supabase.auth.signUp({ email, password })
-
+    // Skapa användaren via Supabase Auth
+    const { data, error } = await supabase.auth.signUp({ email, password })
     if (error) {
       setMessage(error.message)
       setStatus('error')
       return
     }
 
-    setMessage(
-      'Account created. Please check your email to verify your account.'
-    )
+    // Hämta användarens ID
+    const { data: authData } = await supabase.auth.getUser()
+    const userId = authData?.user?.id
+    if (!userId) return alert('Could not get user ID')
+
+    // Lägg till användaren i databasen
+    const { error: insertError } = await supabase.from('users').insert({
+      id: userId,
+      email,
+      created_at: new Date().toISOString(),
+      first_name: '',
+      last_name: '',
+      avatar_url: '',
+      phone_number: ''
+    })
+
+    if (insertError) {
+      setMessage('Error creating user profile.')
+      setStatus('error')
+      return
+    }
+
+    setMessage('Account created. Please check your email to verify your account.')
     setStatus('success')
   }
 
@@ -75,9 +86,6 @@ export default function SignupBox() {
       </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <label className="text-sm font-semibold text-gray-700">
-          Email address
-        </label>
         <input
           type="email"
           placeholder="example@email.com"
@@ -86,14 +94,10 @@ export default function SignupBox() {
           className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400"
           required
         />
-
-        <label className="text-sm font-semibold text-gray-700 mt-2">
-          Choose a password
-        </label>
         <div className="relative">
           <input
             type={showPassword ? 'text' : 'password'}
-            placeholder="Password must be at least 8 characters long and include a number, a letter, and a special character."
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400 w-full"
@@ -116,27 +120,6 @@ export default function SignupBox() {
         </button>
       </form>
 
-      {message && (
-        <div className="mt-3 text-sm text-center">
-          <p
-            className={`${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
-          >
-            {message}
-          </p>
-
-          {message.includes('already exists') && (
-            <Link
-              href="/reset-password"
-              className="text-pink-600 hover:text-pink-700 underline font-semibold block mt-1"
-            >
-              Forgot your password?
-            </Link>
-          )}
-        </div>
-      )}
-
       <div className="flex items-center my-4">
         <hr className="flex-grow border-pink-200" />
         <span className="mx-2 text-sm text-gray-500">or</span>
@@ -150,14 +133,10 @@ export default function SignupBox() {
         Sign up with Google
       </button>
 
+      {message && <p className={`mt-3 text-sm text-center ${status === 'success' ? 'text-green-600' : 'text-red-500'}`}>{message}</p>}
+
       <p className="mt-4 text-sm text-center text-gray-800">
-        Already have an account?{' '}
-        <Link
-          href="/login"
-          className="text-pink-600 hover:text-pink-700 underline font-semibold"
-        >
-          Log in
-        </Link>
+        Already have an account? <Link href="/login" className="text-pink-600 hover:text-pink-700 underline font-semibold">Log in</Link>
       </p>
     </div>
   )

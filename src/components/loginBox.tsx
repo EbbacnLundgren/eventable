@@ -18,29 +18,45 @@ export default function LoginBox() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data: session } = useSession()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [user, setUser] = useState<SupabaseUser | null>(null)
   const [showPassword, setShowPassword] = useState(false)
 
+  // När användaren loggar in med Google, skapa rad i database -> Users om den inte finns
   useEffect(() => {
-    //ska tydligen helst bara användas under utveckling?
-    const resetSession = async () => {
-      await supabase.auth.signOut()
-      const { data } = await supabase.auth.getUser()
-      if (data.user) setUser(data.user as unknown as SupabaseUser)
+    const createUserIfNotExists = async () => {
+      if (!session?.user?.email) return
+
+      // Kontrollera om användaren redan finns i Users-tabellen
+      const { data: existing } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', session.user.email)
+        .single()
+
+      if (!existing) {
+        await supabase.from('users').insert({
+          email: session.user.email,
+          created_at: new Date().toISOString(),
+          first_name: session.user.name?.split(' ')[0] || '',
+          last_name: session.user.name?.split(' ')[1] || '',
+          avatar_url: session.user.image || '',
+          phone_number: ''
+        })
+      }
     }
-    resetSession()
-  }, [])
+
+    createUserIfNotExists()
+  }, [session])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setMessage('')
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
+
     if (error) setMessage(error.message)
     else router.push('/main')
   }
