@@ -3,8 +3,8 @@
 import { useState, FormEvent } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/client'
-import { Eye, EyeOff } from 'lucide-react'
 import { signIn } from 'next-auth/react'
+import { Eye, EyeOff } from 'lucide-react'
 
 export default function SignupBox() {
   const [email, setEmail] = useState('')
@@ -43,7 +43,7 @@ export default function SignupBox() {
     }
 
     // Skapa användaren via Supabase Auth
-    const { error } = await supabase.auth.signUp({ email, password })
+    const { data, error } = await supabase.auth.signUp({ email, password })
     if (error) {
       setMessage(error.message)
       setStatus('error')
@@ -53,7 +53,7 @@ export default function SignupBox() {
     // Hämta användarens ID
     const { data: authData } = await supabase.auth.getUser()
     const userId = authData?.user?.id
-    if (!userId) return alert('Could not get user ID')
+    //if (!userId) return alert('Could not get user ID') denna kan vi inte ha med för userid skapas efter att användaren har klickat på mejlet och då komemr alltid denna upp..
 
     // Lägg till användaren i databasen
     const { error: insertError } = await supabase.from('users').insert({
@@ -77,8 +77,6 @@ export default function SignupBox() {
     )
     setStatus('success')
   }
-
-  const messageClass = status === 'success' ? 'text-green-600' : 'text-red-500'
 
   return (
     <div className="border p-6 rounded-xl shadow-md w-80 bg-white/80 backdrop-blur-md border-pink-200 text-gray-800">
@@ -131,17 +129,6 @@ export default function SignupBox() {
       </div>
 
       <button
-        /*onClick={async () => {
-          await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-              redirectTo:
-                process.env.NODE_ENV === 'development'
-                  ? 'http://localhost:3000/'
-                  : 'https://eventableproject.vercel.app/',
-            },
-          })
-        }}*/
         onClick={() => signIn('google', { callbackUrl: '/main' })}
         className="px-4 py-2 bg-blue-500 text-white rounded w-full hover:bg-blue-600 transition font-medium"
       >
@@ -149,7 +136,11 @@ export default function SignupBox() {
       </button>
 
       {message && (
-        <p className={`mt-3 text-sm text-center ${messageClass}`}>{message}</p>
+        <p
+          className={`mt-3 text-sm text-center ${status === 'success' ? 'text-green-600' : 'text-red-500'}`}
+        >
+          {message}
+        </p>
       )}
 
       <p className="mt-4 text-sm text-center text-gray-800">
