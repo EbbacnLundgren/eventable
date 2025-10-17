@@ -66,11 +66,11 @@ export default function SignupBox() {
       phone_number: '',
     })
 
-    if (insertError) {
+    /*if (insertError) {
       setMessage('Error creating user profile.')
       setStatus('error')
       return
-    }
+    }*/ //Detta kommer ju ske också
 
     setMessage(
       'Account created. Please check your email to verify your account.'
