@@ -55,8 +55,10 @@ export default function SignupBox() {
     const userId = authData?.user?.id
     //if (!userId) return alert('Could not get user ID') denna kan vi inte ha med för userid skapas efter att användaren har klickat på mejlet och då komemr alltid denna upp..
 
-    // Lägg till användaren i databasen
-    const { error: insertError } = await supabase.from('users').insert({
+    // Lägg till användaren i databasen (vi ignorerar svaret här för att undvika
+    // fel i klient-flödet när userId skapas först efter e-postverifiering).
+    // Om du vill hantera DB-fel, använd try/catch eller logga svaret.
+    await supabase.from('users').insert({
       id: userId,
       email,
       created_at: new Date().toISOString(),
