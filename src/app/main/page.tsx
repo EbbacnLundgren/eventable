@@ -19,42 +19,48 @@ export default function MainPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [showForm, setShowForm] = useState(false)
   const { data: session } = useSession()
+  const [userInfo, setUserInfo] = useState<{
+    id: string
+    email: string
+  } | null>(null)
 
   useEffect(() => {
     const fetchEvents = async () => {
+      let userId: string | null = null
+
+      // Supabase Auth
       const {
         data: { user: supabaseUser },
       } = await supabase.auth.getUser()
-
-      let query = supabase.from('events').select('*')
-
       if (supabaseUser?.id) {
-        // Supabase-auth user
-        query = query.eq('user_id', supabaseUser.id)
-      } else if (session?.user?.email) {
-        // Google-auth user
+        userId = supabaseUser.id
+        setUserInfo({ id: userId, email: supabaseUser.email || 'unknown' })
+      }
+      // Google login
+      else if (session?.user?.email) {
         const { data: googleUser, error } = await supabase
           .from('google_users')
-          .select('id')
+          .select('id, email')
           .eq('email', session.user.email)
           .single()
 
-        if (error || !googleUser) {
-          console.warn('Google user not found', session.user?.email)
-          setEvents([])
-          return
+        if (googleUser && !error) {
+          userId = googleUser.id
+          setUserInfo({ id: googleUser.id, email: googleUser.email })
         }
+      }
 
-        query = query.eq('user_id', googleUser.id)
-      } else {
-        // No user logged in
+      if (!userId) {
         setEvents([])
         return
       }
 
-      const { data: eventsData, error } = await query.order('date', {
-        ascending: true,
-      })
+      // Hämta events för den användaren
+      const { data: eventsData, error } = await supabase
+        .from('events')
+        .select('*')
+        .eq('user_id', userId)
+        .order('date', { ascending: true })
 
       if (error) console.error('Error fetching events:', error)
       if (eventsData) setEvents(eventsData)
@@ -67,6 +73,12 @@ export default function MainPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white flex flex-col items-center">
+      {userInfo && (
+        <p className="text-lg font-semibold mb-4">
+          Hej {userInfo.email} (ID: {userInfo.id})
+        </p>
+      )}
+
       <CreateEventForm
         showForm={showForm}
         setShowForm={setShowForm}
@@ -81,8 +93,6 @@ export default function MainPage() {
       >
         + Create Event Page
       </Link>
-
-      <h1 className="text-2xl font-bold mb-4">Welcome</h1>
 
       <EventSection events={events} />
     </div>

@@ -15,33 +15,25 @@ export default function LoginBox() {
   const { data: session } = useSession()
   const [showPassword, setShowPassword] = useState(false)
 
-  // När användaren loggar in med Google, skapa rad i database -> Users om den inte finns
+  // När användaren loggar in med Google, skapa rad i google_users om den inte finns
   useEffect(() => {
     const createUserIfNotExists = async () => {
       if (!session?.user?.email) return
 
-      // Kontrollera om användaren redan finns i Users-tabellen
-      const { data: existing, error } = await supabase
-        .from('google_users')
-        .select('id')
-        .eq('email', session.user.email)
-        .single()
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Unexpected error checking google_users:', error)
-        return
-      }
-
-      if (!existing) {
-        await supabase.from('google_users').insert({
+      // Upsert baserat på email -> skapar om email saknas, annars gör inget
+      const { error } = await supabase.from('google_users').upsert(
+        {
           email: session.user.email,
           created_at: new Date().toISOString(),
           first_name: session.user.name?.split(' ')[0] || '',
           last_name: session.user.name?.split(' ')[1] || '',
           avatar_url: session.user.image || '',
           phone_nbr: '',
-        })
-      }
+        },
+        { onConflict: 'email' } // <-- säkerställer att email är unik
+      )
+
+      if (error) console.error('Error upserting google_user:', error)
     }
 
     createUserIfNotExists()
