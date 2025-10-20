@@ -83,13 +83,13 @@ const CalendarComponent: React.FC = () => {
       start: clickInfo.event.startStr,
     })
     setEventPopupPos({ x: rect.left, y: rect.bottom + window.scrollY })
-    setActiveDate(null) // stäng dag-popup
+    setActiveDate(null) //close day-popup
   }
 
   return (
     <div className="min-h-screen bg-pink-50 flex justify-center items-start p-4 pt-20">
       <div className="relative flex p-4 shadow-md bg-white rounded-lg border border-pink-200">
-        {/* Veckonummerkolumn */}
+        {/* week nbr column */}
         <div className="flex flex-col items-center pt-[6rem]">
           {weekNumbers.map((weekNum, i) => (
             <div
@@ -101,7 +101,7 @@ const CalendarComponent: React.FC = () => {
           ))}
         </div>
 
-        {/* Kalender */}
+        {/* Calendar */}
         <div className="flex-1">
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin]}
@@ -121,7 +121,7 @@ const CalendarComponent: React.FC = () => {
           />
         </div>
 
-        {/* Dag-popup */}
+        {/* Day-popup */}
         {activeDate && popupPos && (
           <div
             className="absolute bg-white shadow-md rounded p-2 z-50 border border-gray-200"
