@@ -28,3 +28,8 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* FullCalendar Customizations */
+.fc .fc-toolbar-title {
+  @apply text-gray-900;
+}

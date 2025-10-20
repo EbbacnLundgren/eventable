@@ -1,55 +1,162 @@
 'use client'
 
-import React, { useState } from 'react'
+import { startOfWeek, addWeeks, getISOWeek } from 'date-fns'
+import React, { useState, useEffect } from 'react'
 import FullCalendar from '@fullcalendar/react'
-import { DateSelectArg, EventClickArg, EventInput } from '@fullcalendar/core'
+import { EventClickArg, EventInput, DatesSetArg } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import { supabase } from '@/lib/client'
 
 const CalendarComponent: React.FC = () => {
-  const [events, setEvents] = useState<EventInput[]>([
-    { title: 'Event 1', date: '2025-10-20' },
-    { title: 'Event 2', date: '2025-10-21' },
-  ])
+  const [events, setEvents] = useState<EventInput[]>([])
+  const [weekNumbers, setWeekNumbers] = useState<number[]>([])
+  const [activeDate, setActiveDate] = useState<string | null>(null)
+  const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(
+    null
+  )
+  const [activeEvent, setActiveEvent] = useState<{
+    id?: string
+    title: string
+    start: string
+  } | null>(null)
+  const [eventPopupPos, setEventPopupPos] = useState<{
+    x: number
+    y: number
+  } | null>(null)
 
-  const handleDateSelect = (selectInfo: DateSelectArg) => {
-    const title = prompt('Eventtitel:')
-    if (title) {
-      setEvents([...events, { title, start: selectInfo.startStr }])
+  // Hämta events från Supabase
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const { data, error } = await supabase
+        .from('events')
+        .select('id, name, date')
+        .order('date', { ascending: true })
+
+      if (error) {
+        console.error('Failed to fetch events:', error)
+      } else if (data) {
+        const formatted = data.map((e: any) => ({
+          id: e.id,
+          title: e.name,
+          date: e.date,
+        }))
+        setEvents(formatted)
+      }
     }
+
+    fetchEvents()
+  }, [])
+
+  // Uppdatera veckonummer när månad ändras
+  const handleDatesSet = (info: DatesSetArg) => {
+    const monthStart = info.start
+    const firstWeekStart = startOfWeek(monthStart, { weekStartsOn: 1 })
+    const totalWeeks = 6
+    const numbers = Array.from({ length: totalWeeks }).map((_, i) => {
+      const weekStart = addWeeks(firstWeekStart, i)
+      return getISOWeek(weekStart)
+    })
+    setWeekNumbers(numbers)
   }
 
+  // Klick på dag → popup för skapa event
+  const handleDateClick = (arg: { dateStr: string; dayEl: HTMLElement }) => {
+    setActiveDate(arg.dateStr)
+    const rect = arg.dayEl.getBoundingClientRect()
+    setPopupPos({ x: rect.left, y: rect.bottom + window.scrollY })
+    setActiveEvent(null) // stäng event-popup
+  }
+
+  // Klick på event → popup för eventdetails
   const handleEventClick = (clickInfo: EventClickArg) => {
-    if (confirm(`Vill du ta bort eventet '${clickInfo.event.title}'?`)) {
-      setEvents(
-        events.filter(
-          (e) =>
-            e.title !== clickInfo.event.title ||
-            e.start !== clickInfo.event.startStr
-        )
-      )
-    }
+    const rect = clickInfo.el.getBoundingClientRect()
+    setActiveEvent({
+      id: clickInfo.event.id,
+      title: clickInfo.event.title,
+      start: clickInfo.event.startStr,
+    })
+    setEventPopupPos({ x: rect.left, y: rect.bottom + window.scrollY })
+    setActiveDate(null) // stäng dag-popup
   }
 
   return (
-    <div className="flex-1 p-4 bg-pink-50 shadow-md">
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        selectable={true}
-        editable={true}
-        events={events}
-        select={handleDateSelect}
-        eventClick={handleEventClick}
-        height="auto"
-        firstDay={1}
-        weekNumbers={true}
-        weekNumberContent={(arg) => (
-          <div className="text-black font-semibold text-center w-8">
-            {arg.num}
+    <div className="min-h-screen bg-pink-50 flex justify-center items-start p-4 pt-20">
+      <div className="relative flex p-4 shadow-md bg-white rounded-lg border border-pink-200">
+        {/* Veckonummerkolumn */}
+        <div className="flex flex-col items-center pt-[6rem]">
+          {weekNumbers.map((weekNum, i) => (
+            <div
+              key={i}
+              className="flex-1 flex items-center justify-center w-10 text-black font-semibold border-b border-gray-200 bg-pink-100"
+            >
+              {weekNum}
+            </div>
+          ))}
+        </div>
+
+        {/* Kalender */}
+        <div className="flex-1">
+          <FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            selectable
+            editable
+            events={events}
+            datesSet={handleDatesSet}
+            dateClick={handleDateClick}
+            eventClick={handleEventClick}
+            height="auto"
+            firstDay={1}
+            weekNumbers={false}
+            dayHeaderClassNames="text-gray-900 font-semibold bg-pink-100"
+            dayCellClassNames="text-gray-900 bg-white"
+            eventClassNames="bg-pink-200 text-gray-900 border border-pink-300"
+          />
+        </div>
+
+        {/* Dag-popup */}
+        {activeDate && popupPos && (
+          <div
+            className="absolute bg-white shadow-md rounded p-2 z-50 border border-gray-200"
+            style={{ top: popupPos.y, left: popupPos.x }}
+          >
+            <a
+              href={`/createEvent?date=${activeDate}`}
+              className="bg-pink-200 text-gray-900 px-3 py-1 rounded hover:bg-pink-300 block"
+            >
+              Create Event
+            </a>
+            <button
+              onClick={() => setActiveDate(null)}
+              className="text-sm text-gray-500 mt-1 block"
+            >
+              Cancel
+            </button>
           </div>
         )}
-      />
+
+        {/* Event-popup */}
+        {activeEvent && eventPopupPos && (
+          <div
+            className="absolute bg-white shadow-md rounded p-2 z-50 border border-gray-200"
+            style={{ top: eventPopupPos.y, left: eventPopupPos.x }}
+          >
+            <a
+              href={`/eventdetails?id=${activeEvent.id}`}
+              className="bg-pink-200 text-gray-900 px-3 py-1 rounded hover:bg-pink-300 block"
+            >
+              Go to Event
+            </a>
+            <button
+              onClick={() => setActiveEvent(null)}
+              className="text-sm text-gray-500 mt-1 block"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

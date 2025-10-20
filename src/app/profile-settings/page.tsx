@@ -6,8 +6,6 @@ export default function Page() {
   return (
     <div>
       <ProfileSettings />
-      <h1>Min Kalender</h1>
-      <CalendarComponent />
     </div>
   )
 }
