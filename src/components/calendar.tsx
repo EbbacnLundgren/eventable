@@ -8,6 +8,12 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { supabase } from '@/lib/client'
 
+interface EventRow {
+  id: string
+  name: string
+  date: string
+}
+
 const CalendarComponent: React.FC = () => {
   const [events, setEvents] = useState<EventInput[]>([])
   const [weekNumbers, setWeekNumbers] = useState<number[]>([])
@@ -36,7 +42,7 @@ const CalendarComponent: React.FC = () => {
       if (error) {
         console.error('Failed to fetch events:', error)
       } else if (data) {
-        const formatted = data.map((e: any) => ({
+        const formatted: EventInput[] = (data as EventRow[]).map((e) => ({
           id: e.id,
           title: e.name,
           date: e.date,
