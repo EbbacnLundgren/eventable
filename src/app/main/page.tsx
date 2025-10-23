@@ -19,7 +19,10 @@ export default function MainPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [showForm, setShowForm] = useState(false)
   const { data: session } = useSession()
-  const [userInfo, setUserInfo] = useState<{ id: string; email: string } | null>(null)
+  const [userInfo, setUserInfo] = useState<{
+    id: string
+    email: string
+  } | null>(null)
 
   useEffect(() => {
     const fetchEvents = async () => {

@@ -40,19 +40,24 @@ export default function SignupBox() {
 
     // Lägg till användaren i google_users-tabellen
     try {
-      await supabase.from('google_users').upsert({
-        email,
-        first_name: '',
-        last_name: '',
-        avatar_url: '',
-        created_at: new Date().toISOString(),
-        phone_nbr: '',
-      }, { onConflict: 'email' })
+      await supabase.from('google_users').upsert(
+        {
+          email,
+          first_name: '',
+          last_name: '',
+          avatar_url: '',
+          created_at: new Date().toISOString(),
+          phone_nbr: '',
+        },
+        { onConflict: 'email' }
+      )
     } catch (dbError) {
       console.error('Error inserting into google_users:', dbError)
     }
 
-    setMessage('Account created. Please check your email to verify your account.')
+    setMessage(
+      'Account created. Please check your email to verify your account.'
+    )
     setStatus('success')
   }
 
@@ -114,7 +119,9 @@ export default function SignupBox() {
       </button>
 
       {message && (
-        <p className={`mt-3 text-sm text-center ${status === 'success' ? 'text-green-600' : 'text-red-500'}`}>
+        <p
+          className={`mt-3 text-sm text-center ${status === 'success' ? 'text-green-600' : 'text-red-500'}`}
+        >
           {message}
         </p>
       )}
