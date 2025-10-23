@@ -6,6 +6,7 @@ import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import TimePicker from '@/components/timePicker'
 import { useSession } from 'next-auth/react'
+import { Image as ImageIcon, Shuffle } from 'lucide-react'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -21,14 +22,48 @@ export default function CreateEventPage() {
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
   const { data: session } = useSession()
 
+  const defaultImages = [
+    '/images/default1.jpg',
+    '/images/default2.jpg',
+    '/images/default3.jpg',
+    '/images/default4.jpg',
+  ]
+
+  const [selectedImage, setSelectedImage] = useState(defaultImages[0])
+
+  function handleRandomize() {
+    let random = selectedImage
+    while (random === selectedImage) {
+      random = defaultImages[Math.floor(Math.random() * defaultImages.length)]
+    }
+    setSelectedImage(random)
+    setFormData((prev) => ({ ...prev, image: null }))
+  }
+
+  function handleImageUpload(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) {
+      setFormData((prev) => ({ ...prev, image: file }))
+      const url = URL.createObjectURL(file)
+      setSelectedImage(url)
+    }
+  }
+
+  function handleInputChange(
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setMessage('')
     setStatus('idle')
 
+    // 1) Försök Supabase Auth först (samma som i MainPage)
     let userId: string | null = null
 
-    // 1) Försök Supabase Auth först (samma som i MainPage)
     const {
       data: { user: supabaseUser },
     } = await supabase.auth.getUser()
@@ -55,6 +90,7 @@ export default function CreateEventPage() {
       return
     }
 
+    /*
     // 2. Ladda upp bild om vald
     let imageUrl: string | null = null
     if (formData.image) {
@@ -66,6 +102,24 @@ export default function CreateEventPage() {
         setStatus('error')
         return
       }
+    } */
+
+    // 2. Hantera bild (antingen uppladdad eller default)
+    let imageUrl: string | null = null
+
+    if (formData.image) {
+      // User uploaded their own file
+      try {
+        imageUrl = await uploadEventImage(formData.image, Date.now())
+      } catch (error) {
+        console.error('Image upload failed:', error)
+        setMessage('Failed to upload image. Please try again.')
+        setStatus('error')
+        return
+      }
+    } else if (selectedImage) {
+      // User picked a default image
+      imageUrl = selectedImage
     }
 
     // 3. Förbered data för insert
@@ -95,6 +149,7 @@ export default function CreateEventPage() {
     setTimeout(() => router.push('/main'), 1500)
   }
 
+  /*
   function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value, files } = e.target
     if (name === 'image' && files) {
@@ -102,70 +157,97 @@ export default function CreateEventPage() {
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }))
     }
-  }
+  } */
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-pink-100 p-6">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md flex flex-col gap-3 p-6 rounded-xl 
-                   text-black bg-white/80 backdrop-blur-md border border-pink-200 shadow-lg"
+        className="w-full max-w-2xl flex flex-col gap-5 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
       >
-        <h2 className="text-2xl font-bold text-center text-pink-700 mb-2">
-          Create a New Event
-        </h2>
-
-        <input
-          type="text"
-          name="name"
-          placeholder="Event name"
-          value={formData.name}
-          onChange={handleInputChange}
-          className="border p-2 rounded"
-          required
-        />
-
-        <input
-          type="text"
-          name="location"
-          placeholder="Location"
-          value={formData.location}
-          onChange={handleInputChange}
-          className="border p-2 rounded"
-          required
-        />
-
-        <div className="flex gap-2">
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleInputChange}
-            className="border p-2 rounded flex-1"
-            required
+        {/* Image Header */}
+        <div className="relative h-48 w-full overflow-hidden rounded-2xl">
+          <img
+            key={selectedImage}
+            src={selectedImage}
+            alt="Event banner"
+            className="object-cover w-full h-full transition-all duration-300"
           />
-          <TimePicker
-            value={formData.time}
-            onChange={(v) => setFormData((prev) => ({ ...prev, time: v }))}
-          />
+
+          <div className="absolute top-3 right-3 flex gap-2">
+            <button
+              type="button"
+              onClick={handleRandomize}
+              className="bg-purple-200 hover:bg-purple-300 text-black rounded-full p-2 backdrop-blur-md shadow-md transition"
+              title="Randomize image"
+            >
+              <Shuffle size={20} />
+            </button>
+            <label
+              className="bg-purple-200 hover:bg-purple-300 text-black rounded-full p-2 backdrop-blur-md cursor-pointer shadow-md transition"
+              title="Upload image"
+            >
+              <ImageIcon size={20} />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+            </label>
+          </div>
         </div>
 
-        <input
-          type="text"
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleInputChange}
-          className="border p-2 rounded"
-        />
+        <h2 className="text-3xl font-bold text-center text-pink-800">
+          Create Event
+        </h2>
 
-        <input
-          type="file"
-          name="image"
-          accept="image/*"
-          onChange={handleInputChange}
-          className="border p-2 rounded"
-        />
+        <div className="flex flex-col gap-3">
+          <label className="font-medium text-purple-600">Event name</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400"
+            required
+          />
+
+          <label className="font-medium text-purple-600">Location</label>
+          <input
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleInputChange}
+            className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400"
+            required
+          />
+
+          <label className="font-medium text-purple-600">Date and time</label>
+          <div className="flex gap-2">
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleInputChange}
+              className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
+              required
+            />
+            <TimePicker
+              value={formData.time}
+              onChange={(v) => setFormData((prev) => ({ ...prev, time: v }))}
+            />
+          </div>
+
+          <label className="font-medium text-purple-600">Description</label>
+          <input
+            type="text"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
+          />
+        </div>
 
         <button
           type="submit"
