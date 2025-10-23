@@ -175,7 +175,11 @@ export default function MainPage() {
       // Attach hostLabel by fetching profiles directly from Supabase (no proxy)
       const merged = Array.from(mergedById.values()) as Event[]
       const userIds = Array.from(
-        new Set(merged.map((e: any) => e.user_id).filter(Boolean))
+        new Set(
+          merged
+            .map((e: Event) => e.user_id)
+            .filter((id): id is string => Boolean(id))
+        )
       ) as string[]
 
       const hostMap: Record<string, string | null> = {}
@@ -215,7 +219,7 @@ export default function MainPage() {
         }
       }
 
-      const annotated = merged.map((ev: any) => ({
+      const annotated = merged.map((ev: Event) => ({
         ...ev,
         hostLabel: ev.user_id ? (hostMap[ev.user_id] ?? null) : null,
       }))
