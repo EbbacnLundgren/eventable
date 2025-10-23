@@ -124,7 +124,7 @@ export default function MainPage() {
         .eq('user_id', userId)
         .order('date', { ascending: true })
       if (ownErr) console.error('Error fetching own events:', ownErr)
-      setOwnEventIds((ownEvents ?? []).map((e: any) => e.id))
+      if (ownEvents) setOwnEventIds(ownEvents.map((e: Event) => e.id))
 
       // Accepted-invited events
       // Accepted-invited events
