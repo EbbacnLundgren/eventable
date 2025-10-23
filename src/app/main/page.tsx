@@ -15,14 +15,23 @@ interface Event {
   image?: string
 }
 
+type InviteStatus = 'pending' | 'accepted' | 'declined' | null
+interface InviteRow {
+  event_id: number
+  status: InviteStatus
+}
+
 export default function MainPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [showForm, setShowForm] = useState(false)
   const { data: session } = useSession()
+  const [ownEventIds, setOwnEventIds] = useState<number[]>([])
   const [userInfo, setUserInfo] = useState<{
     id: string
     email: string
   } | null>(null)
+
+  const [pendingIds, setPendingIds] = useState<number[]>([])
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -88,19 +97,136 @@ export default function MainPage() {
 
       setUserInfo({ id: userId, email })
 
-      // Hämta events för den användaren
-      const { data: eventsData, error } = await supabase
+      // ---- Steg 1: hämta invites och dela upp pending/accepted ----
+      const { data: invitesRaw, error: invErr } = await supabase
+        .from('event_invites')
+        .select('event_id, status')
+        .eq('invited_user_id', userId)
+
+      if (invErr) console.error('Error fetching invites:', invErr)
+
+      const invites: InviteRow[] = (invitesRaw as InviteRow[] | null) ?? []
+
+      const pending = invites
+        .filter((i) => i.status === 'pending')
+        .map((i) => i.event_id)
+
+      const accepted = invites
+        .filter((i) => i.status === 'accepted')
+        .map((i) => i.event_id)
+
+      setPendingIds(pending)
+
+      // Egna events
+      const { data: ownEvents, error: ownErr } = await supabase
         .from('events')
         .select('*')
         .eq('user_id', userId)
         .order('date', { ascending: true })
+      if (ownErr) console.error('Error fetching own events:', ownErr)
+      setOwnEventIds((ownEvents ?? []).map((e: any) => e.id))
 
-      if (error) console.error('Error fetching events:', error)
-      if (eventsData) setEvents(eventsData)
+      // Accepted-invited events
+      // Accepted-invited events
+      let invitedEvents: Event[] = []
+      if (accepted.length > 0) {
+        const { data: accEvents, error: accErr } = await supabase
+          .from('events')
+          .select('*')
+          .in('id', accepted)
+        if (accErr) console.error('Error fetching accepted events:', accErr)
+        invitedEvents = (accEvents as Event[]) || []
+      }
+
+      // Pending-invited events  ← lägg till detta
+      let pendingEvents: Event[] = []
+      if (pending.length > 0) {
+        const { data: pendEvents, error: pendErr } = await supabase
+          .from('events')
+          .select('*')
+          .in('id', pending)
+        if (pendErr) console.error('Error fetching pending events:', pendErr)
+        pendingEvents = (pendEvents as Event[]) || []
+      }
+
+      // Slå ihop och deduplicera på id
+      const mergedById = new Map<number, Event>()
+      for (const ev of [
+        ...((ownEvents as Event[]) || []),
+        ...invitedEvents,
+        ...pendingEvents,
+      ]) {
+        mergedById.set(ev.id, ev)
+      }
+      setEvents(Array.from(mergedById.values()))
     }
-
     fetchEvents()
   }, [session])
+
+  const resolveCurrentUserId = async () => {
+    // Samma logik som i fetchEvents/AutoAddInvite
+    let email: string | null = null
+    const {
+      data: { user: supaUser },
+    } = await supabase.auth.getUser()
+    if (supaUser?.email) email = supaUser.email
+    else if (session?.user?.email) email = session.user.email
+    if (!email) return null
+
+    // Försök hämta google_users.id (det är detta som används i event_invites)
+    const { data: gUser } = await supabase
+      .from('google_users')
+      .select('id')
+      .eq('email', email)
+      .single()
+
+    return gUser?.id ?? supaUser?.id ?? null
+  }
+
+  const handleAcceptInvite = async (eventId: number) => {
+    const currentUserId = await resolveCurrentUserId()
+    if (!currentUserId) return
+
+    const { error } = await supabase
+      .from('event_invites')
+      .update({ status: 'accepted' })
+      .eq('event_id', eventId)
+      .eq('invited_user_id', currentUserId)
+
+    if (error) {
+      console.error(error)
+      return
+    }
+
+    setPendingIds((prev) => prev.filter((id) => id !== eventId))
+
+    const { data: ev } = await supabase
+      .from('events')
+      .select('*')
+      .eq('id', eventId)
+      .single()
+    if (ev && !events.find((e) => e.id === ev.id)) {
+      setEvents((prev) => [...prev, ev as Event])
+    }
+  }
+
+  const handleDeclineInvite = async (eventId: number) => {
+    const currentUserId = await resolveCurrentUserId()
+    if (!currentUserId) return
+
+    const { error } = await supabase
+      .from('event_invites')
+      .update({ status: 'declined' })
+      .eq('event_id', eventId)
+      .eq('invited_user_id', currentUserId)
+
+    if (error) {
+      console.error(error)
+      return
+    }
+
+    setPendingIds((prev) => prev.filter((id) => id !== eventId))
+  }
 
   const addEvent = (event: Event) => setEvents((prev) => [...prev, event])
 
@@ -127,7 +253,13 @@ export default function MainPage() {
         + Create Event Page
       </Link>
 
-      <EventSection events={events} />
+      <EventSection
+        events={events}
+        pendingIds={pendingIds}
+        onAcceptInvite={handleAcceptInvite}
+        onDeclineInvite={handleDeclineInvite}
+        ownEventIds={ownEventIds}
+      />
     </div>
   )
 }

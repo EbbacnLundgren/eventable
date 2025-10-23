@@ -5,6 +5,9 @@ import Link from 'next/link'
 import { Camera, Music } from 'lucide-react'
 import { ArrowLeft } from 'lucide-react'
 
+import ShareEventButton from '@/components/shareEvents'
+import AutoAddInvite from '@/components/AutoAddInvite'
+
 export default async function EventDetailsPage({
   params,
 }: {
@@ -94,6 +97,11 @@ export default async function EventDetailsPage({
                 <strong>Time:</strong> {event.time}
               </div>
             )}
+            <AutoAddInvite eventId={Number(event.id)} />
+
+            <div className="mt-6 flex justify-center">
+              <ShareEventButton eventId={Number(event.id)} />
+            </div>
           </div>
         </div>
 
