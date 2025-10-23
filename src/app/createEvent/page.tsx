@@ -50,7 +50,7 @@ export default function CreateEventPage() {
     }
 
     if (!userId) {
-      setMessage('You must be logged in to create an event.')
+      setMessage('Invalid user')
       setStatus('error')
       return
     }
