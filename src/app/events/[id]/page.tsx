@@ -9,6 +9,8 @@ import ShareEventButton from '@/components/shareEvents'
 import AutoAddInvite from '@/components/AutoAddInvite'
 import { formatTime } from '@/lib/formatTime'
 
+import { formatEventDuration } from '@/lib/formatEventDuration'
+
 export default async function EventDetailsPage({
   params,
 }: {
@@ -133,11 +135,15 @@ export default async function EventDetailsPage({
                 year: 'numeric',
               })}
             </div>
-            {event.time && (
-              <div>
-                <strong>Time:</strong> {formatTime(event.time)}
-              </div>
-            )}
+            <div>
+              <strong>Time:</strong>{' '}
+              {formatEventDuration(
+                event.date,
+                event.time,
+                event.end_date,
+                event.end_time
+              )}
+            </div>
             {hostLabel && (
               <div>
                 <strong>Host:</strong> {hostLabel}
