@@ -103,10 +103,6 @@ export default async function EventDetailsPage({
             </ArrowLeft>
           </Link>
 
-          <h1 className="text-4xl font-extrabold mb-4 text-center">
-            {event.name}
-          </h1>
-
           {event.image && (
             <div className="relative w-full h-64 mb-6">
               <Image
@@ -117,6 +113,10 @@ export default async function EventDetailsPage({
               />
             </div>
           )}
+
+          <h1 className="text-4xl font-extrabold mb-4 text-center">
+            {event.name}
+          </h1>
 
           <div className="space-y-4 text-lg">
             {event.description && (
