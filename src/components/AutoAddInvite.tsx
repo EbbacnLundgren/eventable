@@ -19,7 +19,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
   }
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       // 1) Hämta e-post
       let email: string | null = null
       const {
@@ -63,6 +63,22 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
       }
 
       const storageKey = `inviteToast:${userId}:${eid}`
+
+      const { data: evOwner, error: evErr } = await supabase
+        .from('events')
+        .select('user_id')
+        .eq('id', eid)
+        .single()
+
+      if (evErr) {
+        // Om du vill kan du logga felet, men avbryt tyst
+        return
+      }
+
+      if (evOwner?.user_id === userId) {
+        // Du är skaparen → ingen invite, ingen popup
+        return
+      }
 
       // 3) Kolla befintlig invite
       const { data: existing, error: existErr } = await supabase
