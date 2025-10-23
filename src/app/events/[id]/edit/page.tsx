@@ -54,8 +54,8 @@ export default function EditEventPage() {
           location: data.location ?? '',
           date: data.date ?? '',
           time: data.time ?? '',
-          endDate: data.endDate ?? '',
-          endTime: data.endTime ?? '',
+          endDate: data.end_date ?? '',
+          endTime: data.end_time ?? '',
           description: data.description ?? '',
           image: data.image ?? '',
         })
@@ -135,8 +135,8 @@ export default function EditEventPage() {
         location: formData.location,
         date: formData.date,
         time: formData.time || null,
-        endDate: formData.endDate || null,
-        endTime: formData.endTime || null,
+        end_date: formData.endDate || null, // ändrat
+        end_time: formData.endTime || null, // ändrat
         description: formData.description,
         image: imageUrl,
       })
