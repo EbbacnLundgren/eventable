@@ -20,6 +20,7 @@ interface InviteRow {
   event_id: number
   status: InviteStatus
 }
+type EventIdRow = { id: number }
 
 export default function MainPage() {
   const [events, setEvents] = useState<Event[]>([])
@@ -124,7 +125,12 @@ export default function MainPage() {
         .eq('user_id', userId)
         .order('date', { ascending: true })
       if (ownErr) console.error('Error fetching own events:', ownErr)
-      setOwnEventIds((ownEvents ?? []).map((e: any) => e.id))
+      const own = (ownEvents as Event[] | null) ?? []
+      setOwnEventIds(own.map((e) => e.id))
+
+      setOwnEventIds(
+        ((ownEvents as EventIdRow[] | null) ?? []).map((e) => e.id)
+      )
 
       // Accepted-invited events
       // Accepted-invited events
