@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import EventDetails from '@/components/eventDetails'
 import type { Event } from '@/types/event'
-import { formatTime } from '@/lib/formatTime'
 import Link from 'next/link'
 import { formatEventDuration } from '@/lib/formatEventDuration'
 
