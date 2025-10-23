@@ -2,13 +2,14 @@ import { supabase } from '@/lib/client'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Camera, Music, Pencil } from 'lucide-react'
+import { Camera, Music } from 'lucide-react'
 import { ArrowLeft } from 'lucide-react'
 
 import ShareEventButton from '@/components/shareEvents'
 import AutoAddInvite from '@/components/AutoAddInvite'
 import { formatTime } from '@/lib/formatTime'
 import InviteStatusList from '@/components/InviteStatusList'
+import EditEventButton from '@/components/editEventsButton'
 
 export default async function EventDetailsPage({
   params,
@@ -34,30 +35,24 @@ export default async function EventDetailsPage({
   const { data: event, error } = await supabase
     .from('events')
     .select('*')
-    .eq('id', id)
+    .eq('id', Number(id))
     .single()
+
+  //console.log('Update response:', { error })
+  //console.log('Event id being updated:', id, '→ as number:', Number(id))
 
   if (error || !event) {
     return (
       <div className="mb-6 flex items-center justify-between">
-        <Link
-          href="/main"
-          className="inline-flex items-center gap-2 text-sm text-pink-200 hover:underline"
-        >
-          <ArrowLeft size={20} />
-          <span>Back</span>
-        </Link>
-
-        <Link
-          href={`/events/${event.id}/edit`}
-          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg
-                    bg-white/20 border border-white/30 hover:bg-white/30
-                    text-white transition"
-          title="Edit event"
-        >
-          <Pencil size={18} />
-          <span>Edit</span>
-        </Link>
+        <div className="mb-6 flex items-center justify-between">
+          <Link
+            href="/main"
+            className="inline-flex items-center gap-2 text-sm text-pink-200 hover:underline"
+          >
+            <ArrowLeft size={20} />
+            <span>Back</span>
+          </Link>
+        </div>
       </div>
     )
   }
@@ -133,14 +128,17 @@ export default async function EventDetailsPage({
       <div className="max-w-5xl mx-auto flex gap-6 items-start">
         {/* --- Left: Box containing event details --- */}
         <div className="flex-1 bg-white/20 backdrop-blur-md rounded-3xl p-8 shadow-lg border border-white/30">
-          <Link
-            href="/main"
-            className="inline-block mb-6 text-sm text-pink-200 hover:underline"
-          >
-            <ArrowLeft size={26} className="mr-2">
-              <title>Back to events</title>
-            </ArrowLeft>
-          </Link>
+          <div className="mb-6 flex items-center justify-between">
+            <Link
+              href="/main"
+              className="inline-flex items-center gap-2 text-sm text-pink-200 hover:underline"
+            >
+              <ArrowLeft size={20} />
+              <span>Back</span>
+            </Link>
+
+            <EditEventButton eventUserId={event.user_id} eventId={event.id} />
+          </div>
 
           <h1 className="text-4xl font-extrabold mb-4 text-center">
             {event.name}
@@ -194,19 +192,6 @@ export default async function EventDetailsPage({
 
             <div className="mt-6 flex justify-center">
               <ShareEventButton eventId={Number(event.id)} />
-            </div>
-
-            <div className="mt-3 flex justify-center">
-              <Link
-                href={`/events/${event.id}/edit`}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg
-                          bg-white/20 border border-white/30 hover:bg-white/30
-                          text-white transition"
-                title="Edit event"
-              >
-                <Pencil size={18} />
-                <span>Edit</span>
-              </Link>
             </div>
           </div>
         </div>

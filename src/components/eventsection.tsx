@@ -116,24 +116,24 @@ const EventsSection = ({
                 />
               )}
               <div className="p-4">
-                <h3 className="text-lg font-semibold text-white drop-shadow-md">
+                <h3 className="text-lg font-semibold text-stone-900 drop-shadow-md">
                   {event.name}
                 </h3>
-                <p className="text-sm text-white/80 drop-shadow">
+                <p className="text-sm text-stone-900/80 drop-shadow">
                   When: {new Date(event.date).toISOString().split('T')[0]}
                 </p>
 
                 {event.time !== undefined && (
-                  <p className="text-sm text-white/80 drop-shadow">
+                  <p className="text-sm text-stone-900/80 drop-shadow">
                     Time: {formatTime(event.time)}
                   </p>
                 )}
 
-                <p className="text-sm text-white/90 drop-shadow">
+                <p className="text-sm text-stone-900/90 drop-shadow">
                   Location: {event.location}
                 </p>
                 {event.hostLabel !== undefined && (
-                  <p className="text-sm text-white/80 drop-shadow mt-1">
+                  <p className="text-sm text-stone-900/80 drop-shadow mt-1">
                     <strong>Host:</strong> {event.hostLabel ?? 'Unknown'}
                   </p>
                 )}
