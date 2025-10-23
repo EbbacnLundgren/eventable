@@ -5,94 +5,108 @@ import { supabase } from '@/lib/client'
 type Props = {
   acceptedIds: string[]
   declinedIds: string[]
+  /** Valfritt: skicka in pending också om du har det */
+  pendingIds?: string[]
 }
 
-export default function InviteStatusList({ acceptedIds, declinedIds }: Props) {
+type ProfileLabel = { id: string; label: string }
+type AllInviteeRow = { id: string; label: string; status: 'accepted' | 'declined' | 'pending' }
+
+export default function InviteStatusList({ acceptedIds, declinedIds, pendingIds = [] }: Props) {
   const [showAccepted, setShowAccepted] = useState(false)
   const [showDeclined, setShowDeclined] = useState(false)
-  const [acceptedUsers, setAcceptedUsers] = useState<Array<string> | null>(null)
-  const [declinedUsers, setDeclinedUsers] = useState<Array<string> | null>(null)
+  const [showAll, setShowAll] = useState(false)
+
+  const [acceptedUsers, setAcceptedUsers] = useState<ProfileLabel[] | null>(null)
+  const [declinedUsers, setDeclinedUsers] = useState<ProfileLabel[] | null>(null)
+  const [pendingUsers, setPendingUsers] = useState<ProfileLabel[] | null>(null)
+  const [allUsers, setAllUsers] = useState<AllInviteeRow[] | null>(null)
+
   const [loading, setLoading] = useState(false)
 
-  const resolveProfiles = async (ids: string[]): Promise<string[]> => {
+  async function resolveProfiles(ids: string[]): Promise<ProfileLabel[]> {
     if (ids.length === 0) return []
+    // Hämta namn/email från users först
+    const map: Record<string, string> = {}
+    const resolved: ProfileLabel[] = []
+
+    const { data: appUsers } = await supabase
+      .from('users')
+      .select('id, first_name, last_name, email')
+      .in('id', ids)
+
+    if (appUsers) {
+      for (const u of appUsers as Array<{ id: string; first_name?: string | null; last_name?: string | null; email?: string | null }>) {
+        map[u.id] = u.first_name
+          ? `${u.first_name} ${u.last_name || ''}`.trim()
+          : (u.email || u.id)
+      }
+    }
+
+    // Rest från google_users
+    const remaining = ids.filter((i) => !map[i])
+    if (remaining.length > 0) {
+      const { data: googleUsers } = await supabase
+        .from('google_users')
+        .select('id, first_name, last_name, email')
+        .in('id', remaining)
+
+      if (googleUsers) {
+        for (const g of googleUsers as Array<{ id: string; first_name?: string | null; last_name?: string | null; email?: string | null }>) {
+          map[g.id] = g.first_name
+            ? `${g.first_name} ${g.last_name || ''}`.trim()
+            : (g.email || g.id)
+        }
+      }
+    }
+
+    for (const id of ids) resolved.push({ id, label: map[id] ?? id })
+    return resolved
+  }
+
+  const onToggleAccepted = async () => {
+    if (!acceptedUsers) setAcceptedUsers(await resolveProfiles(acceptedIds))
+    setShowAccepted((s) => !s)
+    setShowDeclined(false)
+    setShowAll(false)
+  }
+
+  const onToggleDeclined = async () => {
+    if (!declinedUsers) setDeclinedUsers(await resolveProfiles(declinedIds))
+    setShowDeclined((s) => !s)
+    setShowAccepted(false)
+    setShowAll(false)
+  }
+
+  const onToggleAll = async () => {
     setLoading(true)
     try {
-      // Try users table first
-      const { data: appUsers } = await supabase
-        .from('users')
-        .select('id, first_name, last_name, email')
-        .in('id', ids)
-
-      const map: Record<string, string> = {}
-      if (appUsers) {
-        type AppUser = {
-          id: string
-          first_name?: string | null
-          last_name?: string | null
-          email?: string | null
-        }
-        for (const u of appUsers as AppUser[]) {
-          map[u.id] = u.first_name
-            ? `${u.first_name} ${u.last_name || ''}`.trim()
-            : u.email || u.id
-        }
+      if (!pendingUsers && pendingIds.length > 0) {
+        setPendingUsers(await resolveProfiles(pendingIds))
       }
+      if (!acceptedUsers) setAcceptedUsers(await resolveProfiles(acceptedIds))
+      if (!declinedUsers) setDeclinedUsers(await resolveProfiles(declinedIds))
 
-      // Resolve remaining ids from google_users
-      const remaining = ids.filter((i) => !map[i])
-      if (remaining.length > 0) {
-        const { data: googleUsers } = await supabase
-          .from('google_users')
-          .select('id, first_name, last_name, email')
-          .in('id', remaining)
-
-        if (googleUsers) {
-          type GoogleUser = {
-            id: string
-            first_name?: string | null
-            last_name?: string | null
-            email?: string | null
-          }
-          for (const g of googleUsers as GoogleUser[]) {
-            map[g.id] = g.first_name
-              ? `${g.first_name} ${g.last_name || ''}`.trim()
-              : g.email || g.id
-          }
-        }
-      }
-
-      // Final fallback: use raw id for any unresolved
-      return ids.map((i) => map[i] ?? i)
-    } catch (e) {
-      console.error('Error resolving invite profiles', e)
-      return ids
+      // Bygg samlad lista med status
+      const all: AllInviteeRow[] = [
+        ...(acceptedUsers ?? (await resolveProfiles(acceptedIds))).map((u) => ({ ...u, status: 'accepted' as const })),
+        ...(declinedUsers ?? (await resolveProfiles(declinedIds))).map((u) => ({ ...u, status: 'declined' as const })),
+        ...(pendingUsers ?? (await resolveProfiles(pendingIds))).map((u) => ({ ...u, status: 'pending' as const })),
+      ]
+      setAllUsers(all)
+      setShowAll((s) => !s)
+      setShowAccepted(false)
+      setShowDeclined(false)
     } finally {
       setLoading(false)
     }
   }
 
-  const onToggleAccepted = async () => {
-    if (!acceptedUsers) {
-      const resolved = await resolveProfiles(acceptedIds)
-      setAcceptedUsers(resolved)
-    }
-    setShowAccepted((s) => !s)
-    if (showDeclined) setShowDeclined(false)
-  }
-
-  const onToggleDeclined = async () => {
-    if (!declinedUsers) {
-      const resolved = await resolveProfiles(declinedIds)
-      setDeclinedUsers(resolved)
-    }
-    setShowDeclined((s) => !s)
-    if (showAccepted) setShowAccepted(false)
-  }
+  const allCount = acceptedIds.length + declinedIds.length + pendingIds.length
 
   return (
     <div className="mt-4">
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <button
           onClick={onToggleAccepted}
           className="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700"
@@ -106,6 +120,13 @@ export default function InviteStatusList({ acceptedIds, declinedIds }: Props) {
         >
           ({declinedIds.length}) Declined
         </button>
+
+        <button
+          onClick={onToggleAll}
+          className="px-3 py-1.5 bg-white/20 text-white rounded-lg hover:bg-white/30 border border-white/30"
+        >
+          ({allCount}) All invitees
+        </button>
       </div>
 
       {loading && <p className="mt-2 text-sm text-white/80">Loading...</p>}
@@ -114,13 +135,9 @@ export default function InviteStatusList({ acceptedIds, declinedIds }: Props) {
         <div className="mt-3 bg-white/10 p-3 rounded">
           <h4 className="text-sm font-semibold mb-2">Accepted</h4>
           <ul className="text-sm">
-            {acceptedUsers.length === 0 && (
-              <li className="text-white/80">No users</li>
-            )}
-            {acceptedUsers.map((u, idx) => (
-              <li key={idx} className="text-white/90">
-                {u}
-              </li>
+            {acceptedUsers.length === 0 && <li className="text-white/80">No users</li>}
+            {acceptedUsers.map((u) => (
+              <li key={u.id} className="text-white/90">{u.label}</li>
             ))}
           </ul>
         </div>
@@ -130,12 +147,25 @@ export default function InviteStatusList({ acceptedIds, declinedIds }: Props) {
         <div className="mt-3 bg-white/10 p-3 rounded">
           <h4 className="text-sm font-semibold mb-2">Declined</h4>
           <ul className="text-sm">
-            {declinedUsers.length === 0 && (
-              <li className="text-white/80">No users</li>
-            )}
-            {declinedUsers.map((u, idx) => (
-              <li key={idx} className="text-white/90">
-                {u}
+            {declinedUsers.length === 0 && <li className="text-white/80">No users</li>}
+            {declinedUsers.map((u) => (
+              <li key={u.id} className="text-white/90">{u.label}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {showAll && allUsers && (
+        <div className="mt-3 bg-white/10 p-3 rounded">
+          <h4 className="text-sm font-semibold mb-2">All invitees</h4>
+          <ul className="text-sm space-y-1">
+            {allUsers.length === 0 && <li className="text-white/80">No users</li>}
+            {allUsers.map((u) => (
+              <li key={`${u.id}-${u.status}`} className="text-white/90">
+                {u.label}{' '}
+                <span className="ml-2 text-xs opacity-80">
+                  ({u.status})
+                </span>
               </li>
             ))}
           </ul>

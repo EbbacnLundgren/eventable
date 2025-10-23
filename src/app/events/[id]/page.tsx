@@ -91,6 +91,7 @@ export default async function EventDetailsPage({
   // Fetch invite statuses (accepted / declined) for this event
   const acceptedIds: string[] = []
   const declinedIds: string[] = []
+  const pendingIds: string[] = []
   try {
     const { data: invites } = await supabase
       .from('event_invites')
@@ -104,8 +105,8 @@ export default async function EventDetailsPage({
       }
       for (const inv of invites as InvRow[]) {
         if (inv.status === 'accepted') acceptedIds.push(inv.invited_user_id)
-        else if (inv.status === 'declined')
-          declinedIds.push(inv.invited_user_id)
+        else if (inv.status === 'declined') declinedIds.push(inv.invited_user_id)
+        else if (inv.status === 'pending') pendingIds.push(inv.invited_user_id)   // <-- Lägg till
       }
     }
   } catch (e) {
@@ -173,6 +174,7 @@ export default async function EventDetailsPage({
             <InviteStatusList
               acceptedIds={acceptedIds}
               declinedIds={declinedIds}
+              pendingIds={pendingIds}
             />
 
             <div className="mt-6 flex justify-center">
