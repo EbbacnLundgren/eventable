@@ -134,10 +134,14 @@ export default function CreateEventPage() {
 
     //dubbelkolla ås tiden stämmer (inte i dåtiden)
     const now = new Date()
-    const startDateTime = new Date(`${formData.date}T${formData.time || '00:00'}`)
+    const startDateTime = new Date(
+      `${formData.date}T${formData.time || '00:00'}`
+    )
     const endDateTime =
       formData.endDate || formData.endTime
-        ? new Date(`${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`)
+        ? new Date(
+            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+          )
         : null
 
     if (startDateTime < now) {
@@ -316,8 +320,9 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
-              }`}
+            className={`text-center text-sm mt-2 ${
+              status === 'success' ? 'text-green-600' : 'text-red-500'
+            }`}
           >
             {message}
           </p>
