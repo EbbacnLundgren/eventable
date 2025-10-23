@@ -5,6 +5,7 @@ import EventDetails from '@/components/eventDetails'
 import type { Event } from '@/types/event'
 import Link from 'next/link'
 import { formatEventDuration } from '@/lib/formatEventDuration'
+import { MapPin, Calendar, Clock, User } from 'lucide-react'
 
 interface EventsSectionProps {
   events: Event[]
@@ -117,10 +118,12 @@ const EventsSection = ({
                   {event.name}
                 </h3>
                 <p className="text-sm text-white/80 drop-shadow">
-                  When: {new Date(event.date).toISOString().split('T')[0]}
+                  <Calendar size={14} />{' '}
+                  {new Date(event.date).toISOString().split('T')[0]}
                 </p>
 
                 <p className="text-sm text-white/80 drop-shadow">
+                  <Clock size={14} />{' '}
                   {formatEventDuration(
                     event.date,
                     event.time,
@@ -137,13 +140,23 @@ const EventsSection = ({
                 )} */}
 
                 <p className="text-sm text-white/90 drop-shadow">
-                  Location: {event.location}
+                  <MapPin size={14} /> {event.location}
                 </p>
+
+                {/*
                 {event.hostLabel !== undefined && (
                   <p className="text-sm text-white/80 drop-shadow mt-1">
                     <strong>Host:</strong> {event.hostLabel ?? 'Unknown'}
                   </p>
-                )}
+                )} */}
+
+                <div className="flex items-center gap-2 text-sm text-white/80 drop-shadow mt-1">
+                  <User size={16} />
+                  <span>
+                    <strong>Host:</strong> {event.hostLabel ?? 'Unknown'}
+                  </span>
+                </div>
+
                 <button
                   onClick={(e) => {
                     e.preventDefault() // prevent navigation when opening modal
