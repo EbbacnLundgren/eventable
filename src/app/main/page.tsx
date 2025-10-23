@@ -14,6 +14,20 @@ interface InviteRow {
 }
 type EventIdRow = { id: number }
 
+type AppUserRow = {
+  id: string
+  first_name?: string | null
+  last_name?: string | null
+  email?: string | null
+}
+
+type GoogleUserRow = {
+  id: string
+  first_name?: string | null
+  last_name?: string | null
+  email?: string | null
+}
+
 export default function MainPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [showForm, setShowForm] = useState(false)
@@ -158,34 +172,37 @@ export default function MainPage() {
       }
 
       // Attach hostLabel by fetching profiles directly from Supabase (no proxy)
+      // Attach hostLabel by fetching profiles directly from Supabase (no proxy)
       const merged = Array.from(mergedById.values()) as Event[]
       const userIds = Array.from(
-        new Set(merged.map((e) => e.user_id).filter(Boolean))
+        new Set(merged.map((e: any) => e.user_id).filter(Boolean))
       ) as string[]
 
       const hostMap: Record<string, string | null> = {}
       if (userIds.length > 0) {
         try {
+          // public.users
           const { data: appUsers } = await supabase
             .from('users')
             .select('id, first_name, last_name, email')
             .in('id', userIds)
 
           if (appUsers) {
-            for (const u of appUsers as any[]) {
+            for (const u of appUsers as AppUserRow[]) {
               hostMap[u.id] = u.first_name
                 ? `${u.first_name} ${u.last_name || ''}`.trim()
                 : u.email || null
             }
           }
 
+          // google_users (fallback om ingen träff i users)
           const { data: googleUsers } = await supabase
             .from('google_users')
             .select('id, first_name, last_name, email')
             .in('id', userIds)
 
           if (googleUsers) {
-            for (const g of googleUsers as any[]) {
+            for (const g of googleUsers as GoogleUserRow[]) {
               if (!hostMap[g.id]) {
                 hostMap[g.id] = g.first_name
                   ? `${g.first_name} ${g.last_name || ''}`.trim()
@@ -198,7 +215,7 @@ export default function MainPage() {
         }
       }
 
-      const annotated = merged.map((ev) => ({
+      const annotated = merged.map((ev: any) => ({
         ...ev,
         hostLabel: ev.user_id ? (hostMap[ev.user_id] ?? null) : null,
       }))
