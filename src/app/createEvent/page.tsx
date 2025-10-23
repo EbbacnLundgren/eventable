@@ -6,7 +6,8 @@ import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import TimePicker from '@/components/timePicker'
 import { useSession } from 'next-auth/react'
-import { Image as ImageIcon, Shuffle } from 'lucide-react'
+import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
+import Link from 'next/link'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -137,6 +138,14 @@ export default function CreateEventPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
+      <Link
+        href="/main"
+        className="fixed top-4 left-4 text-pink-600 hover:text-pink-800 z-50"
+        aria-label="Back to main page"
+      >
+        <ArrowLeft size={26} />
+      </Link>
+
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-2xl flex flex-col gap-5 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
@@ -174,12 +183,12 @@ export default function CreateEventPage() {
           </div>
         </div>
 
-        <h2 className="text-3xl font-bold text-center text-pink-800">
+        <h2 className="font-serif text-2xl font-bold text-center text-pink-800">
           Create Event
         </h2>
 
         <div className="flex flex-col gap-3">
-          <label className="font-medium text-purple-600">Event name</label>
+          <label className="font-serif text-purple-600">Event name</label>
           <input
             type="text"
             name="name"
@@ -189,7 +198,7 @@ export default function CreateEventPage() {
             required
           />
 
-          <label className="font-medium text-purple-600">Location</label>
+          <label className="font-serif text-purple-600">Location</label>
           <input
             type="text"
             name="location"
@@ -199,7 +208,7 @@ export default function CreateEventPage() {
             required
           />
 
-          <label className="font-medium text-purple-600">Date and time</label>
+          <label className="font-serif text-purple-600">Date and time</label>
           <div className="flex gap-2">
             <input
               type="date"
@@ -215,7 +224,7 @@ export default function CreateEventPage() {
             />
           </div>
 
-          <label className="font-medium text-purple-600">Description</label>
+          <label className="font-serif text-purple-600">Description</label>
           <input
             type="text"
             name="description"
@@ -234,9 +243,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
