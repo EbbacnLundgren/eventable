@@ -90,20 +90,6 @@ export default function CreateEventPage() {
       return
     }
 
-    /*
-    // 2. Ladda upp bild om vald
-    let imageUrl: string | null = null
-    if (formData.image) {
-      try {
-        imageUrl = await uploadEventImage(formData.image, Date.now())
-      } catch (error) {
-        console.error('Image upload failed:', error)
-        setMessage('Failed to upload image. Please try again.')
-        setStatus('error')
-        return
-      }
-    } */
-
     // 2. Hantera bild (antingen uppladdad eller default)
     let imageUrl: string | null = null
 
@@ -148,16 +134,6 @@ export default function CreateEventPage() {
     setMessage('Event created successfully! Redirecting...')
     setTimeout(() => router.push('/main'), 1500)
   }
-
-  /*
-  function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
-    const { name, value, files } = e.target
-    if (name === 'image' && files) {
-      setFormData((prev) => ({ ...prev, image: files[0] }))
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }))
-    }
-  } */
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
@@ -258,9 +234,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
