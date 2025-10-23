@@ -1,6 +1,5 @@
 import CalendarComponent from '@/components/calendar'
 import Sidebar from '@/components/Sidebar'
-import MovingBackground from '@/components/MovingBackground'
 
 export default function Page() {
   return (

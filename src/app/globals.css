@@ -34,13 +34,13 @@ body {
   @apply text-gray-900;
 }
 
-
-
 /************Liquid glass card************/
 
 /* Anpassad animation */
 @keyframes border-spin {
-  100% { transform: rotate(-360deg); }
+  100% {
+    transform: rotate(-360deg);
+  }
 }
 
 /* Komponentstilar */
@@ -70,10 +70,7 @@ body {
   border-radius: 1rem;
 }
 
-
 /* Animation */
 .animate-border-spin {
   animation: border-spin 7s linear infinite;
 }
-
-
