@@ -33,3 +33,47 @@ body {
 .fc .fc-toolbar-title {
   @apply text-gray-900;
 }
+
+
+
+/************Liquid glass card************/
+
+/* Anpassad animation */
+@keyframes border-spin {
+  100% { transform: rotate(-360deg); }
+}
+
+/* Komponentstilar */
+.card-wrapper {
+  @apply relative h-[200px] w-[200px] rounded-2xl overflow-hidden;
+}
+
+.card-border {
+  content: '';
+  @apply absolute inset-0 rounded-2xl;
+  background: conic-gradient(
+    rgba(255, 255, 255, 0.4) 0deg,
+    rgba(255, 255, 255, 0.4) 80deg,
+    transparent 100deg
+  );
+  animation: border-spin 7s linear infinite;
+  /* gör "hålet" i mitten */
+  mask: radial-gradient(farthest-side, transparent 0%, black 95%);
+  -webkit-mask: radial-gradient(farthest-side, transparent 0%, black 95%);
+}
+
+.card-content {
+  @apply absolute inset-1 rounded-2xl flex items-center justify-center text-white text-xs;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 1rem;
+}
+
+
+/* Animation */
+.animate-border-spin {
+  animation: border-spin 7s linear infinite;
+}
+
+
