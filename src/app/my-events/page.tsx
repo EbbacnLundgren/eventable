@@ -1,8 +1,13 @@
+import CalendarComponent from '@/components/calendar'
+import Sidebar from '@/components/Sidebar'
+import MovingBackground from '@/components/MovingBackground'
+
 export default function Page() {
   return (
-    <div>
-      <h1>TODO</h1>
-      <p>Denna sida är under konstruktion.</p>
+    <div className="flex min-h-screen">
+
+      <Sidebar />
+
     </div>
   )
 }

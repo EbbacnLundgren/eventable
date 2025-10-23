@@ -297,7 +297,7 @@ export default function MainPage() {
   const addEvent = (event: Event) => setEvents((prev) => [...prev, event])
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white flex flex-col items-center">
+    <div className="min-h-screen flex flex-col items-center">
       {userInfo && (
         <p className="text-lg font-semibold mb-4">
           Hej {userInfo.email} (ID: {userInfo.id})
