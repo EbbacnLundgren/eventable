@@ -185,9 +185,9 @@ export default async function EventDetailsPage({
             <AutoAddInvite eventId={Number(event.id)} />
 
             <InviteStatusList
-              acceptedIds={acceptedIds}
-              declinedIds={declinedIds}
-              pendingIds={pendingIds}
+              acceptedIds={acceptedIds.filter((id) => id !== event.user_id)}
+              declinedIds={declinedIds.filter((id) => id !== event.user_id)}
+              pendingIds={pendingIds.filter((id) => id !== event.user_id)}
             />
 
             <div className="mt-6 flex justify-center">

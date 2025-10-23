@@ -38,30 +38,28 @@ export default function InviteStatusList({
 
   async function resolveProfiles(ids: string[]): Promise<ProfileLabel[]> {
     if (ids.length === 0) return []
-    // Hämta namn/email från users först
     const map: Record<string, string> = {}
     const resolved: ProfileLabel[] = []
 
+    // Fetch from users table first
     const { data: appUsers } = await supabase
       .from('users')
       .select('id, first_name, last_name, email')
       .in('id', ids)
 
     if (appUsers) {
-      for (const u of appUsers as Array<{
-        id: string
-        first_name?: string | null
-        last_name?: string | null
-        email?: string | null
-      }>) {
-        map[u.id] = u.first_name
-          ? `${u.first_name} ${u.last_name || ''}`.trim()
-          : u.email || u.id
+      for (const u of appUsers) {
+        if (u.id) {
+          map[u.id] = u.first_name
+            ? `${u.first_name} ${u.last_name || ''}`.trim()
+            : u.email || u.id
+        }
       }
     }
 
-    // Rest från google_users
-    const remaining = ids.filter((i) => !map[i])
+    // Find IDs not yet resolved or with empty string
+    const remaining = ids.filter((id) => !map[id] || map[id].trim() === '')
+
     if (remaining.length > 0) {
       const { data: googleUsers } = await supabase
         .from('google_users')
@@ -69,15 +67,12 @@ export default function InviteStatusList({
         .in('id', remaining)
 
       if (googleUsers) {
-        for (const g of googleUsers as Array<{
-          id: string
-          first_name?: string | null
-          last_name?: string | null
-          email?: string | null
-        }>) {
-          map[g.id] = g.first_name
-            ? `${g.first_name} ${g.last_name || ''}`.trim()
-            : g.email || g.id
+        for (const g of googleUsers) {
+          if (g.id) {
+            map[g.id] = g.first_name
+              ? `${g.first_name} ${g.last_name || ''}`.trim()
+              : g.email || g.id
+          }
         }
       }
     }

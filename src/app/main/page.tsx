@@ -230,21 +230,32 @@ export default function MainPage() {
   }, [session])
 
   const resolveCurrentUserId = async () => {
-    // Samma logik som i fetchEvents/AutoAddInvite
     let email: string | null = null
     const {
       data: { user: supaUser },
     } = await supabase.auth.getUser()
-    if (supaUser?.email) email = supaUser.email
-    else if (session?.user?.email) email = session.user.email
-    if (!email) return null
+
+    if (supaUser?.email) {
+      email = supaUser.email
+      console.log('Supabase Auth email:', email)
+    } else if (session?.user?.email) {
+      email = session.user.email
+      console.log('NextAuth email:', email)
+    }
+
+    if (!email) {
+      console.warn('No email found for current user.')
+      return null
+    }
 
     // Försök hämta google_users.id (det är detta som används i event_invites)
     const { data: gUser } = await supabase
       .from('google_users')
-      .select('id')
+      .select('id, email')
       .eq('email', email)
       .single()
+
+    console.log('Matched google_users entry:', gUser)
 
     return gUser?.id ?? supaUser?.id ?? null
   }
@@ -252,6 +263,10 @@ export default function MainPage() {
   const handleAcceptInvite = async (eventId: number) => {
     const currentUserId = await resolveCurrentUserId()
     if (!currentUserId) return
+
+    console.log('RSVP attempt →')
+    console.log('Event ID:', eventId)
+    console.log('Current user ID (the one accepting):', currentUserId)
 
     const { error } = await supabase
       .from('event_invites')
