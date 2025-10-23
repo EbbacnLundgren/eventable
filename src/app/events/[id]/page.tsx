@@ -2,7 +2,7 @@ import { supabase } from '@/lib/client'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Camera, Music } from 'lucide-react'
+import { Camera, Music, Pencil } from 'lucide-react'
 import { ArrowLeft } from 'lucide-react'
 
 import ShareEventButton from '@/components/shareEvents'
@@ -39,10 +39,24 @@ export default async function EventDetailsPage({
 
   if (error || !event) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen text-white">
-        <h1 className="text-2xl font-bold">Event not found</h1>
-        <Link href="/main" className="mt-4 underline text-pink-200">
-          ← Back
+      <div className="mb-6 flex items-center justify-between">
+        <Link
+          href="/main"
+          className="inline-flex items-center gap-2 text-sm text-pink-200 hover:underline"
+        >
+          <ArrowLeft size={20} />
+          <span>Back</span>
+        </Link>
+
+        <Link
+          href={`/events/${event.id}/edit`}
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg
+                    bg-white/20 border border-white/30 hover:bg-white/30
+                    text-white transition"
+          title="Edit event"
+        >
+          <Pencil size={18} />
+          <span>Edit</span>
         </Link>
       </div>
     )
@@ -180,6 +194,19 @@ export default async function EventDetailsPage({
 
             <div className="mt-6 flex justify-center">
               <ShareEventButton eventId={Number(event.id)} />
+            </div>
+
+            <div className="mt-3 flex justify-center">
+              <Link
+                href={`/events/${event.id}/edit`}
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg
+                          bg-white/20 border border-white/30 hover:bg-white/30
+                          text-white transition"
+                title="Edit event"
+              >
+                <Pencil size={18} />
+                <span>Edit</span>
+              </Link>
             </div>
           </div>
         </div>
