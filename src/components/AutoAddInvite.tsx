@@ -19,7 +19,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
   }
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       // 1) Hämta e-post
       let email: string | null = null
       const {

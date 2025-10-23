@@ -200,7 +200,7 @@ export default function MainPage() {
 
       const annotated = merged.map((ev) => ({
         ...ev,
-        hostLabel: ev.user_id ? hostMap[ev.user_id] ?? null : null,
+        hostLabel: ev.user_id ? (hostMap[ev.user_id] ?? null) : null,
       }))
 
       setEvents(annotated)
