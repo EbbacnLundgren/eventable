@@ -126,7 +126,7 @@ export default function CreateEventPage() {
       name: formData.name,
       location: formData.location,
       date: formData.date,
-      time: formData.time !== '' ? Number(formData.time) : null,
+      time: formData.time || null,
       description: formData.description,
       image: imageUrl,
       user_id: userId, // ← användarens UID
@@ -160,6 +160,9 @@ export default function CreateEventPage() {
 
       <form
         onSubmit={handleSubmit}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') e.preventDefault()
+        }}
         className="w-full max-w-2xl flex flex-col gap-5 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
       >
         {/* Image Header */}
@@ -293,9 +296,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
