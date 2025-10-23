@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/client'
 import EventSection from '@/components/eventsection'
-import CreateEventForm from '@/components/createEventForm'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import type { Event } from '@/types/event'
@@ -30,7 +29,6 @@ type GoogleUserRow = {
 
 export default function MainPage() {
   const [events, setEvents] = useState<Event[]>([])
-  const [showForm, setShowForm] = useState(false)
   const { data: session } = useSession()
   const [ownEventIds, setOwnEventIds] = useState<number[]>([])
   const [userInfo, setUserInfo] = useState<{
@@ -294,8 +292,6 @@ export default function MainPage() {
     setPendingIds((prev) => prev.filter((id) => id !== eventId))
   }
 
-  const addEvent = (event: Event) => setEvents((prev) => [...prev, event])
-
   return (
     <div className="min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white flex flex-col items-center">
       {userInfo && (
@@ -303,12 +299,6 @@ export default function MainPage() {
           Hej {userInfo.email} (ID: {userInfo.id})
         </p>
       )}
-
-      <CreateEventForm
-        showForm={showForm}
-        setShowForm={setShowForm}
-        addEvent={addEvent}
-      />
 
       <Link
         href="/createEvent"
