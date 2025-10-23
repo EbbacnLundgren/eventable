@@ -105,8 +105,9 @@ export default async function EventDetailsPage({
       }
       for (const inv of invites as InvRow[]) {
         if (inv.status === 'accepted') acceptedIds.push(inv.invited_user_id)
-        else if (inv.status === 'declined') declinedIds.push(inv.invited_user_id)
-        else if (inv.status === 'pending') pendingIds.push(inv.invited_user_id)   // <-- Lägg till
+        else if (inv.status === 'declined')
+          declinedIds.push(inv.invited_user_id)
+        else if (inv.status === 'pending') pendingIds.push(inv.invited_user_id) // <-- Lägg till
       }
     }
   } catch (e) {

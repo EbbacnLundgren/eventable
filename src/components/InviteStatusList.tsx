@@ -10,15 +10,27 @@ type Props = {
 }
 
 type ProfileLabel = { id: string; label: string }
-type AllInviteeRow = { id: string; label: string; status: 'accepted' | 'declined' | 'pending' }
+type AllInviteeRow = {
+  id: string
+  label: string
+  status: 'accepted' | 'declined' | 'pending'
+}
 
-export default function InviteStatusList({ acceptedIds, declinedIds, pendingIds = [] }: Props) {
+export default function InviteStatusList({
+  acceptedIds,
+  declinedIds,
+  pendingIds = [],
+}: Props) {
   const [showAccepted, setShowAccepted] = useState(false)
   const [showDeclined, setShowDeclined] = useState(false)
   const [showAll, setShowAll] = useState(false)
 
-  const [acceptedUsers, setAcceptedUsers] = useState<ProfileLabel[] | null>(null)
-  const [declinedUsers, setDeclinedUsers] = useState<ProfileLabel[] | null>(null)
+  const [acceptedUsers, setAcceptedUsers] = useState<ProfileLabel[] | null>(
+    null
+  )
+  const [declinedUsers, setDeclinedUsers] = useState<ProfileLabel[] | null>(
+    null
+  )
   const [pendingUsers, setPendingUsers] = useState<ProfileLabel[] | null>(null)
   const [allUsers, setAllUsers] = useState<AllInviteeRow[] | null>(null)
 
@@ -36,10 +48,15 @@ export default function InviteStatusList({ acceptedIds, declinedIds, pendingIds 
       .in('id', ids)
 
     if (appUsers) {
-      for (const u of appUsers as Array<{ id: string; first_name?: string | null; last_name?: string | null; email?: string | null }>) {
+      for (const u of appUsers as Array<{
+        id: string
+        first_name?: string | null
+        last_name?: string | null
+        email?: string | null
+      }>) {
         map[u.id] = u.first_name
           ? `${u.first_name} ${u.last_name || ''}`.trim()
-          : (u.email || u.id)
+          : u.email || u.id
       }
     }
 
@@ -52,10 +69,15 @@ export default function InviteStatusList({ acceptedIds, declinedIds, pendingIds 
         .in('id', remaining)
 
       if (googleUsers) {
-        for (const g of googleUsers as Array<{ id: string; first_name?: string | null; last_name?: string | null; email?: string | null }>) {
+        for (const g of googleUsers as Array<{
+          id: string
+          first_name?: string | null
+          last_name?: string | null
+          email?: string | null
+        }>) {
           map[g.id] = g.first_name
             ? `${g.first_name} ${g.last_name || ''}`.trim()
-            : (g.email || g.id)
+            : g.email || g.id
         }
       }
     }
@@ -89,9 +111,18 @@ export default function InviteStatusList({ acceptedIds, declinedIds, pendingIds 
 
       // Bygg samlad lista med status
       const all: AllInviteeRow[] = [
-        ...(acceptedUsers ?? (await resolveProfiles(acceptedIds))).map((u) => ({ ...u, status: 'accepted' as const })),
-        ...(declinedUsers ?? (await resolveProfiles(declinedIds))).map((u) => ({ ...u, status: 'declined' as const })),
-        ...(pendingUsers ?? (await resolveProfiles(pendingIds))).map((u) => ({ ...u, status: 'pending' as const })),
+        ...(acceptedUsers ?? (await resolveProfiles(acceptedIds))).map((u) => ({
+          ...u,
+          status: 'accepted' as const,
+        })),
+        ...(declinedUsers ?? (await resolveProfiles(declinedIds))).map((u) => ({
+          ...u,
+          status: 'declined' as const,
+        })),
+        ...(pendingUsers ?? (await resolveProfiles(pendingIds))).map((u) => ({
+          ...u,
+          status: 'pending' as const,
+        })),
       ]
       setAllUsers(all)
       setShowAll((s) => !s)
@@ -135,9 +166,13 @@ export default function InviteStatusList({ acceptedIds, declinedIds, pendingIds 
         <div className="mt-3 bg-white/10 p-3 rounded">
           <h4 className="text-sm font-semibold mb-2">Accepted</h4>
           <ul className="text-sm">
-            {acceptedUsers.length === 0 && <li className="text-white/80">No users</li>}
+            {acceptedUsers.length === 0 && (
+              <li className="text-white/80">No users</li>
+            )}
             {acceptedUsers.map((u) => (
-              <li key={u.id} className="text-white/90">{u.label}</li>
+              <li key={u.id} className="text-white/90">
+                {u.label}
+              </li>
             ))}
           </ul>
         </div>
@@ -147,9 +182,13 @@ export default function InviteStatusList({ acceptedIds, declinedIds, pendingIds 
         <div className="mt-3 bg-white/10 p-3 rounded">
           <h4 className="text-sm font-semibold mb-2">Declined</h4>
           <ul className="text-sm">
-            {declinedUsers.length === 0 && <li className="text-white/80">No users</li>}
+            {declinedUsers.length === 0 && (
+              <li className="text-white/80">No users</li>
+            )}
             {declinedUsers.map((u) => (
-              <li key={u.id} className="text-white/90">{u.label}</li>
+              <li key={u.id} className="text-white/90">
+                {u.label}
+              </li>
             ))}
           </ul>
         </div>
@@ -159,13 +198,13 @@ export default function InviteStatusList({ acceptedIds, declinedIds, pendingIds 
         <div className="mt-3 bg-white/10 p-3 rounded">
           <h4 className="text-sm font-semibold mb-2">All invitees</h4>
           <ul className="text-sm space-y-1">
-            {allUsers.length === 0 && <li className="text-white/80">No users</li>}
+            {allUsers.length === 0 && (
+              <li className="text-white/80">No users</li>
+            )}
             {allUsers.map((u) => (
               <li key={`${u.id}-${u.status}`} className="text-white/90">
                 {u.label}{' '}
-                <span className="ml-2 text-xs opacity-80">
-                  ({u.status})
-                </span>
+                <span className="ml-2 text-xs opacity-80">({u.status})</span>
               </li>
             ))}
           </ul>
