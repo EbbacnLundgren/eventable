@@ -16,8 +16,11 @@ export default function CreateEventPage() {
     location: '',
     date: '',
     time: '',
+    endDate: '',
+    endTime: '',
     description: '',
     image: null as File | null,
+    allowInviteesToInvite: false,
   })
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
@@ -227,6 +230,23 @@ export default function CreateEventPage() {
             />
           </div>
 
+          <label className="font-serif text-purple-600">
+            End date and time (optional)
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="date"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleInputChange}
+              className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
+            />
+            <TimePicker
+              value={formData.endTime}
+              onChange={(v) => setFormData((prev) => ({ ...prev, endTime: v }))}
+            />
+          </div>
+
           <label className="font-serif text-purple-600">Description</label>
           <input
             type="text"
@@ -235,6 +255,27 @@ export default function CreateEventPage() {
             onChange={handleInputChange}
             className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
           />
+        </div>
+
+        <div className="flex items-center gap-2 mt-2">
+          <input
+            type="checkbox"
+            id="allowInviteesToInvite"
+            checked={formData.allowInviteesToInvite}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                allowInviteesToInvite: e.target.checked,
+              }))
+            }
+            className="w-4 h-4 accent-pink-500"
+          />
+          <label
+            htmlFor="allowInviteesToInvite"
+            className="font-serif text-purple-600"
+          >
+            Allow invitees to invite others
+          </label>
         </div>
 
         <button
