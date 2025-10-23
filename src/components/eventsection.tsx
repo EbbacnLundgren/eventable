@@ -7,6 +7,10 @@ import Link from 'next/link'
 
 interface EventsSectionProps {
   events: Event[]
+  pendingIds?: number[]
+  onAcceptInvite?: (eventId: number) => void
+  onDeclineInvite?: (eventId: number) => void
+  ownEventIds?: number[]
 }
 
 const EventsSection = ({ events }: EventsSectionProps) => {
