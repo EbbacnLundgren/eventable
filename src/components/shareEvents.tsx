@@ -27,7 +27,6 @@ export default function ShareEventButton({
           <Share2 size={24} />
           Share event
         </button>
-
       </div>
 
       {/* Toast */}
