@@ -61,7 +61,9 @@ export default function TimePicker({
         value={value}
         onChange={handleInputChange}
         onFocus={() => setShowDropdown(true)}
-        className="border p-2 rounded w-full"
+        className="p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 
+                   text-black placeholder-black focus:outline-none focus:ring-2 
+                   focus:ring-pink-400 w-full"
         placeholder="HH:mm"
       />
       {showDropdown && (
@@ -70,7 +72,7 @@ export default function TimePicker({
             <div
               key={t}
               onClick={() => handleSelect(t)}
-              className="p-2 hover:bg-pink-100 cursor-pointer"
+              className="p-2 hover:bg-pink-100 cursor-pointer text-black"
             >
               {t}
             </div>
