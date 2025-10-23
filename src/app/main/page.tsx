@@ -5,27 +5,20 @@ import EventSection from '@/components/eventsection'
 import CreateEventForm from '@/components/createEventForm'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
-import type { Event } from '@/types/event'
+
+interface Event {
+  id: number
+  name: string
+  location: string
+  date: string
+  time: number
+  image?: string
+}
 
 type InviteStatus = 'pending' | 'accepted' | 'declined' | null
 interface InviteRow {
   event_id: number
   status: InviteStatus
-}
-type EventIdRow = { id: number }
-
-type AppUserRow = {
-  id: string
-  first_name?: string | null
-  last_name?: string | null
-  email?: string | null
-}
-
-type GoogleUserRow = {
-  id: string
-  first_name?: string | null
-  last_name?: string | null
-  email?: string | null
 }
 
 export default function MainPage() {
@@ -63,7 +56,7 @@ export default function MainPage() {
       // Google login via NextAuth
       else if (session?.user?.email) {
         email = session.user.email
-        // Kolla users först
+        // Kolla auth.users först
         const { data: supaUser } = await supabase
           .from('auth.users')
           .select('id')
@@ -131,12 +124,7 @@ export default function MainPage() {
         .eq('user_id', userId)
         .order('date', { ascending: true })
       if (ownErr) console.error('Error fetching own events:', ownErr)
-      const own = (ownEvents as Event[] | null) ?? []
-      setOwnEventIds(own.map((e) => e.id))
-
-      setOwnEventIds(
-        ((ownEvents as EventIdRow[] | null) ?? []).map((e) => e.id)
-      )
+      setOwnEventIds((ownEvents ?? []).map((e: any) => e.id))
 
       // Accepted-invited events
       // Accepted-invited events
@@ -170,92 +158,27 @@ export default function MainPage() {
       ]) {
         mergedById.set(ev.id, ev)
       }
-
-      // Attach hostLabel by fetching profiles directly from Supabase (no proxy)
-      // Attach hostLabel by fetching profiles directly from Supabase (no proxy)
-      const merged = Array.from(mergedById.values()) as Event[]
-      const userIds = Array.from(
-        new Set(
-          merged
-            .map((e: Event) => e.user_id)
-            .filter((id): id is string => Boolean(id))
-        )
-      ) as string[]
-
-      const hostMap: Record<string, string | null> = {}
-      if (userIds.length > 0) {
-        try {
-          // public.users
-          const { data: appUsers } = await supabase
-            .from('auth.users')
-            .select('id, first_name, last_name, email')
-            .in('id', userIds)
-
-          if (appUsers) {
-            for (const u of appUsers as AppUserRow[]) {
-              hostMap[u.id] = u.first_name
-                ? `${u.first_name} ${u.last_name || ''}`.trim()
-                : u.email || null
-            }
-          }
-
-          // google_users (fallback om ingen träff i users)
-          const { data: googleUsers } = await supabase
-            .from('google_users')
-            .select('id, first_name, last_name, email')
-            .in('id', userIds)
-
-          if (googleUsers) {
-            for (const g of googleUsers as GoogleUserRow[]) {
-              if (!hostMap[g.id]) {
-                hostMap[g.id] = g.first_name
-                  ? `${g.first_name} ${g.last_name || ''}`.trim()
-                  : g.email || null
-              }
-            }
-          }
-        } catch (e) {
-          console.error('Error fetching host profiles:', e)
-        }
-      }
-
-      const annotated = merged.map((ev: Event) => ({
-        ...ev,
-        hostLabel: ev.user_id ? (hostMap[ev.user_id] ?? null) : null,
-      }))
-
-      setEvents(annotated)
+      setEvents(Array.from(mergedById.values()))
     }
     fetchEvents()
   }, [session])
 
   const resolveCurrentUserId = async () => {
+    // Samma logik som i fetchEvents/AutoAddInvite
     let email: string | null = null
     const {
       data: { user: supaUser },
     } = await supabase.auth.getUser()
-
-    if (supaUser?.email) {
-      email = supaUser.email
-      console.log('Supabase Auth email:', email)
-    } else if (session?.user?.email) {
-      email = session.user.email
-      console.log('NextAuth email:', email)
-    }
-
-    if (!email) {
-      console.warn('No email found for current user.')
-      return null
-    }
+    if (supaUser?.email) email = supaUser.email
+    else if (session?.user?.email) email = session.user.email
+    if (!email) return null
 
     // Försök hämta google_users.id (det är detta som används i event_invites)
     const { data: gUser } = await supabase
       .from('google_users')
-      .select('id, email')
+      .select('id')
       .eq('email', email)
       .single()
-
-    console.log('Matched google_users entry:', gUser)
 
     return gUser?.id ?? supaUser?.id ?? null
   }
@@ -263,10 +186,6 @@ export default function MainPage() {
   const handleAcceptInvite = async (eventId: number) => {
     const currentUserId = await resolveCurrentUserId()
     if (!currentUserId) return
-
-    console.log('RSVP attempt →')
-    console.log('Event ID:', eventId)
-    console.log('Current user ID (the one accepting):', currentUserId)
 
     const { error } = await supabase
       .from('event_invites')
@@ -312,7 +231,7 @@ export default function MainPage() {
   const addEvent = (event: Event) => setEvents((prev) => [...prev, event])
 
   return (
-    <div className="min-h-screen flex flex-col items-center">
+    <div className="min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white flex flex-col items-center">
       {userInfo && (
         <p className="text-lg font-semibold mb-4">
           Hej {userInfo.email} (ID: {userInfo.id})
