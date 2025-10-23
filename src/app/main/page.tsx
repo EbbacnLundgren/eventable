@@ -15,6 +15,12 @@ interface Event {
   image?: string
 }
 
+type InviteStatus = 'pending' | 'accepted' | 'declined' | null
+interface InviteRow {
+  event_id: number
+  status: InviteStatus
+}
+
 export default function MainPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [showForm, setShowForm] = useState(false)
@@ -25,7 +31,6 @@ export default function MainPage() {
   } | null>(null)
 
   const [pendingIds, setPendingIds] = useState<number[]>([])
-  const [acceptedInvites, setAcceptedInvites] = useState<number[]>([])
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -92,23 +97,24 @@ export default function MainPage() {
       setUserInfo({ id: userId, email })
 
       // ---- Steg 1: hämta invites och dela upp pending/accepted ----
-      const { data: invites, error: invErr } = await supabase
+      const { data: invitesRaw, error: invErr } = await supabase
         .from('event_invites')
         .select('event_id, status')
         .eq('invited_user_id', userId)
 
       if (invErr) console.error('Error fetching invites:', invErr)
 
-      const pending = (invites || [])
-        .filter((i: any) => i.status === 'pending')
-        .map((i: any) => i.event_id)
+      const invites: InviteRow[] = (invitesRaw as InviteRow[] | null) ?? []
 
-      const accepted = (invites || [])
-        .filter((i: any) => i.status === 'accepted')
-        .map((i: any) => i.event_id)
+      const pending = invites
+        .filter((i) => i.status === 'pending')
+        .map((i) => i.event_id)
+
+      const accepted = invites
+        .filter((i) => i.status === 'accepted')
+        .map((i) => i.event_id)
 
       setPendingIds(pending)
-      setAcceptedInvites(accepted)
 
       // Egna events
       const { data: ownEvents, error: ownErr } = await supabase

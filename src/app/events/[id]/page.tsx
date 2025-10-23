@@ -6,7 +6,6 @@ import { Camera, Music } from 'lucide-react'
 import { ArrowLeft } from 'lucide-react'
 
 import ShareEventButton from '@/components/shareEvents'
-import JoinEvent from '@/components/joinEvent'
 import AutoAddInvite from '@/components/AutoAddInvite'
 
 export default async function EventDetailsPage({

@@ -7,6 +7,17 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
   const { data: session } = useSession()
   const [msg, setMsg] = useState<string | null>(null)
 
+  type InviteStatus = 'pending' | 'accepted' | 'declined' | null
+  interface InviteRow {
+    id: string
+    status: InviteStatus
+  }
+  interface DbError {
+    code?: string
+    message?: string
+    details?: string
+  }
+
   useEffect(() => {
     ;(async () => {
       // 1) Hämta e-post
@@ -59,7 +70,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         .select('id, status')
         .eq('event_id', eid)
         .eq('invited_user_id', userId)
-        .maybeSingle()
+        .maybeSingle<InviteRow>()
 
       if (existErr) {
         setMsg('Kunde inte kontrollera inbjudan.')
@@ -78,9 +89,9 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
           .insert({ event_id: eid, invited_user_id: userId, status: 'pending' })
 
         if (insErr) {
-          // Om unique-violation, behandla som redan finns
-          // @ts-ignore
-          if (insErr.code !== '23505') {
+          const dbErr = insErr as DbError
+          const isUniqueViolation = dbErr.code === '23505'
+          if (!isUniqueViolation) {
             setMsg('Could not add event.')
             return
           }

@@ -7,17 +7,9 @@ import Link from 'next/link'
 
 interface EventsSectionProps {
   events: Event[]
-  pendingIds?: number[]
-  onAcceptInvite?: (eventId: number) => void
-  onDeclineInvite?: (eventId: number) => void
 }
 
-const EventsSection = ({
-  events,
-  pendingIds = [],
-  onAcceptInvite,
-  onDeclineInvite,
-}: EventsSectionProps) => {
+const EventsSection = ({ events }: EventsSectionProps) => {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const today = new Date()
@@ -70,17 +62,15 @@ const EventsSection = ({
       <div className="relative flex bg-white/20 rounded-md p-1 mb-6 w-full max-w-md">
         {/* Active background "slider" */}
         <div
-          className={`absolute top-1 bottom-1 left-0 w-1/2 rounded-sm bg-pink-500 transition-all duration-300 ease-in-out ${
-            activeTab === 'upcoming' ? 'left-0' : 'left-1/2'
-          }`}
+          className={`absolute top-1 bottom-1 left-0 w-1/2 rounded-sm bg-pink-500 transition-all duration-300 ease-in-out ${activeTab === 'upcoming' ? 'left-0' : 'left-1/2'
+            }`}
         ></div>
 
         {/* Upcoming tab */}
         <button
           onClick={() => setActiveTab('upcoming')}
-          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
-            activeTab === 'upcoming' ? 'text-white' : 'text-black bg-gray-200'
-          }`}
+          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${activeTab === 'upcoming' ? 'text-white' : 'text-black bg-gray-200'
+            }`}
         >
           Upcoming Events
         </button>
@@ -88,9 +78,8 @@ const EventsSection = ({
         {/* Past tab */}
         <button
           onClick={() => setActiveTab('past')}
-          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
-            activeTab === 'past' ? 'text-white' : 'text-black bg-gray-200'
-          }`}
+          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${activeTab === 'past' ? 'text-white' : 'text-black bg-gray-200'
+            }`}
         >
           Past Events
         </button>
@@ -141,32 +130,6 @@ const EventsSection = ({
                 >
                   View Details
                 </button>
-
-                {pendingIds?.includes(event.id) && (
-                  <div className="mt-3 flex items-center gap-2">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault()
-                        onAcceptInvite?.(event.id)
-                      }}
-                      className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
-                    >
-                      Accept invite
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault()
-                        onDeclineInvite?.(event.id)
-                      }}
-                      className="px-3 py-1.5 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700"
-                    >
-                      Decline invite
-                    </button>
-                    <span className="ml-2 text-xs text-white/80">
-                      Invit väntar
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
           </Link>
