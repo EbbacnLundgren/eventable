@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
-import { signIn } from 'next-auth/react'
+import { useState, FormEvent, useEffect } from 'react'
+import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
+import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 
@@ -11,23 +12,64 @@ export default function LoginBox() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
+  const { data: session } = useSession()
   const [showPassword, setShowPassword] = useState(false)
+
+  // När användaren loggar in med Google, skapa/updatera rad i google_users
+  useEffect(() => {
+    const createOrUpdateGoogleUser = async () => {
+      if (!session?.user?.email) return
+
+      const email = session.user.email
+
+      // Om det redan finns en rad i auth.users med samma email → slå ihop
+      const { data: supaUser } = await supabase
+        .from('auth.users')
+        .select('id')
+        .eq('email', email)
+        .single()
+
+      let userId = supaUser?.id
+
+      if (!userId) {
+        const { data: newGoogleUser, error } = await supabase
+          .from('google_users')
+          .upsert(
+            {
+              email,
+              first_name: session.user.name?.split(' ')[0] || '',
+              last_name: session.user.name?.split(' ')[1] || '',
+              avatar_url: session.user.image || '',
+              created_at: new Date().toISOString(),
+              phone_nbr: '',
+            },
+            { onConflict: 'email' }
+          )
+          .select()
+          .single()
+
+        if (error) {
+          console.error('Error upserting google_user:', error)
+        } else {
+          userId = newGoogleUser?.id
+        }
+      }
+    }
+
+    createOrUpdateGoogleUser()
+  }, [session])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setMessage('')
 
-    const result = await signIn('credentials', {
-      redirect: false,
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
 
-    if (result?.error) {
-      setMessage(result.error)
-    } else {
-      router.push('/main')
-    }
+    if (error) setMessage(error.message)
+    else router.push('/main')
   }
 
   return (
