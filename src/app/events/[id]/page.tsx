@@ -8,6 +8,7 @@ import { ArrowLeft } from 'lucide-react'
 import ShareEventButton from '@/components/shareEvents'
 import AutoAddInvite from '@/components/AutoAddInvite'
 import { formatTime } from '@/lib/formatTime'
+import InviteStatusList from '@/components/InviteStatusList'
 
 export default async function EventDetailsPage({
   params,
@@ -87,6 +88,30 @@ export default async function EventDetailsPage({
     }
   }
 
+  // Fetch invite statuses (accepted / declined) for this event
+  const acceptedIds: string[] = []
+  const declinedIds: string[] = []
+  try {
+    const { data: invites } = await supabase
+      .from('event_invites')
+      .select('invited_user_id, status')
+      .eq('event_id', event.id)
+
+    if (invites && Array.isArray(invites)) {
+      type InvRow = {
+        invited_user_id: string
+        status: 'accepted' | 'declined' | string | null
+      }
+      for (const inv of invites as InvRow[]) {
+        if (inv.status === 'accepted') acceptedIds.push(inv.invited_user_id)
+        else if (inv.status === 'declined')
+          declinedIds.push(inv.invited_user_id)
+      }
+    }
+  } catch (e) {
+    console.error('Error fetching invites for event detail:', e)
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white py-10 px-6">
       <div className="max-w-5xl mx-auto flex gap-6 items-start">
@@ -144,6 +169,11 @@ export default async function EventDetailsPage({
               </div>
             )}
             <AutoAddInvite eventId={Number(event.id)} />
+
+            <InviteStatusList
+              acceptedIds={acceptedIds}
+              declinedIds={declinedIds}
+            />
 
             <div className="mt-6 flex justify-center">
               <ShareEventButton eventId={Number(event.id)} />
