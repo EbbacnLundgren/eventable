@@ -28,29 +28,36 @@ export default function CreateEventPage() {
 
     let userId: string | null = null
 
-    // 1) Försök Supabase Auth först (samma som i MainPage)
+    // 1) Hämta email från Supabase Auth eller NextAuth
+    let email: string | null = null
     const {
       data: { user: supabaseUser },
     } = await supabase.auth.getUser()
+    if (supabaseUser?.email) email = supabaseUser.email
+    else if (session?.user?.email) email = session.user.email
 
-    if (supabaseUser?.id) {
-      userId = supabaseUser.id
+    if (!email) {
+      setMessage('You must be logged in to create an event.')
+      setStatus('error')
+      return
     }
-    // 2) Annars, om NextAuth-session finns, plocka från google_users
-    else if (session?.user?.email) {
-      const { data: googleUser, error } = await supabase
-        .from('google_users')
-        .select('id')
-        .eq('email', session.user.email)
-        .single()
 
-      if (googleUser && !error) {
-        userId = googleUser.id
-      }
+    // 2) Försök använda google_users.id först (matchar MainPage & invites)
+    const { data: gUser } = await supabase
+      .from('google_users')
+      .select('id')
+      .eq('email', email)
+      .single()
+
+    if (gUser?.id) {
+      userId = gUser.id
+    } else if (supabaseUser?.id) {
+      // fallback till Supabase UID om ingen google_users-rad finns
+      userId = supabaseUser.id
     }
 
     if (!userId) {
-      setMessage('Invalid user')
+      setMessage('You must be logged in to create an event.')
       setStatus('error')
       return
     }
@@ -176,8 +183,9 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
-              }`}
+            className={`text-center text-sm mt-2 ${
+              status === 'success' ? 'text-green-600' : 'text-red-500'
+            }`}
           >
             {message}
           </p>

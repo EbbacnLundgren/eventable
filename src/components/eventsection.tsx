@@ -7,9 +7,17 @@ import Link from 'next/link'
 
 interface EventsSectionProps {
   events: Event[]
+  pendingIds?: number[]
+  onAcceptInvite?: (eventId: number) => void
+  onDeclineInvite?: (eventId: number) => void
 }
 
-const EventsSection = ({ events }: EventsSectionProps) => {
+const EventsSection = ({
+  events,
+  pendingIds = [],
+  onAcceptInvite,
+  onDeclineInvite,
+}: EventsSectionProps) => {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const today = new Date()
@@ -133,6 +141,32 @@ const EventsSection = ({ events }: EventsSectionProps) => {
                 >
                   View Details
                 </button>
+
+                {pendingIds?.includes(event.id) && (
+                  <div className="mt-3 flex items-center gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        onAcceptInvite?.(event.id)
+                      }}
+                      className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+                    >
+                      Accept invite
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        onDeclineInvite?.(event.id)
+                      }}
+                      className="px-3 py-1.5 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700"
+                    >
+                      Decline invite
+                    </button>
+                    <span className="ml-2 text-xs text-white/80">
+                      Invit väntar
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </Link>
