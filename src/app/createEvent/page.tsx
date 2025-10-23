@@ -132,13 +132,22 @@ export default function CreateEventPage() {
       user_id: userId,
     }
 
-    const selectedDateTime = new Date(
-      `${formData.date}T${formData.time || '00:00'}`
-    )
+    //dubbelkolla ås tiden stämmer (inte i dåtiden)
     const now = new Date()
+    const startDateTime = new Date(`${formData.date}T${formData.time || '00:00'}`)
+    const endDateTime =
+      formData.endDate || formData.endTime
+        ? new Date(`${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`)
+        : null
 
-    if (selectedDateTime < now) {
+    if (startDateTime < now) {
       setMessage('That date has already been.')
+      setStatus('error')
+      return
+    }
+
+    if (endDateTime && endDateTime < startDateTime) {
+      setMessage('End time cannot be before start time.')
       setStatus('error')
       return
     }
@@ -307,9 +316,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
