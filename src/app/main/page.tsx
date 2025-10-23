@@ -25,6 +25,7 @@ export default function MainPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [showForm, setShowForm] = useState(false)
   const { data: session } = useSession()
+  const [ownEventIds, setOwnEventIds] = useState<number[]>([])
   const [userInfo, setUserInfo] = useState<{
     id: string
     email: string
@@ -123,6 +124,7 @@ export default function MainPage() {
         .eq('user_id', userId)
         .order('date', { ascending: true })
       if (ownErr) console.error('Error fetching own events:', ownErr)
+      setOwnEventIds((ownEvents ?? []).map((e: any) => e.id))
 
       // Accepted-invited events
       // Accepted-invited events
@@ -256,6 +258,7 @@ export default function MainPage() {
         pendingIds={pendingIds}
         onAcceptInvite={handleAcceptInvite}
         onDeclineInvite={handleDeclineInvite}
+        ownEventIds={ownEventIds}
       />
     </div>
   )
