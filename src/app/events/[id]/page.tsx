@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react'
 
 import ShareEventButton from '@/components/shareEvents'
 import AutoAddInvite from '@/components/AutoAddInvite'
+import { formatTime } from '@/lib/formatTime'
 
 export default async function EventDetailsPage({
   params,
@@ -44,6 +45,46 @@ export default async function EventDetailsPage({
         </Link>
       </div>
     )
+  }
+
+  // Resolve host (the user who created the event) server-side.
+  // Prefer `users`, then `google_users` for name/email lookup.
+  let hostLabel: string | null = null
+  if (event.user_id) {
+    try {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('first_name, last_name, email')
+        .eq('id', event.user_id)
+        .single()
+
+      if (profile) {
+        hostLabel = profile.first_name
+          ? `${profile.first_name} ${profile.last_name || ''}`.trim()
+          : profile.email || null
+      } else {
+        const { data: g } = await supabase
+          .from('google_users')
+          .select('first_name, last_name, email')
+          .eq('id', event.user_id)
+          .single()
+
+        if (g) {
+          hostLabel = g.first_name
+            ? `${g.first_name} ${g.last_name || ''}`.trim()
+            : g.email || null
+        } else {
+          const { data: authUser } = await supabase
+            .from('users')
+            .select('email')
+            .eq('id', event.user_id)
+            .single()
+          hostLabel = authUser?.email ?? null
+        }
+      }
+    } catch (e) {
+      console.error('Error resolving host for event:', e)
+    }
   }
 
   return (
@@ -94,7 +135,12 @@ export default async function EventDetailsPage({
             </div>
             {event.time && (
               <div>
-                <strong>Time:</strong> {event.time}
+                <strong>Time:</strong> {formatTime(event.time)}
+              </div>
+            )}
+            {hostLabel && (
+              <div>
+                <strong>Host:</strong> {hostLabel}
               </div>
             )}
             <AutoAddInvite eventId={Number(event.id)} />

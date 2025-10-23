@@ -5,15 +5,7 @@ import EventSection from '@/components/eventsection'
 import CreateEventForm from '@/components/createEventForm'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
-
-interface Event {
-  id: number
-  name: string
-  location: string
-  date: string
-  time: number
-  image?: string
-}
+import type { Event } from '@/types/event'
 
 type InviteStatus = 'pending' | 'accepted' | 'declined' | null
 interface InviteRow {
@@ -57,9 +49,9 @@ export default function MainPage() {
       // Google login via NextAuth
       else if (session?.user?.email) {
         email = session.user.email
-        // Kolla auth.users först
+        // Kolla users först
         const { data: supaUser } = await supabase
-          .from('auth.users')
+          .from('users')
           .select('id')
           .eq('email', email)
           .single()
@@ -164,7 +156,54 @@ export default function MainPage() {
       ]) {
         mergedById.set(ev.id, ev)
       }
-      setEvents(Array.from(mergedById.values()))
+
+      // Attach hostLabel by fetching profiles directly from Supabase (no proxy)
+      const merged = Array.from(mergedById.values()) as Event[]
+      const userIds = Array.from(
+        new Set(merged.map((e) => e.user_id).filter(Boolean))
+      ) as string[]
+
+      const hostMap: Record<string, string | null> = {}
+      if (userIds.length > 0) {
+        try {
+          const { data: appUsers } = await supabase
+            .from('users')
+            .select('id, first_name, last_name, email')
+            .in('id', userIds)
+
+          if (appUsers) {
+            for (const u of appUsers as any[]) {
+              hostMap[u.id] = u.first_name
+                ? `${u.first_name} ${u.last_name || ''}`.trim()
+                : u.email || null
+            }
+          }
+
+          const { data: googleUsers } = await supabase
+            .from('google_users')
+            .select('id, first_name, last_name, email')
+            .in('id', userIds)
+
+          if (googleUsers) {
+            for (const g of googleUsers as any[]) {
+              if (!hostMap[g.id]) {
+                hostMap[g.id] = g.first_name
+                  ? `${g.first_name} ${g.last_name || ''}`.trim()
+                  : g.email || null
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Error fetching host profiles:', e)
+        }
+      }
+
+      const annotated = merged.map((ev) => ({
+        ...ev,
+        hostLabel: ev.user_id ? hostMap[ev.user_id] ?? null : null,
+      }))
+
+      setEvents(annotated)
     }
     fetchEvents()
   }, [session])

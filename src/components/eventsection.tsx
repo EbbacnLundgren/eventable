@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import EventDetails from '@/components/eventDetails'
 import type { Event } from '@/types/event'
+import { formatTime } from '@/lib/formatTime'
 import Link from 'next/link'
 
 interface EventsSectionProps {
@@ -72,17 +73,15 @@ const EventsSection = ({
       <div className="relative flex bg-white/20 rounded-md p-1 mb-6 w-full max-w-md">
         {/* Active background "slider" */}
         <div
-          className={`absolute top-1 bottom-1 left-0 w-1/2 rounded-sm bg-pink-500 transition-all duration-300 ease-in-out ${
-            activeTab === 'upcoming' ? 'left-0' : 'left-1/2'
-          }`}
+          className={`absolute top-1 bottom-1 left-0 w-1/2 rounded-sm bg-pink-500 transition-all duration-300 ease-in-out ${activeTab === 'upcoming' ? 'left-0' : 'left-1/2'
+            }`}
         ></div>
 
         {/* Upcoming tab */}
         <button
           onClick={() => setActiveTab('upcoming')}
-          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
-            activeTab === 'upcoming' ? 'text-white' : 'text-black bg-gray-200'
-          }`}
+          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${activeTab === 'upcoming' ? 'text-white' : 'text-black bg-gray-200'
+            }`}
         >
           Upcoming Events
         </button>
@@ -90,9 +89,8 @@ const EventsSection = ({
         {/* Past tab */}
         <button
           onClick={() => setActiveTab('past')}
-          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
-            activeTab === 'past' ? 'text-white' : 'text-black bg-gray-200'
-          }`}
+          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${activeTab === 'past' ? 'text-white' : 'text-black bg-gray-200'
+            }`}
         >
           Past Events
         </button>
@@ -119,18 +117,23 @@ const EventsSection = ({
                   {event.name}
                 </h3>
                 <p className="text-sm text-white/80 drop-shadow">
-                  {new Date(event.date).toISOString().split('T')[0]}
+                  When: {new Date(event.date).toISOString().split('T')[0]}
                 </p>
 
                 {event.time !== undefined && (
                   <p className="text-sm text-white/80 drop-shadow">
-                    Time: {event.time}:00
+                    Time: {formatTime(event.time)}
                   </p>
                 )}
 
                 <p className="text-sm text-white/90 drop-shadow">
-                  {event.location}
+                  Location: {event.location}
                 </p>
+                {event.hostLabel !== undefined && (
+                  <p className="text-sm text-white/80 drop-shadow mt-1">
+                    <strong>Host:</strong> {event.hostLabel ?? 'Unknown'}
+                  </p>
+                )}
                 <button
                   onClick={(e) => {
                     e.preventDefault() // prevent navigation when opening modal
