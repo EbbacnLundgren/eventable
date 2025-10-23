@@ -316,7 +316,7 @@ export default function MainPage() {
                    hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-red-100 
                    dark:focus:ring-red-400 font-medium rounded-lg text-sm px-2 py-2.5 text-center mb-4 inline-block"
       >
-        + Create Event Page
+        + Create Event
       </Link>
 
       <EventSection
