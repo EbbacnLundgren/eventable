@@ -3,7 +3,9 @@ export interface Event {
   name: string
   location: string
   date: string
-  time?: number
+  time?: string
+  end_date?: string | null
+  end_time?: string | null
   description?: string
   participants?: string[]
   image?: string
