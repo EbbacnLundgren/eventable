@@ -20,7 +20,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
 
   useEffect(() => {
     ;(async () => {
-      // 1) Hämta e-post för aktuell användare
+      // 1) Hämta e-post
       let email: string | null = null
       const {
         data: { user: supabaseUser },
@@ -33,7 +33,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         return
       }
 
-      // 2) Säkerställ att användaren finns i google_users och hämta id
+      // 2) Säkerställ google_users-rad och hämta id
       const { data: gUser, error: upErr } = await supabase
         .from('google_users')
         .upsert(
@@ -64,42 +64,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
 
       const storageKey = `inviteToast:${userId}:${eid}`
 
-      // 3) Hämta värdens user_id från events
-      const { data: eventRow, error: eventErr } = await supabase
-        .from('events')
-        .select('user_id')
-        .eq('id', eid)
-        .single()
-
-      if (eventErr || !eventRow) return
-
-      // 4) Hämta värdens e-postadress för korrekt jämförelse
-      let hostEmail: string | null = null
-      if (eventRow.user_id) {
-        const { data: hostGoogle } = await supabase
-          .from('google_users')
-          .select('email')
-          .eq('id', eventRow.user_id)
-          .single()
-
-        if (hostGoogle?.email) hostEmail = hostGoogle.email
-        else {
-          const { data: hostAppUser } = await supabase
-            .from('users')
-            .select('email')
-            .eq('id', eventRow.user_id)
-            .single()
-          if (hostAppUser?.email) hostEmail = hostAppUser.email
-        }
-      }
-
-      // 5) Om aktuell användare är värden → ingen inbjudan skapas
-      if (hostEmail && hostEmail === email) {
-        console.log('Skipping invite creation for host:', email)
-        return
-      }
-
-      // 6) Kontrollera om inbjudan redan finns
+      // 3) Kolla befintlig invite
       const { data: existing, error: existErr } = await supabase
         .from('event_invites')
         .select('id, status')
@@ -125,7 +90,8 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
 
         if (insErr) {
           const dbErr = insErr as DbError
-          if (dbErr.code !== '23505') {
+          const isUniqueViolation = dbErr.code === '23505'
+          if (!isUniqueViolation) {
             setMsg('Could not add event.')
             return
           }
@@ -140,7 +106,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         return
       }
 
-      // Finns redan som pending: visa endast första gången
+      // Finns redan som pending: visa endast första gången på den här enheten
       if (existing.status === 'pending' && !localStorage.getItem(storageKey)) {
         setMsg('This event already exists on your page.')
         localStorage.setItem(storageKey, '1')

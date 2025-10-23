@@ -65,7 +65,7 @@ export default function MainPage() {
         email = session.user.email
         // Kolla users först
         const { data: supaUser } = await supabase
-          .from('users')
+          .from('auth.users')
           .select('id')
           .eq('email', email)
           .single()
@@ -187,7 +187,7 @@ export default function MainPage() {
         try {
           // public.users
           const { data: appUsers } = await supabase
-            .from('users')
+            .from('auth.users')
             .select('id, first_name, last_name, email')
             .in('id', userIds)
 
