@@ -8,7 +8,6 @@ import { Eye, EyeOff } from 'lucide-react'
 
 export default function LoginBox() {
   const router = useRouter()
-  const { data: session } = useSession()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
