@@ -6,7 +6,8 @@ import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import TimePicker from '@/components/timePicker'
 import { useSession } from 'next-auth/react'
-import { Image as ImageIcon, Shuffle } from 'lucide-react'
+import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
+import Link from 'next/link'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -15,8 +16,11 @@ export default function CreateEventPage() {
     location: '',
     date: '',
     time: '',
+    endDate: '',
+    endTime: '',
     description: '',
     image: null as File | null,
+    allowInviteesToInvite: false,
   })
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
@@ -27,6 +31,7 @@ export default function CreateEventPage() {
     '/images/default2.jpg',
     '/images/default3.jpg',
     '/images/default4.jpg',
+    '/images/default5.jpg',
   ]
 
   const [selectedImage, setSelectedImage] = useState(defaultImages[0])
@@ -145,6 +150,14 @@ export default function CreateEventPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
+      <Link
+        href="/main"
+        className="fixed top-4 left-4 text-pink-600 hover:text-pink-800 z-50"
+        aria-label="Back to main page"
+      >
+        <ArrowLeft size={26} />
+      </Link>
+
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-2xl flex flex-col gap-5 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
@@ -182,12 +195,12 @@ export default function CreateEventPage() {
           </div>
         </div>
 
-        <h2 className="text-3xl font-bold text-center text-pink-800">
+        <h2 className="font-serif text-2xl font-bold text-center text-pink-800">
           Create Event
         </h2>
 
         <div className="flex flex-col gap-3">
-          <label className="font-medium text-purple-600">Event name</label>
+          <label className="font-serif text-purple-600">Event name</label>
           <input
             type="text"
             name="name"
@@ -197,7 +210,7 @@ export default function CreateEventPage() {
             required
           />
 
-          <label className="font-medium text-purple-600">Location</label>
+          <label className="font-serif text-purple-600">Location</label>
           <input
             type="text"
             name="location"
@@ -207,7 +220,7 @@ export default function CreateEventPage() {
             required
           />
 
-          <label className="font-medium text-purple-600">Date and time</label>
+          <label className="font-serif text-purple-600">Date and time</label>
           <div className="flex gap-2">
             <input
               type="date"
@@ -223,7 +236,24 @@ export default function CreateEventPage() {
             />
           </div>
 
-          <label className="font-medium text-purple-600">Description</label>
+          <label className="font-serif text-purple-600">
+            End date and time (optional)
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="date"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleInputChange}
+              className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
+            />
+            <TimePicker
+              value={formData.endTime}
+              onChange={(v) => setFormData((prev) => ({ ...prev, endTime: v }))}
+            />
+          </div>
+
+          <label className="font-serif text-purple-600">Description</label>
           <input
             type="text"
             name="description"
@@ -231,6 +261,27 @@ export default function CreateEventPage() {
             onChange={handleInputChange}
             className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
           />
+        </div>
+
+        <div className="flex items-center gap-2 mt-2">
+          <input
+            type="checkbox"
+            id="allowInviteesToInvite"
+            checked={formData.allowInviteesToInvite}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                allowInviteesToInvite: e.target.checked,
+              }))
+            }
+            className="w-4 h-4 accent-pink-500"
+          />
+          <label
+            htmlFor="allowInviteesToInvite"
+            className="font-serif text-purple-600"
+          >
+            Allow invitees to invite others
+          </label>
         </div>
 
         <button
@@ -242,9 +293,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
