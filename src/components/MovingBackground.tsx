@@ -2,15 +2,43 @@
 
 import { useEffect, useRef } from 'react'
 
+declare global {
+  interface Window {
+    THREE?: typeof import('three')
+    VANTA?: {
+      FOG?: (options: VantaFogOptions) => VantaEffect
+    }
+  }
+}
+
+interface VantaEffect {
+  destroy: () => void
+}
+
+interface VantaFogOptions {
+  el: HTMLElement
+  mouseControls?: boolean
+  touchControls?: boolean
+  gyroControls?: boolean
+  minHeight?: number
+  minWidth?: number
+  highlightColor?: number
+  midtoneColor?: number
+  lowlightColor?: number
+  baseColor?: number
+  blurFactor?: number
+  speed?: number
+  zoom?: number
+  backgroundAlpha?: number
+}
+
 export default function MovingBackground() {
   const vantaRef = useRef<HTMLDivElement>(null)
+  const effectRef = useRef<VantaEffect | null>(null)
 
   useEffect(() => {
-    let effect: any
-
     const loadVanta = async () => {
-      // Ladda Three.js om det inte finns
-      if (!(window as any).THREE) {
+      if (!window.THREE) {
         await new Promise<void>((resolve) => {
           const script = document.createElement('script')
           script.src =
@@ -20,8 +48,7 @@ export default function MovingBackground() {
         })
       }
 
-      // Ladda Vanta Fog via CDN
-      if (!(window as any).VANTA) {
+      if (!window.VANTA) {
         await new Promise<void>((resolve) => {
           const script = document.createElement('script')
           script.src =
@@ -31,9 +58,8 @@ export default function MovingBackground() {
         })
       }
 
-      // Initiera Vanta
-      if (vantaRef.current && (window as any).VANTA?.FOG) {
-        effect = (window as any).VANTA.FOG({
+      if (vantaRef.current && window.VANTA?.FOG) {
+        effectRef.current = window.VANTA.FOG({
           el: vantaRef.current,
           mouseControls: true,
           touchControls: true,
@@ -55,7 +81,7 @@ export default function MovingBackground() {
     loadVanta()
 
     return () => {
-      if (effect) effect.destroy()
+      effectRef.current?.destroy()
     }
   }, [])
 
