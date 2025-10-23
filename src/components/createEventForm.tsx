@@ -54,7 +54,7 @@ export default function CreateEventForm({
       name: formData.name,
       location: formData.location,
       date: formData.date,
-      time: formData.time !== '' ? Number(formData.time) : null,
+      time: formData.time || null,
       description: formData.description,
       image: imageUrl,
     }
