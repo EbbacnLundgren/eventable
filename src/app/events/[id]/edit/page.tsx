@@ -22,6 +22,8 @@ export default function EditEventPage() {
     location: '',
     date: '',
     time: '',
+    endDate: '',
+    endTime: '',
     description: '',
     image: '' as string | File,
   })
@@ -52,6 +54,8 @@ export default function EditEventPage() {
           location: data.location ?? '',
           date: data.date ?? '',
           time: data.time ?? '',
+          endDate: data.endDate ?? '',
+          endTime: data.endTime ?? '',
           description: data.description ?? '',
           image: data.image ?? '',
         })
@@ -106,6 +110,22 @@ export default function EditEventPage() {
       }
     }
 
+    const startDateTime = new Date(
+      `${formData.date}T${formData.time || '00:00'}`
+    )
+    const endDateTime =
+      formData.endDate || formData.endTime
+        ? new Date(
+            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+          )
+        : null
+
+    if (endDateTime && endDateTime < startDateTime) {
+      setMessage('End time cannot be before start time.')
+      setStatus('error')
+      return
+    }
+
     //console.log('Submitting changes:', formData)
 
     const { error } = await supabase
@@ -115,6 +135,8 @@ export default function EditEventPage() {
         location: formData.location,
         date: formData.date,
         time: formData.time || null,
+        endDate: formData.endDate || null,
+        endTime: formData.endTime || null,
         description: formData.description,
         image: imageUrl,
       })
@@ -218,6 +240,23 @@ export default function EditEventPage() {
           <TimePicker
             value={formData.time}
             onChange={(v) => setFormData((prev) => ({ ...prev, time: v }))}
+          />
+        </div>
+
+        <label className="font-serif text-purple-600">
+          End date and time (optional)
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="date"
+            name="endDate"
+            value={formData.endDate}
+            onChange={handleInputChange}
+            className="text-black flex-1 p-3 rounded-xl bg-white/40 border border-white/50"
+          />
+          <TimePicker
+            value={formData.endTime}
+            onChange={(v) => setFormData((prev) => ({ ...prev, endTime: v }))}
           />
         </div>
 
