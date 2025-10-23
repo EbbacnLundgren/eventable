@@ -18,19 +18,6 @@ export default function SignupBox() {
     setMessage('')
     setStatus('idle')
 
-    // Kontrollera om användaren redan finns i databasen
-    const { data: existingUser } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', email)
-      .single()
-
-    if (existingUser) {
-      setMessage('This account already exists')
-      setStatus('error')
-      return
-    }
-
     const passwordRegex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/
 
@@ -42,41 +29,30 @@ export default function SignupBox() {
       return
     }
 
-    // Skapa användaren via Supabase Auth
-    const { error } = await supabase.auth.signUp({ email, password })
+    // Skapa användare via Supabase Auth
+    const { data, error } = await supabase.auth.signUp({ email, password })
+
     if (error) {
       setMessage(error.message)
       setStatus('error')
       return
     }
 
-    // Hämta användarens ID
-    const { data: authData } = await supabase.auth.getUser()
-    const userId = authData?.user?.id
-    //if (!userId) return alert('Could not get user ID') denna kan vi inte ha med för userid skapas efter att användaren har klickat på mejlet och då komemr alltid denna upp..
+    // Lägg till användaren i google_users-tabellen
+    try {
+      await supabase.from('google_users').upsert({
+        email,
+        first_name: '',
+        last_name: '',
+        avatar_url: '',
+        created_at: new Date().toISOString(),
+        phone_nbr: '',
+      }, { onConflict: 'email' })
+    } catch (dbError) {
+      console.error('Error inserting into google_users:', dbError)
+    }
 
-    // Lägg till användaren i databasen (vi ignorerar svaret här för att undvika
-    // fel i klient-flödet när userId skapas först efter e-postverifiering).
-    // Om du vill hantera DB-fel, använd try/catch eller logga svaret.
-    await supabase.from('users').insert({
-      id: userId,
-      email,
-      created_at: new Date().toISOString(),
-      first_name: '',
-      last_name: '',
-      avatar_url: '',
-      phone_number: '',
-    })
-
-    /*if (insertError) {
-      setMessage('Error creating user profile.')
-      setStatus('error')
-      return
-    }*/ //Detta kommer ju ske också
-
-    setMessage(
-      'Account created. Please check your email to verify your account.'
-    )
+    setMessage('Account created. Please check your email to verify your account.')
     setStatus('success')
   }
 
@@ -138,9 +114,7 @@ export default function SignupBox() {
       </button>
 
       {message && (
-        <p
-          className={`mt-3 text-sm text-center ${status === 'success' ? 'text-green-600' : 'text-red-500'}`}
-        >
+        <p className={`mt-3 text-sm text-center ${status === 'success' ? 'text-green-600' : 'text-red-500'}`}>
           {message}
         </p>
       )}

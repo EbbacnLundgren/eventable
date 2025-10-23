@@ -1,55 +1,34 @@
 'use client'
 
-import { useState, FormEvent, useEffect } from 'react'
-import { supabase } from '@/lib/client'
-import { useRouter } from 'next/navigation'
+import { useState, FormEvent } from 'react'
 import { signIn, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 
 export default function LoginBox() {
   const router = useRouter()
+  const { data: session } = useSession()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
-  const { data: session } = useSession()
   const [showPassword, setShowPassword] = useState(false)
-
-  // När användaren loggar in med Google, skapa rad i google_users om den inte finns
-  useEffect(() => {
-    const createUserIfNotExists = async () => {
-      if (!session?.user?.email) return
-
-      // Upsert baserat på email -> skapar om email saknas, annars gör inget
-      const { error } = await supabase.from('google_users').upsert(
-        {
-          email: session.user.email,
-          created_at: new Date().toISOString(),
-          first_name: session.user.name?.split(' ')[0] || '',
-          last_name: session.user.name?.split(' ')[1] || '',
-          avatar_url: session.user.image || '',
-          phone_nbr: '',
-        },
-        { onConflict: 'email' } // <-- säkerställer att email är unik
-      )
-
-      if (error) console.error('Error upserting google_user:', error)
-    }
-
-    createUserIfNotExists()
-  }, [session])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setMessage('')
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const result = await signIn('credentials', {
+      redirect: false,
       email,
       password,
     })
 
-    if (error) setMessage(error.message)
-    else router.push('/main')
+    if (result?.error) {
+      setMessage(result.error)
+    } else {
+      router.push('/main')
+    }
   }
 
   return (

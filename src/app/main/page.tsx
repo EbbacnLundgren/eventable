@@ -19,41 +19,71 @@ export default function MainPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [showForm, setShowForm] = useState(false)
   const { data: session } = useSession()
-  const [userInfo, setUserInfo] = useState<{
-    id: string
-    email: string
-  } | null>(null)
+  const [userInfo, setUserInfo] = useState<{ id: string; email: string } | null>(null)
 
   useEffect(() => {
     const fetchEvents = async () => {
       let userId: string | null = null
+      let email: string | null = null
 
-      // Supabase Auth
+      // Supabase Auth (email/password)
       const {
         data: { user: supabaseUser },
       } = await supabase.auth.getUser()
-      if (supabaseUser?.id) {
-        userId = supabaseUser.id
-        setUserInfo({ id: userId, email: supabaseUser.email || 'unknown' })
-      }
-      // Google login
-      else if (session?.user?.email) {
-        const { data: googleUser, error } = await supabase
+      if (supabaseUser?.email) {
+        email = supabaseUser.email
+        // Kolla om det finns en google_user med samma email
+        const { data: googleUser } = await supabase
           .from('google_users')
-          .select('id, email')
-          .eq('email', session.user.email)
+          .select('id')
+          .eq('email', email)
           .single()
+        userId = googleUser?.id || supabaseUser.id
+      }
 
-        if (googleUser && !error) {
-          userId = googleUser.id
-          setUserInfo({ id: googleUser.id, email: googleUser.email })
+      // Google login via NextAuth
+      else if (session?.user?.email) {
+        email = session.user.email
+        // Kolla auth.users först
+        const { data: supaUser } = await supabase
+          .from('auth.users')
+          .select('id')
+          .eq('email', email)
+          .single()
+        userId = supaUser?.id
+
+        // Om inte finns → upsert i google_users
+        if (!userId) {
+          const { data: newGoogleUser, error } = await supabase
+            .from('google_users')
+            .upsert(
+              {
+                email,
+                first_name: session.user.name?.split(' ')[0] || '',
+                last_name: session.user.name?.split(' ')[1] || '',
+                avatar_url: session.user.image || '',
+                created_at: new Date().toISOString(),
+                phone_nbr: '',
+              },
+              { onConflict: 'email' }
+            )
+            .select()
+            .single()
+
+          if (error) {
+            console.error('Error upserting google_user:', error)
+          }
+          userId = newGoogleUser?.id || null
         }
       }
 
-      if (!userId) {
+      if (!userId || !email) {
         setEvents([])
+        setUserInfo(null)
         return
       }
+
+      setUserInfo({ id: userId, email })
 
       // Hämta events för den användaren
       const { data: eventsData, error } = await supabase
