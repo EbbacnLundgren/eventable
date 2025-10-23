@@ -32,8 +32,6 @@ export default function CreateEventPage() {
     '/images/default3.jpg',
     '/images/default4.jpg',
     '/images/default5.jpg',
-    '/images/default6.jpg',
-    '/images/default7.jpg',
   ]
 
   const [selectedImage, setSelectedImage] = useState(defaultImages[0])
