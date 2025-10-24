@@ -127,6 +127,8 @@ export default function CreateEventPage() {
       location: formData.location,
       date: formData.date,
       time: formData.time || null,
+      end_date: formData.endDate || null,
+      end_time: formData.endTime || null,
       description: formData.description,
       image: imageUrl,
       user_id: userId,
@@ -140,8 +142,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-          )
+          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+        )
         : null
 
     if (startDateTime < now) {
@@ -320,9 +322,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>

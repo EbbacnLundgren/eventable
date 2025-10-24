@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import EventDetails from '@/components/eventDetails'
 import type { Event } from '@/types/event'
-import { formatTime } from '@/lib/formatTime'
 import Link from 'next/link'
+import { formatEventDuration } from '@/lib/formatEventDuration'
+import { MapPin, Calendar, Clock, User } from 'lucide-react'
 
 interface EventsSectionProps {
   events: Event[]
@@ -73,17 +74,15 @@ const EventsSection = ({
       <div className="relative flex bg-white/20 rounded-md p-1 mb-6 w-full max-w-md">
         {/* Active background "slider" */}
         <div
-          className={`absolute top-1 bottom-1 left-0 w-1/2 rounded-sm bg-pink-500 transition-all duration-300 ease-in-out ${
-            activeTab === 'upcoming' ? 'left-0' : 'left-1/2'
-          }`}
+          className={`absolute top-1 bottom-1 left-0 w-1/2 rounded-sm bg-pink-500 transition-all duration-300 ease-in-out ${activeTab === 'upcoming' ? 'left-0' : 'left-1/2'
+            }`}
         ></div>
 
         {/* Upcoming tab */}
         <button
           onClick={() => setActiveTab('upcoming')}
-          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
-            activeTab === 'upcoming' ? 'text-white' : 'text-black bg-gray-200'
-          }`}
+          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${activeTab === 'upcoming' ? 'text-white' : 'text-black bg-gray-200'
+            }`}
         >
           Upcoming Events
         </button>
@@ -91,9 +90,8 @@ const EventsSection = ({
         {/* Past tab */}
         <button
           onClick={() => setActiveTab('past')}
-          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
-            activeTab === 'past' ? 'text-white' : 'text-black bg-gray-200'
-          }`}
+          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${activeTab === 'past' ? 'text-white' : 'text-black bg-gray-200'
+            }`}
         >
           Past Events
         </button>
@@ -115,28 +113,57 @@ const EventsSection = ({
                   className="h-40 w-full object-cover"
                 />
               )}
+
               <div className="p-4">
                 <h3 className="text-lg font-semibold text-stone-900 drop-shadow-md">
                   {event.name}
                 </h3>
-                <p className="text-sm text-stone-900/80 drop-shadow">
-                  When: {new Date(event.date).toISOString().split('T')[0]}
-                </p>
 
+                <div className="flex items-center gap-2 text-sm text-white/80 drop-shadow">
+                  <Calendar size={14} />
+                  <span>
+                    {new Date(event.date).toISOString().split('T')[0]}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-white/80 drop-shadow">
+                  <Clock size={14} />
+                  <span>
+                    {formatEventDuration(
+                      event.date,
+                      event.time,
+                      event.end_date,
+                      event.end_time
+                    )}
+                  </span>
+                </div>
+
+                {/*
                 {event.time !== undefined && (
                   <p className="text-sm text-stone-900/80 drop-shadow">
                     Time: {formatTime(event.time)}
                   </p>
-                )}
+                )} */}
 
-                <p className="text-sm text-stone-900/90 drop-shadow">
-                  Location: {event.location}
-                </p>
+                <div className="flex items-center gap-2 text-sm text-white/90 drop-shadow">
+                  <MapPin size={14} />
+                  <span>{event.location}</span>
+                </div>
+
+                {/*
                 {event.hostLabel !== undefined && (
                   <p className="text-sm text-stone-900/80 drop-shadow mt-1">
                     <strong>Host:</strong> {event.hostLabel ?? 'Unknown'}
                   </p>
-                )}
+                )} */}
+
+                <div className="flex items-center gap-2 text-sm text-white/80 drop-shadow mt-1">
+                  <User size={16} />
+                  <span>
+                    <strong>Host:</strong> {event.hostLabel ?? 'Unknown'}
+                  </span>
+                </div>
+
                 <button
                   onClick={(e) => {
                     e.preventDefault() // prevent navigation when opening modal
