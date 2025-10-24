@@ -113,24 +113,30 @@ const EventsSection = ({
                   className="h-40 w-full object-cover"
                 />
               )}
+
               <div className="p-4">
                 <h3 className="text-lg font-semibold text-white drop-shadow-md">
                   {event.name}
                 </h3>
-                <p className="text-sm text-white/80 drop-shadow">
-                  <Calendar size={14} />{' '}
-                  {new Date(event.date).toISOString().split('T')[0]}
-                </p>
 
-                <p className="text-sm text-white/80 drop-shadow">
-                  <Clock size={14} />{' '}
-                  {formatEventDuration(
-                    event.date,
-                    event.time,
-                    event.end_date,
-                    event.end_time
-                  )}
-                </p>
+                <div className="flex items-center gap-2 text-sm text-white/80 drop-shadow">
+                  <Calendar size={14} />
+                  <span>
+                    {new Date(event.date).toISOString().split('T')[0]}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-white/80 drop-shadow">
+                  <Clock size={14} />
+                  <span>
+                    {formatEventDuration(
+                      event.date,
+                      event.time,
+                      event.end_date,
+                      event.end_time
+                    )}
+                  </span>
+                </div>
 
                 {/*
                 {event.time !== undefined && (
@@ -139,9 +145,10 @@ const EventsSection = ({
                   </p>
                 )} */}
 
-                <p className="text-sm text-white/90 drop-shadow">
-                  <MapPin size={14} /> {event.location}
-                </p>
+                <div className="flex items-center gap-2 text-sm text-white/90 drop-shadow">
+                  <MapPin size={14} />
+                  <span>{event.location}</span>
+                </div>
 
                 {/*
                 {event.hostLabel !== undefined && (
