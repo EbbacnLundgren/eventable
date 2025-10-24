@@ -124,104 +124,74 @@ export default async function EventDetailsPage({
               <p className="leading-relaxed">{event.description}</p>
             )}
 
-            <div className="flex items-center gap-2">
-              <MapPin size={18} />
-              <span>{event.location}</span>
-              <div>
-                <div className="flex items-center gap-2">
-                  <Calendar size={18} />
-                  <span>
-                    {new Date(event.date).toLocaleDateString('sv-SE', {
-                      weekday: 'long',
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </span>
-                </div>
+            {/* --- Event info rows --- */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <MapPin size={18} />
+                <span>{event.location}</span>
+              </div>
 
-                {/*}
-                <strong>Date:</strong>{' '}
-                {new Date(event.date).toLocaleDateString('sv-SE', {
-                  weekday: 'long',
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-              </div> */}
+              <div className="flex items-center gap-2">
+                <Calendar size={18} />
+                <span>
+                  {new Date(event.date).toLocaleDateString('sv-SE', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </span>
+              </div>
 
-                {/*
-                <div>
-                  <strong>Time:</strong>{' '}
+              <div className="flex items-center gap-2">
+                <Clock size={18} />
+                <span>
                   {formatEventDuration(
                     event.date,
                     event.time,
                     event.end_date,
                     event.end_time
                   )}
-                </div> */}
+                </span>
+              </div>
 
+              {hostLabel && (
                 <div className="flex items-center gap-2">
-                  <Clock size={18} />
-                  <span>
-                    {formatEventDuration(
-                      event.date,
-                      event.time,
-                      event.end_date,
-                      event.end_time
-                    )}
-                  </span>
+                  <User size={18} />
+                  <span>{hostLabel}</span>
                 </div>
+              )}
+            </div>
 
-                {/*
-                {hostLabel && (
-                  <div>
-                    <strong>Host:</strong> {hostLabel}
-                  </div>
-                )} */}
+            <AutoAddInvite eventId={Number(event.id)} />
 
-                {hostLabel && (
-                  <div className="flex items-center gap-2">
-                    <User size={18} />
-                    <span>{hostLabel}</span>
-                  </div>
-                )}
-              </div>
-
-              <AutoAddInvite eventId={Number(event.id)} />
-
-              <div className="mt-6 flex justify-center">
-                <ShareEventButton eventId={Number(event.id)} />
-              </div>
+            <div className="mt-6 flex justify-center">
+              <ShareEventButton eventId={Number(event.id)} />
             </div>
           </div>
+        </div>
 
-          {/* --- Right: Placeholder icons --- */}
-          <div className="flex flex-col items-center gap-6">
-            {/* Music playlist icon (placeholder) */}
-            <a
-              href="https://open.spotify.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-4 bg-white/20 hover:bg-white/30 rounded-full shadow-md transition transform hover:scale-105"
-              title="Open Spotify Playlist"
-            >
-              <Music size={36} className="text-white" />
-            </a>
+        {/* --- Right: Placeholder icons --- */}
+        <div className="flex flex-col items-center gap-6">
+          <a
+            href="https://open.spotify.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-4 bg-white/20 hover:bg-white/30 rounded-full shadow-md transition transform hover:scale-105"
+            title="Open Spotify Playlist"
+          >
+            <Music size={36} className="text-white" />
+          </a>
 
-            {/* Photo album icon (placeholder) */}
-            {
-              <a
-                href="https://www.google.com/intl/en/photos/about/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 bg-white/20 hover:bg-white/30 rounded-full shadow-md transition transform hover:scale-105l"
-                title="Open Photo Album"
-              >
-                <Camera size={36} className="text-white" />
-              </a>
-            }
-          </div>
+          <a
+            href="https://www.google.com/intl/en/photos/about/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-4 bg-white/20 hover:bg-white/30 rounded-full shadow-md transition transform hover:scale-105"
+            title="Open Photo Album"
+          >
+            <Camera size={36} className="text-white" />
+          </a>
         </div>
       </div>
     </main>
