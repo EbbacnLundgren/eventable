@@ -75,7 +75,7 @@ export default function Sidebar() {
         {showMenu && (
           <div
             className="absolute left-14 bottom-2 w-48
-                       bg-white bg-opacity-20 backdrop-blur-xl
+                       bg-white bg-opacity-90 backdrop-blur-xl
                        border border-white border-opacity-20
                        rounded-lg shadow-md py-2 z-[1000]"
           >

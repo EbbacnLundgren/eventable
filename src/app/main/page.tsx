@@ -4,15 +4,8 @@ import { supabase } from '@/lib/client'
 import EventSection from '@/components/eventsection'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
-
-interface Event {
-  id: number
-  name: string
-  location: string
-  date: string
-  time: number
-  image?: string
-}
+import type { Event } from '@/types/event'
+import { Plus } from 'lucide-react'
 
 type InviteStatus = 'pending' | 'accepted' | 'declined' | null
 interface InviteRow {
@@ -227,20 +220,24 @@ export default function MainPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white flex flex-col items-center">
-      {userInfo && (
+    <div className="min-h-screen text-white flex flex-col items-center pt-8">
+      {/** To be used for debugging user info
+       * {userInfo && (
         <p className="text-lg font-semibold mb-4">
           Hej {userInfo.email} (ID: {userInfo.id})
         </p>
       )}
+       * 
+       */}
 
       <Link
         href="/createEvent"
-        className="w-fit text-gray-900 bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 
-                   hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-red-100 
-                   dark:focus:ring-red-400 font-medium rounded-lg text-sm px-2 py-2.5 text-center mb-4 inline-block"
+        className="group w-fit inline-flex items-center mb-8 text-white bg-gradient-to-r from-pink-500 to-orange-400 
+             shadow-lg font-semibold rounded-lg text-lg px-8 py-4
+             transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl"
       >
-        + Create Event
+        <Plus className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
+        Create Event
       </Link>
 
       <EventSection

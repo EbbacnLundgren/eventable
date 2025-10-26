@@ -6,6 +6,10 @@ import type { Event } from '@/types/event'
 import Link from 'next/link'
 import { formatEventDuration } from '@/lib/formatEventDuration'
 import { MapPin, Calendar, Clock, User } from 'lucide-react'
+import EventFilters, { FilterType } from '@/components/EventFilters'
+import AdvancedFilters, {
+  AdvancedFilterState,
+} from '@/components/AdvancedFilters'
 
 interface EventsSectionProps {
   events: Event[]
@@ -25,8 +29,18 @@ const EventsSection = ({
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const today = new Date()
+  const [activeFilter, setActiveFilter] = useState<FilterType>('upcoming')
 
-  // --- Fallback demo events, if there are no events in supabase these are used as examples  ---
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilterState>({
+    city: '',
+    dateFrom: '',
+    dateTo: '',
+    dayOfWeek: '',
+    host: '',
+    keyword: '',
+  })
+
+  // --- Fallback demo events ---
   const fallbackUpcoming: Event[] = [
     {
       id: 0,
@@ -54,53 +68,79 @@ const EventsSection = ({
     },
   ]
 
-  // --- Split real events into upcoming/past ---
-  const upcomingEvents = events.filter((event) => new Date(event.date) >= today)
-  const pastEvents = events.filter((event) => new Date(event.date) < today)
+  // --- Filter events based on activeFilter + advancedFilters ---
+  const filteredEvents = events.filter((event) => {
+    const eventDate = new Date(event.date)
 
-  // --- Use Supabase events if available, otherwise fallback demo events ---
+    // Basic filter
+    let matchesFilter = true
+    switch (activeFilter) {
+      case 'upcoming':
+        matchesFilter = eventDate >= today
+        break
+      case 'past':
+        matchesFilter = eventDate < today
+        break
+      case 'declined':
+        return false
+      default:
+        matchesFilter = true
+    }
+
+    // Advanced filters
+    if (advancedFilters.city) {
+      matchesFilter =
+        matchesFilter &&
+        event.location
+          .toLowerCase()
+          .includes(advancedFilters.city.toLowerCase())
+    }
+
+    if (advancedFilters.dateFrom) {
+      matchesFilter =
+        matchesFilter &&
+        new Date(event.date).toISOString().split('T')[0] ===
+          advancedFilters.dateFrom
+    }
+
+    if (advancedFilters.host) {
+      matchesFilter =
+        matchesFilter &&
+        (event.hostLabel
+          ?.toLowerCase()
+          .includes(advancedFilters.host.toLowerCase()) ??
+          false)
+    }
+
+    if (advancedFilters.keyword) {
+      matchesFilter =
+        matchesFilter &&
+        event.name.toLowerCase().includes(advancedFilters.keyword.toLowerCase())
+    }
+
+    return matchesFilter
+  })
+
   const displayedEvents =
-    activeTab === 'upcoming'
-      ? upcomingEvents.length > 0
-        ? upcomingEvents
-        : fallbackUpcoming
-      : pastEvents.length > 0
-        ? pastEvents
+    filteredEvents.length > 0
+      ? filteredEvents
+      : activeFilter === 'upcoming'
+        ? fallbackUpcoming
         : fallbackPast
 
   return (
     <section className="p-6 w-full">
-      {/* Tabs */}
-      <div className="relative flex bg-white/20 rounded-md p-1 mb-6 w-full max-w-md">
-        {/* Active background "slider" */}
-        <div
-          className={`absolute top-1 bottom-1 left-0 w-1/2 rounded-sm bg-pink-500 transition-all duration-300 ease-in-out ${
-            activeTab === 'upcoming' ? 'left-0' : 'left-1/2'
-          }`}
-        ></div>
+      {/* Filters */}
+      <EventFilters
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+      />
+      <AdvancedFilters
+        filters={advancedFilters}
+        onFiltersChange={setAdvancedFilters}
+      />
 
-        {/* Upcoming tab */}
-        <button
-          onClick={() => setActiveTab('upcoming')}
-          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
-            activeTab === 'upcoming' ? 'text-white' : 'text-black bg-gray-200'
-          }`}
-        >
-          Upcoming Events
-        </button>
-
-        {/* Past tab */}
-        <button
-          onClick={() => setActiveTab('past')}
-          className={`relative z-10 flex-1 px-6 py-2 text-sm font-medium transition rounded-sm ${
-            activeTab === 'past' ? 'text-white' : 'text-black bg-gray-200'
-          }`}
-        >
-          Past Events
-        </button>
-      </div>
-
-      {/* Gallery view with event cards*/}
+      {/* Event cards */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full">
         {displayedEvents.map((event) => (
           <Link
@@ -141,24 +181,10 @@ const EventsSection = ({
                   </span>
                 </div>
 
-                {/*
-                {event.time !== undefined && (
-                  <p className="text-sm text-stone-900/80 drop-shadow">
-                    Time: {formatTime(event.time)}
-                  </p>
-                )} */}
-
                 <div className="flex items-center gap-2 text-sm text-white/90 drop-shadow">
                   <MapPin size={14} />
                   <span>{event.location}</span>
                 </div>
-
-                {/*
-                {event.hostLabel !== undefined && (
-                  <p className="text-sm text-stone-900/80 drop-shadow mt-1">
-                    <strong>Host:</strong> {event.hostLabel ?? 'Unknown'}
-                  </p>
-                )} */}
 
                 <div className="flex items-center gap-2 text-sm text-white/80 drop-shadow mt-1">
                   <User size={16} />
@@ -169,7 +195,7 @@ const EventsSection = ({
 
                 <button
                   onClick={(e) => {
-                    e.preventDefault() // prevent navigation when opening modal
+                    e.preventDefault()
                     setSelectedEvent({
                       ...event,
                       participants: ['Alice', 'Bob', 'Charlie'],
@@ -211,6 +237,7 @@ const EventsSection = ({
           </Link>
         ))}
       </div>
+
       {selectedEvent && (
         <EventDetails
           event={selectedEvent}
