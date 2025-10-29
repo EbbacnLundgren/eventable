@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Sidebar from '@/components/Sidebar'
-import EventChat from '@/components/EventChat'
+//import EventChat from '@/components/EventChat'
 import { supabase } from '@/lib/client'
 
 export default function Page() {
@@ -22,12 +22,12 @@ export default function Page() {
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <EventChat
+      {/* <EventChat
         eventId="123"
         supabaseUserId={currentUserId}
         eventMemberIds={[currentUserId]}
         eventName="Mina Eventet"
-      />
+      /> */}
     </div>
   )
 }

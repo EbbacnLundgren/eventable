@@ -11,7 +11,10 @@ interface TabsProps {
   children: React.ReactNode
 }
 
-export function Tabs({ className, children }: TabsProps) {
+export function Tabs({ value, className, children }: TabsProps) {
+  React.useEffect(() => {
+    console.log('Tabs value:', value)
+  }, [value])
   return <div className={className}>{children}</div>
 }
 
