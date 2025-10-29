@@ -48,13 +48,27 @@ const EventsSection = ({
     let matchesFilter = true
     switch (activeFilter) {
       case 'upcoming':
-        matchesFilter = eventDate >= today
+        matchesFilter =
+          (event.status === null ||
+            event.status === 'accepted' ||
+            event.status === 'pending') &&
+          new Date(event.date) >= today
         break
       case 'past':
-        matchesFilter = eventDate < today
+        matchesFilter =
+          (event.status === null ||
+            event.status === 'accepted' ||
+            event.status === 'pending') &&
+          new Date(event.date) < today
         break
       case 'declined':
-        return false
+        matchesFilter = event.status === 'declined'
+        break
+
+      case 'hosting':
+        // Visa egna event
+        matchesFilter = ownEventIds.includes(event.id)
+        break
       default:
         matchesFilter = true
     }
