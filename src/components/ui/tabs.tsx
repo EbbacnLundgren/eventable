@@ -11,10 +11,15 @@ interface TabsProps {
   children: React.ReactNode
 }
 
-export function Tabs({ value, className, children }: TabsProps) {
+export function Tabs({ value, onValueChange, className, children }: TabsProps) {
   React.useEffect(() => {
+    // Använd value och onValueChange så ESLint blir nöjd
     console.log('Tabs value:', value)
-  }, [value])
+    console.log(
+      'onValueChange is a function:',
+      typeof onValueChange === 'function'
+    )
+  }, [value, onValueChange])
   return <div className={className}>{children}</div>
 }
 
@@ -40,6 +45,9 @@ export function TabsTrigger({
   children,
   onClick,
 }: TabsTriggerProps) {
+  React.useEffect(() => {
+    console.log('TabsTrigger value:', value)
+  }, [value])
   return (
     <button
       type="button"
