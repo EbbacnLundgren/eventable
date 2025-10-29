@@ -9,6 +9,7 @@ import { useSession } from 'next-auth/react'
 import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
 import Link from 'next/link'
 import MovingBackground from '@/components/MovingBackground'
+import { Pencil } from 'lucide-react'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -243,15 +244,28 @@ export default function CreateEventPage() {
           /> */}
 
         <div className="flex flex-col gap-3">
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            placeholder="Event name"
-            className="font-sans text-3xl font-bold text-center bg-transparent text-gray-800 placeholder-gray-600 focus:outline-none focus:ring-0 border-none"
-            required
-          />
+          <div className="flex justify-center w-full">
+            <div className="relative inline-flex items-center">
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="Event name"
+                className="font-sans text-3xl font-bold text-center bg-transparent 
+                 text-gray-800 placeholder-gray-600 focus:outline-none focus:ring-0 
+                 border-none pr-0"
+                required
+              />
+              {formData.name === '' && (
+                <Pencil
+                  size={20}
+                  className="absolute left-full -translate-x-3 text-gray-500 opacity-70 hover:opacity-100 transition cursor-text"
+                  title="Click to edit event name"
+                />
+              )}
+            </div>
+          </div>
 
           <label className="font-sans text-gray-600">Location</label>
           <input
