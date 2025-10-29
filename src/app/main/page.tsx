@@ -149,13 +149,62 @@ export default function MainPage() {
       ]) {
         mergedById.set(ev.id, ev)
       }
-      setEvents(Array.from(mergedById.values()))
+
+      const allEvents = Array.from(mergedById.values())
+
+      //KOLLA HOSTEN
+      const eventsWithHost = await Promise.all(
+        allEvents.map(async (event) => {
+          let hostLabel: string | null = null
+
+          if (event.user_id) {
+            try {
+              const { data: profile } = await supabase
+                .from('users')
+                .select('first_name, last_name, email')
+                .eq('id', event.user_id)
+                .single()
+
+              if (profile) {
+                hostLabel = profile.first_name
+                  ? `${profile.first_name} ${profile.last_name || ''}`.trim()
+                  : profile.email || null
+              } else {
+                const { data: g } = await supabase
+                  .from('google_users')
+                  .select('first_name, last_name, email')
+                  .eq('id', event.user_id)
+                  .single()
+
+                if (g) {
+                  hostLabel = g.first_name
+                    ? `${g.first_name} ${g.last_name || ''}`.trim()
+                    : g.email || null
+                } else {
+                  const { data: authUser } = await supabase
+                    .from('users')
+                    .select('email')
+                    .eq('id', event.user_id)
+                    .single()
+                  hostLabel = authUser?.email ?? null
+                }
+              }
+            } catch (e) {
+              console.error('Error resolving host for event:', e)
+            }
+          }
+
+          return { ...event, hostLabel }
+        })
+      )
+
+      setEvents(eventsWithHost)
     }
+
     fetchEvents()
   }, [session])
 
   const resolveCurrentUserId = async () => {
-    // Samma logik som i fetchEvents/AutoAddInvite
     let email: string | null = null
     const {
       data: { user: supaUser },
