@@ -2,17 +2,7 @@ import { useState } from 'react'
 import { uploadEventImage } from '@/lib/uploadEventImage'
 import { supabase } from '@/lib/client'
 //import { useRouter } from 'next/navigation'
-
-interface Event {
-  id: number
-  name: string
-  location: string
-  date: string
-  time: number
-  description?: string
-  image?: string
-  //participants: Users
-}
+import type { Event } from '@/types/event'
 
 interface props {
   showForm: boolean
@@ -54,7 +44,7 @@ export default function CreateEventForm({
       name: formData.name,
       location: formData.location,
       date: formData.date,
-      time: formData.time || null,
+      time: formData.time?.toString() || null,
       description: formData.description,
       image: imageUrl,
     }
