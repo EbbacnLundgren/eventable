@@ -86,7 +86,7 @@ const EventsSection = ({
       matchesFilter =
         matchesFilter &&
         new Date(event.date).toISOString().split('T')[0] ===
-        advancedFilters.dateFrom
+          advancedFilters.dateFrom
     }
 
     if (advancedFilters.host) {
