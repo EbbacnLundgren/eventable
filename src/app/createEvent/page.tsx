@@ -207,13 +207,17 @@ export default function CreateEventPage() {
             <button
               type="button"
               onClick={handleRandomize}
-              className="bg-purple-200 hover:bg-purple-300 text-black rounded-full p-2 backdrop-blur-md shadow-md transition"
+              className="flex items-center justify-center w-10 h-10 rounded-full 
+             bg-gradient-to-r from-pink-500 to-orange-400 text-white 
+             shadow-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl"
               title="Randomize image"
             >
               <Shuffle size={20} />
             </button>
             <label
-              className="bg-purple-200 hover:bg-purple-300 text-black rounded-full p-2 backdrop-blur-md cursor-pointer shadow-md transition"
+              className="flex items-center justify-center w-10 h-10 rounded-full 
+             bg-gradient-to-r from-pink-500 to-orange-400 text-white 
+             shadow-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl"
               title="Upload image"
             >
               <ImageIcon size={20} />
