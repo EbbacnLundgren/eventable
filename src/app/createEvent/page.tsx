@@ -249,7 +249,7 @@ export default function CreateEventPage() {
             value={formData.name}
             onChange={handleInputChange}
             placeholder="Event name"
-            className="font-sans text-3xl font-bold text-center bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-0 border-none"
+            className="font-sans text-3xl font-bold text-center bg-transparent text-gray-800 placeholder-gray-600 focus:outline-none focus:ring-0 border-none"
             required
           />
 
