@@ -8,6 +8,7 @@ import TimePicker from '@/components/timePicker'
 import { useSession } from 'next-auth/react'
 import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
 import Link from 'next/link'
+import MovingBackground from '@/components/movingBackground'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -176,6 +177,7 @@ export default function CreateEventPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
+      <MovingBackground />
       <Link
         href="/main"
         className="fixed top-4 left-4 text-pink-600 hover:text-pink-800 z-50"
