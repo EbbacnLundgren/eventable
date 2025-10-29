@@ -26,7 +26,7 @@ const EventsSection = ({
   onDeclineInvite,
   ownEventIds = [],
 }: EventsSectionProps) => {
-  const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
+  //const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const today = new Date()
   const [activeFilter, setActiveFilter] = useState<FilterType>('upcoming')
@@ -100,7 +100,7 @@ const EventsSection = ({
       matchesFilter =
         matchesFilter &&
         new Date(event.date).toISOString().split('T')[0] ===
-          advancedFilters.dateFrom
+        advancedFilters.dateFrom
     }
 
     if (advancedFilters.host) {

@@ -11,7 +11,8 @@ interface TabsProps {
   children: React.ReactNode
 }
 
-export function Tabs({ value, onValueChange, className, children }: TabsProps) {
+export function Tabs({ className, children }: TabsProps) {
+
   return <div className={className}>{children}</div>
 }
 

@@ -219,21 +219,23 @@ export default function MainPage() {
     setPendingIds((prev) => prev.filter((id) => id !== eventId))
   }
 
+  useEffect(() => {
+    if (userInfo) {
+      console.log(`Hej ${userInfo.email} (ID: ${userInfo.id})`)
+    }
+  }, [userInfo])
+
   return (
     <div className="min-h-screen text-white flex flex-col items-center pt-8">
-      {/** To be used for debugging user info
-       * {userInfo && (
-        <p className="text-lg font-semibold mb-4">
-          Hej {userInfo.email} (ID: {userInfo.id})
-        </p>
-      )}
-       * 
-       */}
+
+
+
+
 
       <Link
         href="/createEvent"
         className="group w-fit inline-flex items-center mb-8 text-white bg-gradient-to-r from-pink-500 to-orange-400 
-             shadow-lg font-semibold rounded-lg text-lg px-8 py-4
+             shadow-lg font-semibold rounded-lg text-lg px-8 py-4 
              transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl"
       >
         <Plus className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />

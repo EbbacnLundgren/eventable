@@ -74,3 +74,16 @@ body {
 .animate-border-spin {
   animation: border-spin 7s linear infinite;
 }
+
+
+
+/* för chatt */
+.sc-MessageList {
+  height: 400px;
+  border: 1px solid #ccc;
+  overflow-y: auto;
+}
+.sc-MessageInput {
+  border-top: 1px solid #ccc;
+}
+
