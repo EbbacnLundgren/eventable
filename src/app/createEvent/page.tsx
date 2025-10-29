@@ -226,12 +226,12 @@ export default function CreateEventPage() {
           </div>
         </div>
 
-        <h2 className="font-sans text-2xl font-bold text-center text-black-800">
+        <h2 className="font-sans text-2xl font-bold text-center text-gray-800">
           Create Event
         </h2>
 
         <div className="flex flex-col gap-3">
-          <label className="font-sans text-black-600">Event name</label>
+          <label className="font-sans text-gray-600">Event name</label>
           <input
             type="text"
             name="name"
@@ -241,7 +241,7 @@ export default function CreateEventPage() {
             required
           />
 
-          <label className="font-sans text-black-600">Location</label>
+          <label className="font-sans text-gray-600">Location</label>
           <input
             type="text"
             name="location"
@@ -251,7 +251,7 @@ export default function CreateEventPage() {
             required
           />
 
-          <label className="font-sans text-black-600">Date and time</label>
+          <label className="font-sans text-gray-600">Date and time</label>
           <div className="flex gap-2">
             <input
               type="date"
@@ -267,7 +267,7 @@ export default function CreateEventPage() {
             />
           </div>
 
-          <label className="font-sans text-black-600">
+          <label className="font-sans text-gray-600">
             End date and time (optional)
           </label>
           <div className="flex gap-2">
@@ -284,7 +284,7 @@ export default function CreateEventPage() {
             />
           </div>
 
-          <label className="font-sans text-black-600">Description</label>
+          <label className="font-sans text-gray-600">Description</label>
           <input
             type="text"
             name="description"
@@ -309,7 +309,7 @@ export default function CreateEventPage() {
           />
           <label
             htmlFor="allowInviteesToInvite"
-            className="font-sans text-black-600"
+            className="font-sans text-gray-600"
           >
             Allow invitees to invite others
           </label>
