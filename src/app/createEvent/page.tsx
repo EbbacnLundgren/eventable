@@ -226,6 +226,7 @@ export default function CreateEventPage() {
           </div>
         </div>
 
+        {/*
         <h2 className="font-sans text-2xl font-bold text-center text-gray-800">
           Create Event
         </h2>
@@ -238,6 +239,17 @@ export default function CreateEventPage() {
             value={formData.name}
             onChange={handleInputChange}
             className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400"
+            required
+          /> */}
+
+        <div className="flex flex-col gap-3">
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            placeholder="Event name"
+            className="font-sans text-3xl font-bold text-center bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-0 border-none"
             required
           />
 
@@ -317,7 +329,9 @@ export default function CreateEventPage() {
 
         <button
           type="submit"
-          className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition font-semibold mt-2"
+          className="group mx-auto w-fit inline-flex items-center justify-center text-white bg-gradient-to-r from-pink-500 to-orange-400 
+             shadow-lg font-semibold rounded-lg text-lg px-8 py-4 
+             transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl"
         >
           Create Event
         </button>
