@@ -40,34 +40,6 @@ const EventsSection = ({
     keyword: '',
   })
 
-  // --- Fallback demo events ---
-  const fallbackUpcoming: Event[] = [
-    {
-      id: 0,
-      name: 'Wine tasting',
-      location: 'Lund, Sweden',
-      date: '2025-09-18',
-      image: '/images/winetasting.jpg',
-    },
-    {
-      id: 1,
-      name: 'Pottery',
-      location: 'Malmö, Sweden',
-      date: '2025-10-05',
-      image: '/images/pottery.jpg',
-    },
-  ]
-
-  const fallbackPast: Event[] = [
-    {
-      id: 2,
-      name: 'Music Festival',
-      location: 'Gothenburg, Sweden',
-      date: '2024-06-12',
-      image: '/images/musicfestival.jpg',
-    },
-  ]
-
   // --- Filter events based on activeFilter + advancedFilters ---
   const filteredEvents = events.filter((event) => {
     const eventDate = new Date(event.date)
@@ -121,12 +93,7 @@ const EventsSection = ({
     return matchesFilter
   })
 
-  const displayedEvents =
-    filteredEvents.length > 0
-      ? filteredEvents
-      : activeFilter === 'upcoming'
-        ? fallbackUpcoming
-        : fallbackPast
+  const displayedEvents = filteredEvents
 
   return (
     <section className="p-6 w-full">
