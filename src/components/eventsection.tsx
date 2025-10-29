@@ -42,7 +42,7 @@ const EventsSection = ({
 
   // --- Filter events based on activeFilter + advancedFilters ---
   const filteredEvents = events.filter((event) => {
-    const eventDate = new Date(event.date)
+    //const eventDate = new Date(event.date)
 
     // Basic filter
     let matchesFilter = true
@@ -86,7 +86,7 @@ const EventsSection = ({
       matchesFilter =
         matchesFilter &&
         new Date(event.date).toISOString().split('T')[0] ===
-          advancedFilters.dateFrom
+        advancedFilters.dateFrom
     }
 
     if (advancedFilters.host) {
