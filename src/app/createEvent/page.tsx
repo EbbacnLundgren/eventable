@@ -144,8 +144,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-          )
+          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+        )
         : null
 
     if (startDateTime < now) {
@@ -265,7 +265,6 @@ export default function CreateEventPage() {
                 <Pencil
                   size={20}
                   className="absolute left-full -translate-x-3 text-gray-500 opacity-70 hover:opacity-100 transition cursor-text"
-                  title="Click to edit event name"
                 />
               )}
             </div>
@@ -356,9 +355,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
