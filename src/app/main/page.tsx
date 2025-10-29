@@ -227,11 +227,6 @@ export default function MainPage() {
 
   return (
     <div className="min-h-screen text-white flex flex-col items-center pt-8">
-
-
-
-
-
       <Link
         href="/createEvent"
         className="group w-fit inline-flex items-center mb-8 text-white bg-gradient-to-r from-pink-500 to-orange-400 

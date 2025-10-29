@@ -75,8 +75,6 @@ body {
   animation: border-spin 7s linear infinite;
 }
 
-
-
 /* för chatt */
 .sc-MessageList {
   height: 400px;
@@ -86,4 +84,3 @@ body {
 .sc-MessageInput {
   border-top: 1px solid #ccc;
 }
-

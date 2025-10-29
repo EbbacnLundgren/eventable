@@ -12,7 +12,6 @@ interface TabsProps {
 }
 
 export function Tabs({ className, children }: TabsProps) {
-
   return <div className={className}>{children}</div>
 }
 

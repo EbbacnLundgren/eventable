@@ -9,7 +9,9 @@ export default function Page() {
 
   useEffect(() => {
     async function getUser() {
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
       setCurrentUserId(user?.id ?? null)
     }
     getUser()
