@@ -149,7 +149,7 @@ export default function InviteStatusList({
 
         <button
           onClick={onToggleAll}
-          className="px-3 py-1.5 bg-white/20 text-white rounded-lg hover:bg-white/30 border border-white/30"
+          className="px-3 py-1.5 bg-yellow-600 text-white rounded-lg hover:bg-white/30 border border-white/30"
         >
           ({allCount}) All invitees
         </button>
