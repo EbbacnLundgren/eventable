@@ -145,8 +145,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-        )
+            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+          )
         : null
 
     if (startDateTime < now) {
@@ -256,17 +256,15 @@ export default function CreateEventPage() {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                placeholder="Event name"
                 className="font-sans text-3xl font-bold text-center bg-transparent 
-                 text-gray-800 placeholder-gray-600 focus:outline-none focus:ring-0 
-                 border-none pr-0"
+       text-gray-800 focus:outline-none focus:ring-0 border-none pr-0"
                 required
               />
               {formData.name === '' && (
-                <Pencil
-                  size={18}
-                  className="absolute left-full -translate-x-1 text-gray-500 opacity-70 hover:opacity-100 transition cursor-text"
-                />
+                <span className="absolute inset-0 flex justify-center items-center pointer-events-none text-gray-600 font-bold text-3xl">
+                  Event name
+                  <Pencil size={18} className="ml-2 text-gray-500 opacity-70" />
+                </span>
               )}
             </div>
           </div>
@@ -356,8 +354,9 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
-              }`}
+            className={`text-center text-sm mt-2 ${
+              status === 'success' ? 'text-green-600' : 'text-red-500'
+            }`}
           >
             {message}
           </p>
