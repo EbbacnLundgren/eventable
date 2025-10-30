@@ -10,6 +10,7 @@ import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
 import Link from 'next/link'
 import { Pencil } from 'lucide-react'
 import DynamicBackground from '@/components/DynamicBackground'
+import { geocodeAddress } from '@/lib/geocode'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -27,6 +28,8 @@ export default function CreateEventPage() {
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
   const { data: session } = useSession()
+  const [geoData, setGeoData] = useState<{ lat: number; lon: number; display_name: string } | null>(null)
+  const [isGeocoding, setIsGeocoding] = useState(false)
 
   const defaultImages = [
     '/images/default1.jpg',
@@ -123,10 +126,22 @@ export default function CreateEventPage() {
       imageUrl = selectedImage
     }
 
+    if (formData.location && !geoData) {
+      setIsGeocoding(true)
+      const geo = await geocodeAddress(formData.location)
+      setIsGeocoding(false)
+      if (geo) {
+        setGeoData(geo)
+      }
+    }
+
     // 3. Förbered data för insert
     const insertData = {
       name: formData.name,
       location: formData.location,
+      latitude: geoData?.lat || null,
+      longitude: geoData?.lon || null,
+      formatted_location: geoData?.display_name || formData.location,
       date: formData.date,
       time: formData.time || null,
       end_date: formData.endDate || null,
@@ -144,8 +159,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-          )
+          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+        )
         : null
 
     if (startDateTime < now) {
@@ -269,14 +284,42 @@ export default function CreateEventPage() {
           </div>
 
           <label className="font-sans text-gray-600">Location</label>
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleInputChange}
-            className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400"
-            required
-          />
+          <div className="relative">
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleInputChange}
+              onBlur={async () => {
+                if (formData.location.length > 2) {
+                  setIsGeocoding(true)
+                  const geo = await geocodeAddress(formData.location)
+                  setGeoData(geo)
+                  setIsGeocoding(false)
+                }
+              }}
+              placeholder="Search for a location..."
+              className="text-black p-3 w-full rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400"
+              required
+            />
+            {isGeocoding && (
+              <p className="text-sm text-gray-500 absolute right-3 top-3">...</p>
+            )}
+          </div>
+
+          {geoData && (
+            <div className="mt-1 text-sm text-gray-700">
+              <p>{geoData.display_name}</p>
+              <a
+                href={`https://www.google.com/maps?q=${geoData.lat},${geoData.lon}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-pink-600 hover:text-pink-700 underline"
+              >
+                View on map
+              </a>
+            </div>
+          )}
 
           <label className="font-sans text-gray-600">Date and time</label>
           <div className="flex gap-2">
@@ -353,9 +396,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>

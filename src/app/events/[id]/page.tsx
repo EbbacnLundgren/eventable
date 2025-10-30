@@ -169,9 +169,25 @@ export default async function EventDetailsPage({
 
             {/* --- Event info rows --- */}
             <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <MapPin size={18} />
-                <span>{event.location}</span>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <MapPin size={18} />
+                  <span>{event.formatted_location || event.location}</span>
+                </div>
+
+                {event.latitude && event.longitude && (
+                  <a
+                    href={`https://www.google.com/maps?q=${event.latitude},${event.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-3 py-1.5 rounded-full 
+               bg-gradient-to-r from-pink-500 to-orange-400 text-white text-sm 
+               font-medium shadow-md hover:shadow-lg hover:scale-105 transition 
+               w-fit mt-2"
+                  >
+                    View on map
+                  </a>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
