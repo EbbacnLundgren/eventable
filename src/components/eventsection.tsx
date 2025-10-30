@@ -197,19 +197,6 @@ const EventsSection = ({
                     </span>
                   </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault()
-                      setSelectedEvent({
-                        ...event,
-                        participants: ['Alice', 'Bob', 'Charlie'],
-                      })
-                    }}
-                    className="mt-3 inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-400 to-yellow-400 rounded-lg hover:opacity-90"
-                  >
-                    View Details
-                  </button>
-
                   {pendingIds.includes(event.id) &&
                     !ownEventIds.includes(event.id) && (
                       <div className="mt-3 flex items-center gap-2">
