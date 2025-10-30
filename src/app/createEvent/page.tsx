@@ -150,8 +150,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-        )
+            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+          )
         : null
 
     if (startDateTime < now) {
@@ -284,7 +284,6 @@ export default function CreateEventPage() {
             required
           />
 
-
           <label className="font-sans text-gray-600">Date and time</label>
           <div className="flex gap-2">
             <input
@@ -360,8 +359,9 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
-              }`}
+            className={`text-center text-sm mt-2 ${
+              status === 'success' ? 'text-green-600' : 'text-red-500'
+            }`}
           >
             {message}
           </p>
