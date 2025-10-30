@@ -7,6 +7,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
 import Link from 'next/link'
 import TimePicker from '@/components/timePicker'
+import DynamicBackground from '@/components/DynamicBackground'
 
 export default function EditEventPage() {
   const router = useRouter()
@@ -116,8 +117,8 @@ export default function EditEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-          )
+          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+        )
         : null
 
     if (endDateTime && endDateTime < startDateTime) {
@@ -162,17 +163,23 @@ export default function EditEventPage() {
     )
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
+    <main className="relative min-h-screen text-white py-10 px-6 flex items-center justify-center">
+
+      <DynamicBackground imageUrl={selectedImage} />
+
+      {/* Back button */}
       <Link
         href={`/events/${id}`}
-        className="fixed top-4 left-4 text-pink-600 hover:text-pink-800 z-50"
+        className="fixed top-4 left-4 text-white hover:text-pink-200 z-50 flex items-center gap-1"
       >
         <ArrowLeft size={26} />
+        <span className="font-semibold"></span>
       </Link>
 
+      {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-2xl flex flex-col gap-5 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
+        className="relative w-full max-w-2xl flex flex-col gap-5 p-8 rounded-3xl bg-white/20 backdrop-blur-lg border border-white/30 shadow-2xl z-10"
       >
         {/* Image */}
         <div className="relative h-48 w-full overflow-hidden rounded-2xl">
@@ -187,11 +194,11 @@ export default function EditEventPage() {
             <button
               type="button"
               onClick={handleRandomize}
-              className="bg-purple-200 hover:bg-purple-300 text-black rounded-full p-2 backdrop-blur-md shadow-md transition"
+              className="bg-white/40 hover:bg-white/60 text-black rounded-full p-2 backdrop-blur-md shadow-md transition"
             >
               <Shuffle size={20} />
             </button>
-            <label className="bg-purple-200 hover:bg-purple-300 text-black rounded-full p-2 backdrop-blur-md cursor-pointer shadow-md transition">
+            <label className="bg-white/40 hover:bg-white/60 text-black rounded-full p-2 backdrop-blur-md cursor-pointer shadow-md transition">
               <ImageIcon size={20} />
               <input
                 type="file"
@@ -203,38 +210,38 @@ export default function EditEventPage() {
           </div>
         </div>
 
-        <h2 className="font-serif text-2xl font-bold text-center text-pink-800">
+        <h2 className="font-bold text-3xl text-center text-black drop-shadow-lg">
           Edit Event
         </h2>
 
-        <label className="font-serif text-purple-600">Event name</label>
+        <label className="text-black font-medium">Event name</label>
         <input
           type="text"
           name="name"
           value={formData.name}
           onChange={handleInputChange}
-          className="text-black p-3 rounded-xl bg-white/40 border border-white/50"
+          className="text-black p-3 rounded-xl bg-white/80 border border-white/50"
           required
         />
 
-        <label className="font-serif text-purple-600">Location</label>
+        <label className="text-black font-medium">Location</label>
         <input
           type="text"
           name="location"
           value={formData.location}
           onChange={handleInputChange}
-          className="text-black p-3 rounded-xl bg-white/40 border border-white/50"
+          className="text-black p-3 rounded-xl bg-white/80 border border-white/50"
           required
         />
 
-        <label className="font-serif text-purple-600">Date and time</label>
+        <label className="text-black font-medium">Date and time</label>
         <div className="flex gap-2">
           <input
             type="date"
             name="date"
             value={formData.date}
             onChange={handleInputChange}
-            className="text-black flex-1 p-3 rounded-xl bg-white/40 border border-white/50"
+            className="text-black flex-1 p-3 rounded-xl bg-white/80 border border-white/50"
             required
           />
           <TimePicker
@@ -243,7 +250,7 @@ export default function EditEventPage() {
           />
         </div>
 
-        <label className="font-serif text-purple-600">
+        <label className="text-black font-medium">
           End date and time (optional)
         </label>
         <div className="flex gap-2">
@@ -252,7 +259,7 @@ export default function EditEventPage() {
             name="endDate"
             value={formData.endDate}
             onChange={handleInputChange}
-            className="text-black flex-1 p-3 rounded-xl bg-white/40 border border-white/50"
+            className="text-black flex-1 p-3 rounded-xl bg-white/80 border border-white/50"
           />
           <TimePicker
             value={formData.endTime}
@@ -260,26 +267,25 @@ export default function EditEventPage() {
           />
         </div>
 
-        <label className="font-serif text-purple-600">Description</label>
+        <label className="text-black font-medium">Description</label>
         <textarea
           name="description"
           value={formData.description}
           onChange={handleInputChange}
-          className="text-black p-3 rounded-xl bg-white/40 border border-white/50 resize-none"
+          className="text-black p-3 rounded-xl bg-white/80 border border-white/50 resize-none"
         />
 
         <button
           type="submit"
-          className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition font-semibold mt-2"
+          className="px-6 py-3 bg-gradient-to-r from-pink-500 to-orange-400 text-white font-semibold rounded-lg hover:opacity-90 transition shadow-md mt-2"
         >
           Save Changes
         </button>
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-200' : 'text-yellow-200'
+              }`}
           >
             {message}
           </p>
