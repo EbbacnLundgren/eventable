@@ -164,14 +164,14 @@ const EventsSection = ({
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm text-white/80 drop-shadow">
+                  <div className="flex items-center gap-2 text-sm text-stone-800 drop-shadow">
                     <Calendar size={14} />
                     <span>
                       {new Date(event.date).toISOString().split('T')[0]}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm text-white/80 drop-shadow">
+                  <div className="flex items-center gap-2 text-sm text-stone-800 drop-shadow">
                     <Clock size={14} />
                     <span>
                       {formatEventDuration(
@@ -183,12 +183,12 @@ const EventsSection = ({
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm text-white/90 drop-shadow">
+                  <div className="flex items-center gap-2 text-sm text-stone-800 drop-shadow">
                     <MapPin size={14} />
                     <span>{event.location}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm text-white/80 drop-shadow mt-1">
+                  <div className="flex items-center gap-2 text-sm text-stone-800 drop-shadow mt-1">
                     <User size={16} />
                     <span>
                       <strong>Host:</strong> {event.hostLabel ?? 'Unknown'}
