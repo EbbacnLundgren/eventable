@@ -64,6 +64,23 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
 
       const storageKey = `inviteToast:${userId}:${eid}`
 
+      // 2.5) Hämta eventets host för att kolla om användaren är ägaren
+      const { data: eventData, error: eventErr } = await supabase
+        .from('events')
+        .select('host_id')
+        .eq('id', eid)
+        .single()
+
+      if (eventErr || !eventData) {
+        setMsg('Kunde inte hämta eventinformation.')
+        return
+      }
+
+      // Om användaren är eventets host → visa aldrig toast
+      if (eventData.host_id === userId) {
+        return
+      }
+
       // 3) Kolla befintlig invite
       const { data: existing, error: existErr } = await supabase
         .from('event_invites')
@@ -97,12 +114,9 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
           }
         }
 
-        // Visa endast en gång
-        if (!localStorage.getItem(storageKey)) {
-          setMsg('This event has been added to your page')
-          localStorage.setItem(storageKey, '1')
-          setTimeout(() => setMsg(null), 2000)
-        }
+        setMsg('This event has been added to your page')
+        localStorage.setItem(storageKey, '1')
+        setTimeout(() => setMsg(null), 2000)
         return
       }
 
