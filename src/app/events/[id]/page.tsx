@@ -14,6 +14,8 @@ import { formatEventDuration } from '@/lib/formatEventDuration'
 import InviteStatusList from '@/components/InviteStatusList'
 import EditEventButton from '@/components/editEventsButton'
 
+import DynamicBackground from '@/components/DynamicBackground'
+
 export default async function EventDetailsPage({
   params,
 }: {
@@ -128,6 +130,7 @@ export default async function EventDetailsPage({
 
   return (
     <main className="min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white py-10 px-6">
+      <DynamicBackground imageUrl={event.image} />
       <div className="max-w-5xl mx-auto flex gap-6 items-start">
         {/* --- Left: Box containing event details --- */}
         <div className="flex-1 bg-white/20 backdrop-blur-md rounded-3xl p-8 shadow-lg border border-white/30">
