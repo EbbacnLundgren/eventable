@@ -8,8 +8,9 @@ import TimePicker from '@/components/timePicker'
 import { useSession } from 'next-auth/react'
 import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
 import Link from 'next/link'
-import MovingBackground from '@/components/MovingBackground'
+//import MovingBackground from '@/components/MovingBackground'
 import { Pencil } from 'lucide-react'
+import DynamicBackground from '@/components/DynamicBackground'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -144,8 +145,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-          )
+          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+        )
         : null
 
     if (startDateTime < now) {
@@ -178,7 +179,7 @@ export default function CreateEventPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
-      <MovingBackground />
+      <DynamicBackground imageUrl={selectedImage} />
       <Link
         href="/main"
         className="fixed top-4 left-4 text-pink-600 hover:text-pink-800 z-50"
@@ -263,8 +264,8 @@ export default function CreateEventPage() {
               />
               {formData.name === '' && (
                 <Pencil
-                  size={20}
-                  className="absolute left-full -translate-x-3 text-gray-500 opacity-70 hover:opacity-100 transition cursor-text"
+                  size={18}
+                  className="absolute left-full -translate-x-1 text-gray-500 opacity-70 hover:opacity-100 transition cursor-text"
                 />
               )}
             </div>
@@ -355,9 +356,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
