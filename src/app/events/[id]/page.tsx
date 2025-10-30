@@ -137,7 +137,7 @@ export default async function EventDetailsPage({
           <div className="mb-6 flex items-center justify-between">
             <Link
               href="/main"
-              className="inline-flex items-center gap-2 text-sm text-pink-200 hover:underline"
+              className="inline-flex items-center gap-2 text-sm text-gray-800 hover:underline"
             >
               <ArrowLeft size={20} />
               <span>Back</span>
@@ -157,11 +157,11 @@ export default async function EventDetailsPage({
             </div>
           )}
 
-          <h1 className="text-4xl font-extrabold mb-4 text-center">
+          <h1 className="text-4xl font-extrabold mb-4 text-center text-gray-800">
             {event.name}
           </h1>
 
-          <div className="space-y-4 text-lg">
+          <div className="space-y-4 text-lg text-gray-800">
             {event.description && (
               <p className="leading-relaxed">{event.description}</p>
             )}
