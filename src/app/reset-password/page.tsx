@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
       setMessage(error.message)
       setStatus('error')
     } else {
-      setMessage('Check your email for a password reset link.')
+      setMessage('Check your email for a password reset link. Be aware that this might take a few minutes.')
       setStatus('success')
     }
   }
@@ -74,9 +74,8 @@ export default function ResetPasswordPage() {
 
           {message && (
             <p
-              className={`mt-3 text-center text-sm ${
-                status === 'success' ? 'text-green-600' : 'text-red-500'
-              }`}
+              className={`mt-3 text-center text-sm ${status === 'success' ? 'text-green-600' : 'text-red-500'
+                }`}
             >
               {message}
             </p>
