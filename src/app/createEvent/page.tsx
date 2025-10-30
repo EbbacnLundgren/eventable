@@ -8,7 +8,6 @@ import TimePicker from '@/components/timePicker'
 import { useSession } from 'next-auth/react'
 import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
 import Link from 'next/link'
-//import MovingBackground from '@/components/MovingBackground'
 import { Pencil } from 'lucide-react'
 import DynamicBackground from '@/components/DynamicBackground'
 
