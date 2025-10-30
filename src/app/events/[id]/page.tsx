@@ -137,7 +137,8 @@ export default async function EventDetailsPage({
           <div className="mb-6 flex items-center justify-between">
             <Link
               href="/main"
-              className="inline-flex items-center gap-2 text-sm text-gray-800 hover:underline"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 font-semibold shadow hover:bg-white/40 transition"
+              aria-label="Back to main page"
             >
               <ArrowLeft size={20} />
               <span>Back</span>
