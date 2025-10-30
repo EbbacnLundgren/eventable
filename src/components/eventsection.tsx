@@ -227,13 +227,6 @@ const EventsSection = ({
           )
         })}
       </div>
-
-      {selectedEvent && (
-        <EventDetails
-          event={selectedEvent}
-          onClose={() => setSelectedEvent(null)}
-        />
-      )}
     </section>
   )
 }
