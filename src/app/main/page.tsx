@@ -23,6 +23,7 @@ export default function MainPage() {
   } | null>(null)
 
   const [pendingIds, setPendingIds] = useState<number[]>([])
+  //const [declinedIds, setDeclinedIds] = useState<number[]>([])
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -106,7 +107,12 @@ export default function MainPage() {
         .filter((i) => i.status === 'accepted')
         .map((i) => i.event_id)
 
+      const declined = invites
+        .filter((i) => i.status === 'declined')
+        .map((i) => i.event_id)
+
       setPendingIds(pending)
+      //setDeclinedIds(declined)
 
       // Egna events
       const { data: ownEvents, error: ownErr } = await supabase
@@ -140,22 +146,84 @@ export default function MainPage() {
         pendingEvents = (pendEvents as Event[]) || []
       }
 
-      // Slå ihop och deduplicera på id
+      //declined events
+      let declinedEvents: Event[] = []
+      if (declined.length > 0) {
+        const { data: decEvents, error: decErr } = await supabase
+          .from('events')
+          .select('*')
+          .in('id', declined)
+        if (decErr) console.error('Error fetching declined events:', decErr)
+        declinedEvents = (decEvents as Event[]) || []
+      }
+
+      const statusMap = new Map(invites.map((i) => [i.event_id, i.status]))
       const mergedById = new Map<number, Event>()
       for (const ev of [
         ...((ownEvents as Event[]) || []),
         ...invitedEvents,
         ...pendingEvents,
+        ...declinedEvents,
       ]) {
-        mergedById.set(ev.id, ev)
+        const status = statusMap.get(ev.id) || null
+        mergedById.set(ev.id, { ...ev, status })
       }
-      setEvents(Array.from(mergedById.values()))
+
+      const allEvents = Array.from(mergedById.values())
+
+      //KOLLA HOSTEN
+      const eventsWithHost = await Promise.all(
+        allEvents.map(async (event) => {
+          let hostLabel: string | null = null
+
+          if (event.user_id) {
+            try {
+              const { data: profile } = await supabase
+                .from('users')
+                .select('first_name, last_name, email')
+                .eq('id', event.user_id)
+                .single()
+
+              if (profile) {
+                hostLabel = profile.first_name
+                  ? `${profile.first_name} ${profile.last_name || ''}`.trim()
+                  : profile.email || null
+              } else {
+                const { data: g } = await supabase
+                  .from('google_users')
+                  .select('first_name, last_name, email')
+                  .eq('id', event.user_id)
+                  .single()
+
+                if (g) {
+                  hostLabel = g.first_name
+                    ? `${g.first_name} ${g.last_name || ''}`.trim()
+                    : g.email || null
+                } else {
+                  const { data: authUser } = await supabase
+                    .from('users')
+                    .select('email')
+                    .eq('id', event.user_id)
+                    .single()
+                  hostLabel = authUser?.email ?? null
+                }
+              }
+            } catch (e) {
+              console.error('Error resolving host for event:', e)
+            }
+          }
+
+          return { ...event, hostLabel }
+        })
+      )
+
+      setEvents(eventsWithHost)
     }
+
     fetchEvents()
   }, [session])
 
   const resolveCurrentUserId = async () => {
-    // Samma logik som i fetchEvents/AutoAddInvite
     let email: string | null = null
     const {
       data: { user: supaUser },
@@ -217,6 +285,12 @@ export default function MainPage() {
     }
 
     setPendingIds((prev) => prev.filter((id) => id !== eventId))
+
+    setEvents((prevEvents) =>
+      prevEvents.map((ev) =>
+        ev.id === eventId ? { ...ev, status: 'declined' } : ev
+      )
+    )
   }
 
   useEffect(() => {

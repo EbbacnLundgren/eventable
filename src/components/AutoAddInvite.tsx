@@ -29,7 +29,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
       else if (session?.user?.email) email = session.user.email
 
       if (!email) {
-        setMsg('Logga in för att lägga till event.')
+        setMsg('Log in to see this event.')
         return
       }
 
@@ -51,14 +51,14 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         .single()
 
       if (upErr || !gUser?.id) {
-        setMsg('Kunde inte hitta/skapa användare.')
+        setMsg('Could not find user.')
         return
       }
 
       const userId = gUser.id as string
       const eid = Number(eventId)
       if (!Number.isFinite(eid)) {
-        setMsg('Ogiltigt event.')
+        setMsg('Invalid event.')
         return
       }
 
@@ -73,7 +73,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         .maybeSingle<InviteRow>()
 
       if (existErr) {
-        setMsg('Kunde inte kontrollera inbjudan.')
+        setMsg('Could not control invite')
         return
       }
 
