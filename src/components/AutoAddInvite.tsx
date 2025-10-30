@@ -29,7 +29,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
       else if (session?.user?.email) email = session.user.email
 
       if (!email) {
-        setMsg('Logga in för att lägga till event.')
+        setMsg('Log in to see this event.')
         return
       }
 
@@ -51,35 +51,18 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         .single()
 
       if (upErr || !gUser?.id) {
-        setMsg('Kunde inte hitta/skapa användare.')
+        setMsg('Could not find user.')
         return
       }
 
       const userId = gUser.id as string
       const eid = Number(eventId)
       if (!Number.isFinite(eid)) {
-        setMsg('Ogiltigt event.')
+        setMsg('Invalid event.')
         return
       }
 
       const storageKey = `inviteToast:${userId}:${eid}`
-
-      // 2.5) Hämta eventets host för att kolla om användaren är ägaren
-      const { data: eventData, error: eventErr } = await supabase
-        .from('events')
-        .select('host_id')
-        .eq('id', eid)
-        .single()
-
-      if (eventErr || !eventData) {
-        setMsg('Kunde inte hämta eventinformation.')
-        return
-      }
-
-      // Om användaren är eventets host → visa aldrig toast
-      if (eventData.host_id === userId) {
-        return
-      }
 
       // 3) Kolla befintlig invite
       const { data: existing, error: existErr } = await supabase
@@ -90,7 +73,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         .maybeSingle<InviteRow>()
 
       if (existErr) {
-        setMsg('Kunde inte kontrollera inbjudan.')
+        setMsg('Could not control invite')
         return
       }
 
@@ -114,9 +97,12 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
           }
         }
 
-        setMsg('This event has been added to your page')
-        localStorage.setItem(storageKey, '1')
-        setTimeout(() => setMsg(null), 2000)
+        // Visa endast en gång
+        if (!localStorage.getItem(storageKey)) {
+          setMsg('This event has been added to your page')
+          localStorage.setItem(storageKey, '1')
+          setTimeout(() => setMsg(null), 2000)
+        }
         return
       }
 
