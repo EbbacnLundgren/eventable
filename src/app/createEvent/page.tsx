@@ -28,7 +28,11 @@ export default function CreateEventPage() {
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
   const { data: session } = useSession()
-  const [geoData, setGeoData] = useState<{ lat: number; lon: number; display_name: string } | null>(null)
+  const [geoData, setGeoData] = useState<{
+    lat: number
+    lon: number
+    display_name: string
+  } | null>(null)
   const [isGeocoding, setIsGeocoding] = useState(false)
 
   const defaultImages = [
@@ -159,8 +163,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-        )
+            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+          )
         : null
 
     if (startDateTime < now) {
@@ -303,7 +307,9 @@ export default function CreateEventPage() {
               required
             />
             {isGeocoding && (
-              <p className="text-sm text-gray-500 absolute right-3 top-3">...</p>
+              <p className="text-sm text-gray-500 absolute right-3 top-3">
+                ...
+              </p>
             )}
           </div>
 
@@ -396,8 +402,9 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
-              }`}
+            className={`text-center text-sm mt-2 ${
+              status === 'success' ? 'text-green-600' : 'text-red-500'
+            }`}
           >
             {message}
           </p>
