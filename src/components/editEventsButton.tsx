@@ -45,9 +45,10 @@ export default function EditEventButton({
   return (
     <Link
       href={`/events/${eventId}/edit`}
-      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg
-                 bg-white/20 border border-white/30 hover:bg-white/30
-                 text-white transition"
+      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg
+                 bg-gradient-to-r from-pink-500 to-orange-400 text-white font-medium
+                 shadow-lg transition-all duration-300 ease-out
+                 hover:scale-105 hover:shadow-2xl"
       title="Edit event"
     >
       <Pencil size={18} />
