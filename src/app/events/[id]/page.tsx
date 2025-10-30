@@ -225,7 +225,7 @@ export default async function EventDetailsPage({
             href="https://open.spotify.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-4 bg-white/20 hover:bg-white/30 rounded-full shadow-md transition transform hover:scale-105"
+            className="p-4 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 shadow-md transition transform hover:scale-105 hover:shadow-md"
             title="Open Spotify Playlist"
           >
             <Music size={36} className="text-white" />
@@ -235,7 +235,7 @@ export default async function EventDetailsPage({
             href="https://www.google.com/intl/en/photos/about/"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-4 bg-white/20 hover:bg-white/30 rounded-full shadow-md transition transform hover:scale-105"
+            className="p-4 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 shadow-md transition transform hover:scale-105 hover:shadow-md"
             title="Open Photo Album"
           >
             <Camera size={36} className="text-white" />
