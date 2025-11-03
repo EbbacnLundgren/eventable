@@ -191,8 +191,23 @@ export default function CreateEventPage() {
     formData.date &&
     new Date(formData.date) >= new Date(new Date().toDateString())
   const isValidTime = /^([01]\d|2[0-3]):([0-5]\d)$/.test(formData.time)
+  const isValidEndTime =
+    formData.endTime === '' ||
+    /^([01]\d|2[0-3]):([0-5]\d)$/.test(formData.endTime)
+
+  const hasPartialEnd =
+    (formData.endDate && !formData.endTime) ||
+    (!formData.endDate && formData.endTime)
+
+  const hasInvalidEnd =
+    (formData.endDate && formData.endTime && !isValidEndTime) || hasPartialEnd
+
   const isFormComplete =
-    formData.name && formData.location && isValidDate && isValidTime
+    formData.name &&
+    formData.location &&
+    isValidDate &&
+    isValidTime &&
+    !hasInvalidEnd
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
@@ -312,6 +327,11 @@ export default function CreateEventPage() {
               onChange={(v) => setFormData((prev) => ({ ...prev, time: v }))}
             />
           </div>
+          {formData.time && !isValidTime && (
+            <p className="text-red-500 text-sm">
+              Please enter a valid start time (HH:MM).
+            </p>
+          )}
 
           <label className="font-sans text-gray-600">
             End date and time (optional)
@@ -320,6 +340,7 @@ export default function CreateEventPage() {
             <input
               type="date"
               name="endDate"
+              min={new Date().toISOString().split('T')[0]}
               value={formData.endDate}
               onChange={handleInputChange}
               className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
@@ -329,6 +350,16 @@ export default function CreateEventPage() {
               onChange={(v) => setFormData((prev) => ({ ...prev, endTime: v }))}
             />
           </div>
+          {hasPartialEnd && (
+            <p className="text-red-500 text-sm">
+              Please provide both end date and end time.
+            </p>
+          )}
+          {formData.endTime && !isValidEndTime && (
+            <p className="text-red-500 text-sm">
+              Please enter a valid end time (HH:MM).
+            </p>
+          )}
 
           <label className="font-sans text-gray-600">Description</label>
           <input
