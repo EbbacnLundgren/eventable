@@ -302,6 +302,7 @@ export default function CreateEventPage() {
               type="date"
               name="date"
               value={formData.date}
+              min={new Date().toISOString().split('T')[0]}
               onChange={handleInputChange}
               className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
               required
