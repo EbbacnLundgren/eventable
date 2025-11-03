@@ -186,6 +186,14 @@ export default function CreateEventPage() {
     setTimeout(() => router.push('/main'), 1500)
   }
 
+  // checkar för create event knappen ska gå från grå till klickbar
+  const isValidDate =
+    formData.date &&
+    new Date(formData.date) >= new Date(new Date().toDateString())
+  const isValidTime = /^([01]\d|2[0-3]):([0-5]\d)$/.test(formData.time)
+  const isFormComplete =
+    formData.name && formData.location && isValidDate && isValidTime
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
       <DynamicBackground imageUrl={selectedImage} />
@@ -354,9 +362,9 @@ export default function CreateEventPage() {
 
         <button
           type="submit"
-          className="group mx-auto w-fit inline-flex items-center justify-center text-white bg-gradient-to-r from-pink-500 to-orange-400 
-             shadow-lg font-semibold rounded-lg text-lg px-8 py-4 
-             transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl"
+          disabled={!isFormComplete}
+          className={`group mx-auto w-fit inline-flex items-center justify-center font-semibold rounded-lg text-lg px-8 py-4 transition-all duration-300 ease-out
+            ${isFormComplete ? 'text-white bg-gradient-to-r from-pink-500 to-orange-400 shadow-lg hover:scale-105 hover:shadow-2xl' : 'text-gray-400 bg-gray-200 cursor-not-allowed'}`}
         >
           Create Event
         </button>
