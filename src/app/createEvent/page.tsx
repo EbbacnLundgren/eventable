@@ -24,6 +24,7 @@ export default function CreateEventPage() {
     image: null as File | null,
     allowInviteesToInvite: false,
   })
+  const [showEndFields, setShowEndFields] = useState(false)
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
   const { data: session } = useSession()
@@ -71,6 +72,19 @@ export default function CreateEventPage() {
     }
     now.setMinutes(0, 0, 0)
     return now.toTimeString().slice(0, 5)
+  }
+
+  function addThreeHoursToTime(time: string): string {
+    const [hours, minutes] = time.split(':').map(Number)
+    const date = new Date()
+    date.setHours(hours)
+    date.setMinutes(minutes)
+    date.setHours(date.getHours() + 3)
+
+    const newHours = date.getHours().toString().padStart(2, '0')
+    const newMinutes = date.getMinutes().toString().padStart(2, '0')
+
+    return `${newHours}:${newMinutes}`
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -333,23 +347,55 @@ export default function CreateEventPage() {
             </p>
           )}
 
-          <label className="font-sans text-gray-600">
-            End date and time (optional)
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="date"
-              name="endDate"
-              min={new Date().toISOString().split('T')[0]}
-              value={formData.endDate}
-              onChange={handleInputChange}
-              className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
-            />
-            <TimePicker
-              value={formData.endTime}
-              onChange={(v) => setFormData((prev) => ({ ...prev, endTime: v }))}
-            />
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                if (showEndFields) {
+                  // Nollställ värden när man stänger fälten
+                  setFormData((prev) => ({
+                    ...prev,
+                    endDate: '',
+                    endTime: '',
+                  }))
+                  setShowEndFields(false)
+                } else {
+                  const defaultEndDate = formData.date
+                  const defaultEndTime = addThreeHoursToTime(formData.time)
+                  setFormData((prev) => ({
+                    ...prev,
+                    endDate: defaultEndDate,
+                    endTime: defaultEndTime,
+                  }))
+                  setShowEndFields(true)
+                }
+              }}
+              className="text-xl  hover:scale-105 mr-3"
+            >
+              {showEndFields ? '−' : '+'}
+            </button>
+            <label className="font-sans text-gray-600">
+              End date and time (optional)
+            </label>
           </div>
+          {showEndFields && (
+            <div className="flex gap-2">
+              <input
+                type="date"
+                name="endDate"
+                min={formData.date}
+                value={formData.endDate || ''}
+                onChange={handleInputChange}
+                className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
+              />
+              <TimePicker
+                value={formData.endTime || ''}
+                onChange={(v) =>
+                  setFormData((prev) => ({ ...prev, endTime: v }))
+                }
+              />
+            </div>
+          )}
           {hasPartialEnd && (
             <p className="text-red-500 text-sm">
               Please provide both end date and end time.
