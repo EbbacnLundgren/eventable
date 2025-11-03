@@ -17,7 +17,7 @@ export default function CreateEventPage() {
     name: '',
     location: '',
     date: '',
-    time: '',
+    time: getNextHour(),
     endDate: '',
     endTime: '',
     description: '',
@@ -61,6 +61,16 @@ export default function CreateEventPage() {
   ) {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  //denna fixar närmsta nästa timme för-inställt
+  function getNextHour() {
+    const now = new Date()
+    if (now.getMinutes() > 0) {
+      now.setHours(now.getHours() + 1)
+    }
+    now.setMinutes(0, 0, 0)
+    return now.toTimeString().slice(0, 5)
   }
 
   async function handleSubmit(e: FormEvent) {
