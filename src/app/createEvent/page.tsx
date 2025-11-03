@@ -16,7 +16,7 @@ export default function CreateEventPage() {
   const [formData, setFormData] = useState({
     name: '',
     location: '',
-    date: '',
+    date: new Date().toISOString().split('T')[0],
     time: getNextHour(),
     endDate: '',
     endTime: '',
