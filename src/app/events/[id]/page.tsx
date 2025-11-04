@@ -163,10 +163,6 @@ export default async function EventDetailsPage({
           </h1>
 
           <div className="space-y-4 text-lg text-gray-800">
-            {event.description && (
-              <p className="leading-relaxed">{event.description}</p>
-            )}
-
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <MapPin size={18} />
@@ -202,6 +198,9 @@ export default async function EventDetailsPage({
                   <User size={18} />
                   <span>{hostLabel}</span>
                 </div>
+              )}
+              {event.description && (
+                <p className="leading-relaxed">{event.description}</p>
               )}
             </div>
 
