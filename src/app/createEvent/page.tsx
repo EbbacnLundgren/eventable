@@ -161,6 +161,8 @@ export default function CreateEventPage() {
       description: formData.description,
       image: imageUrl,
       user_id: userId,
+      rsvp_date: formData.rsvpDate || null,
+      rsvp_time: formData.rsvpTime || null,
     }
 
     //dubbelkolla ås tiden stämmer (inte i dåtiden)

@@ -8,7 +8,13 @@ import { ArrowLeft } from 'lucide-react'
 import ShareEventButton from '@/components/shareEvents'
 import AutoAddInvite from '@/components/AutoAddInvite'
 
-import { MapPin, Calendar, Clock, User } from 'lucide-react'
+import {
+  MapPin,
+  Calendar,
+  Clock,
+  User,
+  MessageCircleWarning,
+} from 'lucide-react'
 
 import { formatEventDuration } from '@/lib/formatEventDuration'
 import InviteStatusList from '@/components/InviteStatusList'
@@ -172,7 +178,7 @@ export default async function EventDetailsPage({
               <div className="flex items-center gap-2">
                 <Calendar size={18} />
                 <span>
-                  {new Date(event.date).toLocaleDateString('sv-SE', {
+                  {new Date(event.date).toLocaleDateString('en-US', {
                     weekday: 'long',
                     month: 'long',
                     day: 'numeric',
@@ -199,6 +205,23 @@ export default async function EventDetailsPage({
                   <span>{hostLabel}</span>
                 </div>
               )}
+
+              {event.rsvp_date && (
+                <div className="flex items-center gap-2">
+                  <MessageCircleWarning size={18} />
+                  <span>
+                    RSVP by{' '}
+                    {new Date(event.rsvp_date).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}{' '}
+                    {event.rsvp_time && `at ${event.rsvp_time}`}
+                  </span>
+                </div>
+              )}
+
               {event.description && (
                 <p className="leading-relaxed">{event.description}</p>
               )}
