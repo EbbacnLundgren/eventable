@@ -23,8 +23,11 @@ export default function CreateEventPage() {
     description: '',
     image: null as File | null,
     allowInviteesToInvite: false,
+    rsvpDate: '',
+    rsvpTime: '',
   })
   const [showEndFields, setShowEndFields] = useState(false)
+  const [showRSVPFields, setShowRSVPFields] = useState(false)
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
   const { data: session } = useSession()
@@ -404,6 +407,66 @@ export default function CreateEventPage() {
           {formData.endTime && !isValidEndTime && (
             <p className="text-red-500 text-sm">
               Please enter a valid end time (HH:MM).
+            </p>
+          )}
+
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                if (showRSVPFields) {
+                  // Nollställ värden när man stänger fälten
+                  setFormData((prev) => ({
+                    ...prev,
+                    rsvpDate: '',
+                    rsvpTime: '',
+                  }))
+                  setShowRSVPFields(false)
+                } else {
+                  const defaultRSVPDate = formData.date
+                  const defaultRSVPTime = addThreeHoursToTime(formData.time)
+                  setFormData((prev) => ({
+                    ...prev,
+                    rsvpDate: defaultRSVPDate,
+                    rsvpTime: defaultRSVPTime,
+                  }))
+                  setShowRSVPFields(true)
+                }
+              }}
+              className="text-xl  hover:scale-105 mr-3"
+            >
+              {showRSVPFields ? '−' : '+'}
+            </button>
+            <label className="font-sans text-gray-600">
+              RSVP date and time (optional)
+            </label>
+          </div>
+          {showRSVPFields && (
+            <div className="flex gap-2">
+              <input
+                type="date"
+                name="rsvpDate"
+                min={formData.date}
+                value={formData.rsvpDate || ''}
+                onChange={handleInputChange}
+                className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
+              />
+              <TimePicker
+                value={formData.rsvpTime || ''}
+                onChange={(v) =>
+                  setFormData((prev) => ({ ...prev, rsvpTime: v }))
+                }
+              />
+            </div>
+          )}
+          {hasPartialEnd && (
+            <p className="text-red-500 text-sm">
+              Please provide both date and time.
+            </p>
+          )}
+          {formData.rsvpTime && !isValidTime && (
+            <p className="text-red-500 text-sm">
+              Please enter a valid time (HH:MM).
             </p>
           )}
 
