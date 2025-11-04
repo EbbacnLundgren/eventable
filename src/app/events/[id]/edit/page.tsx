@@ -27,6 +27,8 @@ export default function EditEventPage() {
     endTime: '',
     description: '',
     image: '' as string | File,
+    rsvpDate: '',
+    rsvpTime: '',
   })
   const [selectedImage, setSelectedImage] = useState<string>('')
 
@@ -59,6 +61,8 @@ export default function EditEventPage() {
           endTime: data.end_time ?? '',
           description: data.description ?? '',
           image: data.image ?? '',
+          rsvpDate: data.rsvp_date ?? '',
+          rsvpTime: data.rsvp_time ?? '',
         })
         setSelectedImage(data.image ?? defaultImages[0])
       }
@@ -91,6 +95,8 @@ export default function EditEventPage() {
     setSelectedImage(random)
     setFormData((prev) => ({ ...prev, image: random }))
   }
+
+  // checkar för create event knappen ska gå från grå till klickbar
 
   // --- 3) Uppdatera event ---
   async function handleSubmit(e: FormEvent) {
@@ -140,6 +146,8 @@ export default function EditEventPage() {
         end_time: formData.endTime || null, // ändrat
         description: formData.description,
         image: imageUrl,
+        rsvp_date: formData.rsvpDate || null,
+        rsvp_time: formData.rsvpTime || null,
       })
       .eq('id', Number(id))
 
@@ -263,6 +271,23 @@ export default function EditEventPage() {
           <TimePicker
             value={formData.endTime}
             onChange={(v) => setFormData((prev) => ({ ...prev, endTime: v }))}
+          />
+        </div>
+
+        <label className="text-black font-medium">
+          RSVP date and time (optional)
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="date"
+            name="rsvpDate"
+            value={formData.rsvpDate}
+            onChange={handleInputChange}
+            className="text-black flex-1 p-3 rounded-xl bg-white/80 border border-white/50"
+          />
+          <TimePicker
+            value={formData.rsvpTime}
+            onChange={(v) => setFormData((prev) => ({ ...prev, rsvpTime: v }))}
           />
         </div>
 
