@@ -172,12 +172,16 @@ export default async function EventDetailsPage({
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <MapPin size={18} />
-                <span>{event.location}</span>
+                <span>
+                  <span className="font-bold">Location:</span> {event.location}
+                </span>
               </div>
 
               <div className="flex items-center gap-2">
                 <Calendar size={18} />
                 <span>
+                  {' '}
+                  <span className="font-bold">Date: </span>
                   {new Date(event.date).toLocaleDateString('en-US', {
                     weekday: 'long',
                     month: 'long',
@@ -190,6 +194,7 @@ export default async function EventDetailsPage({
               <div className="flex items-center gap-2">
                 <Clock size={18} />
                 <span>
+                  <span className="font-bold">Time:</span>{' '}
                   {formatEventDuration(
                     event.date,
                     event.time,
@@ -202,7 +207,11 @@ export default async function EventDetailsPage({
               {hostLabel && (
                 <div className="flex items-center gap-2">
                   <User size={18} />
-                  <span>{hostLabel}</span>
+                  <span>
+                    {' '}
+                    <span className="font-bold">Host: </span>
+                    {hostLabel}
+                  </span>
                 </div>
               )}
 
@@ -210,7 +219,7 @@ export default async function EventDetailsPage({
                 <div className="flex items-center gap-2">
                   <MessageCircleWarning size={18} />
                   <span>
-                    RSVP by{' '}
+                    <span className="font-bold">RSVP: </span>{' '}
                     {new Date(event.rsvp_date).toLocaleDateString('en-US', {
                       weekday: 'long',
                       month: 'long',
@@ -223,7 +232,11 @@ export default async function EventDetailsPage({
               )}
 
               {event.description && (
-                <p className="leading-relaxed">{event.description}</p>
+                <div className="my-8 leading-relaxed">
+                  <p>
+                    <span className="font-bold">Info:</span> {event.description}
+                  </p>
+                </div>
               )}
             </div>
 
