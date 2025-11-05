@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/client'
 import { useSession } from 'next-auth/react'
 
@@ -11,9 +11,17 @@ type User = {
   last_name?: string
 }
 
+type FriendRequest = {
+  id: string
+  requester_id: string
+  status: string
+  google_users: User
+}
+
 export default function AddFriendsPage() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<User[]>([])
+  const [requests, setRequests] = useState<FriendRequest[]>([])
   const [loading, setLoading] = useState(false)
   const { data: session } = useSession()
 
@@ -35,6 +43,18 @@ export default function AddFriendsPage() {
 
     return gUser?.id ?? supaUser?.id ?? null
   }
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      const userId = await resolveCurrentUserId()
+      if (!userId) return
+
+      const res = await fetch(`/api/friends/requests?userId=${userId}`)
+      const data = await res.json()
+      setRequests(data.requests || [])
+    }
+    fetchRequests()
+  }, [session])
 
   const handleSearch = async () => {
     setLoading(true)
@@ -82,6 +102,18 @@ export default function AddFriendsPage() {
     } catch (err) {
       console.error('Error sending request:', err)
     }
+  }
+
+  const respondToRequest = async (
+    requestId: string,
+    action: 'accepted' | 'declined'
+  ) => {
+    await fetch('/api/friends/respond', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requestId, action }),
+    })
+    setRequests((prev) => prev.filter((r) => r.id !== requestId))
   }
 
   return (
@@ -138,6 +170,42 @@ export default function AddFriendsPage() {
             </li>
           ))}
         </ul>
+        {/* 📨 Pending friend requests */}
+        {requests.length > 0 && (
+          <div className="mt-10">
+            <h2 className="text-xl font-semibold mb-3 text-center">
+              Friend Requests
+            </h2>
+            <ul className="space-y-3">
+              {requests.map((req) => (
+                <li
+                  key={req.id}
+                  className="flex justify-between items-center bg-white/10 p-3 rounded-lg"
+                >
+                  <span>
+                    {req.google_users.first_name
+                      ? `${req.google_users.first_name} ${req.google_users.last_name || ''}`
+                      : req.google_users.email}
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => respondToRequest(req.id, 'accepted')}
+                      className="px-3 py-1 bg-green-500 rounded hover:bg-green-600 text-sm"
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={() => respondToRequest(req.id, 'declined')}
+                      className="px-3 py-1 bg-red-500 rounded hover:bg-red-600 text-sm"
+                    >
+                      Decline
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </main>
   )
