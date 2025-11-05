@@ -56,6 +56,20 @@ export default function AddFriendsPage() {
     fetchRequests()
   }, [session])
 
+  useEffect(() => {
+    const fetchRequests = async () => {
+      const userId = await resolveCurrentUserId()
+      console.log('🔍 currentUserId:', userId)
+      if (!userId) return
+
+      const res = await fetch(`/api/friends/requests?userId=${userId}`)
+      const data = await res.json()
+      console.log('📬 fetched requests:', data)
+      setRequests(data.requests || [])
+    }
+    fetchRequests()
+  }, [session])
+
   const handleSearch = async () => {
     setLoading(true)
     const currentUserId = await resolveCurrentUserId()
