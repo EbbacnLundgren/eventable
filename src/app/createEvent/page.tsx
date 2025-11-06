@@ -115,7 +115,7 @@ export default function CreateEventPage() {
       }
     }
 
-    ;(async () => {
+    ; (async () => {
       const cls = await getContrastClassForImage(selectedImage)
       if (!cancelled) setLabelColorClass(cls)
     })()
@@ -239,8 +239,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-          )
+          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+        )
         : null
 
     if (startDateTime < now) {
@@ -310,7 +310,7 @@ export default function CreateEventPage() {
         onKeyDown={(e) => {
           if (e.key === 'Enter') e.preventDefault()
         }}
-        className="w-full max-w-2xl flex flex-col gap-5 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
+        className="w-full max-w-2xl flex flex-col gap-2 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
       >
         {/* Image Header */}
         <div className="relative h-48 w-full overflow-hidden rounded-2xl">
@@ -387,7 +387,7 @@ export default function CreateEventPage() {
             </div>
           </div> */}
 
-        <label className={`font-sans ${labelColorClass}`}>
+        <label className={`font-sans pt-1 ${labelColorClass}`}>
           Event name{' '}
           {touched.name && !formData.name && (
             <span className="text-red-500">*</span>
@@ -407,27 +407,7 @@ export default function CreateEventPage() {
           required
         />
 
-        <label className={`font-sans ${labelColorClass}`}>
-          Location{' '}
-          {touched.name && !formData.name && (
-            <span className="text-red-500">*</span>
-          )}
-        </label>
-        <input
-          type="text"
-          name="location"
-          value={formData.location}
-          onChange={handleInputChange}
-          onBlur={(e) =>
-            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
-          }
-          className={`text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border 
-    ${touched.name && !formData.name ? 'border-red-500' : 'border-white/50'}
-    focus:outline-none focus:ring-2 focus:ring-pink-400`}
-          required
-        />
-
-        <label className={`font-sans ${labelColorClass}`}>Date and time</label>
+        <label className={`font-sans pt-1 ${labelColorClass}`}>Start</label>
         <div className="flex gap-2">
           <input
             type="date"
@@ -449,12 +429,11 @@ export default function CreateEventPage() {
           </p>
         )}
 
-        <div>
+        <div className="flex items-center gap-3 pt-1">
           <button
             type="button"
             onClick={() => {
               if (showEndFields) {
-                // Nollställ värden när man stänger fälten
                 setFormData((prev) => ({
                   ...prev,
                   endDate: '',
@@ -472,12 +451,20 @@ export default function CreateEventPage() {
                 setShowEndFields(true)
               }
             }}
-            className="text-xl  hover:scale-105 mr-3"
+            className="relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 
+    hover:scale-105"
           >
-            {showEndFields ? '−' : '+'}
+            <div
+              className={`absolute inset-0 rounded-full transition-colors duration-300 ${showEndFields ? 'bg-green-500' : 'bg-gray-400'
+                }`}
+            />
+            <span
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showEndFields ? 'translate-x-5' : 'translate-x-1'
+                }`}
+            />
           </button>
-          <label className={`font-sans ${labelColorClass}`}>
-            End date and time (optional)
+          <label className={`font-sans pt-1 ${labelColorClass}`}>
+            End date and time
           </label>
         </div>
         {showEndFields && (
@@ -507,7 +494,55 @@ export default function CreateEventPage() {
           </p>
         )}
 
-        <div>
+        <label className={`font-sans pt-1 ${labelColorClass} `}>
+          Location{' '}
+          {touched.name && !formData.name && (
+            <span className="text-red-500">*</span>
+          )}
+        </label>
+        <input
+          type="text"
+          name="location"
+          value={formData.location}
+          onChange={handleInputChange}
+          onBlur={(e) =>
+            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
+          }
+          className={`text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border 
+    ${touched.name && !formData.name ? 'border-red-500' : 'border-white/50'}
+    focus:outline-none focus:ring-2 focus:ring-pink-400`}
+          required
+        />
+
+
+
+
+
+        {/*
+  <label className={`font-sans ${labelColorClass}`}>Description</label>
+        <input
+          type="text"
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
+          className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
+        /> */}
+
+        <label className={`font-sans ${labelColorClass}`}>Description</label>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={(e) => {
+            handleInputChange(e)
+            e.target.style.height = 'auto'
+            e.target.style.height = `${e.target.scrollHeight}px`
+          }}
+          rows={3}
+          className="text-black p-3 pt-1 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none overflow-hidden"
+          placeholder="Add a description..."
+        />
+
+        <div className="mt-4">
           <button
             type="button"
             onClick={() => {
@@ -532,10 +567,20 @@ export default function CreateEventPage() {
             }}
             className="text-xl  hover:scale-105 mr-3"
           >
-            {showRSVPFields ? '−' : '+'}
+            <button
+              onClick={() => setShowRSVPFields(!showRSVPFields)}
+              className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
+                }`}
+            >
+              <span
+                className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showRSVPFields ? 'translate-x-5' : 'translate-x-1'
+                  }`}
+              />
+            </button>
+
           </button>
-          <label className={`font-sans ${labelColorClass}`}>
-            RSVP date and time (optional)
+          <label className={`font-sans pt-2 ${labelColorClass}`}>
+            RSVP date and time
           </label>
         </div>
         {showRSVPFields && (
@@ -546,7 +591,7 @@ export default function CreateEventPage() {
               min={formData.date}
               value={formData.rsvpDate || ''}
               onChange={handleInputChange}
-              className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
+              className="text-black pt-1 flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
             />
             <TimePicker
               value={formData.rsvpTime || ''}
@@ -566,30 +611,6 @@ export default function CreateEventPage() {
             Please enter a valid time (HH:MM).
           </p>
         )}
-
-        {/*
-  <label className={`font-sans ${labelColorClass}`}>Description</label>
-        <input
-          type="text"
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange}
-          className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
-        /> */}
-
-        <label className={`font-sans ${labelColorClass}`}>Description</label>
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={(e) => {
-            handleInputChange(e)
-            e.target.style.height = 'auto'
-            e.target.style.height = `${e.target.scrollHeight}px`
-          }}
-          rows={3}
-          className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none overflow-hidden"
-          placeholder="Add a description..."
-        />
 
         <div className="flex items-center gap-2 mt-2">
           <input
@@ -623,9 +644,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
