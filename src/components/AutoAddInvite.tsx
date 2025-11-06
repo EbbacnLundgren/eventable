@@ -19,8 +19,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
   }
 
   useEffect(() => {
-    ; (async () => {
-
+    ;(async () => {
       let email: string | null = null
       const {
         data: { user: supabaseUser },
@@ -32,7 +31,6 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         setMsg('Log in to see this event.')
         return
       }
-
 
       const { data: gUser, error: upErr } = await supabase
         .from('google_users')
@@ -70,7 +68,6 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
           .single()
 
         if (ev && ev.user_id && String(ev.user_id) === String(userId)) {
-
           return
         }
       } catch (e) {
@@ -78,7 +75,6 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
       }
 
       const storageKey = `inviteToast:${userId}:${eid}`
-
 
       const { data: existing, error: existErr } = await supabase
         .from('event_invites')
@@ -92,11 +88,9 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         return
       }
 
-
       if (existing?.status === 'accepted' || existing?.status === 'declined') {
         return
       }
-
 
       if (!existing) {
         const { error: insErr } = await supabase
@@ -112,7 +106,6 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
           }
         }
 
-
         if (!localStorage.getItem(storageKey)) {
           setMsg('This event has been added to your page')
           localStorage.setItem(storageKey, '1')
@@ -120,7 +113,6 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         }
         return
       }
-
 
       if (existing.status === 'pending' && !localStorage.getItem(storageKey)) {
         setMsg('This event already exists on your page.')
