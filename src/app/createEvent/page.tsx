@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent, ChangeEvent } from 'react'
+import { useState, FormEvent, ChangeEvent, useEffect } from 'react'
 import { uploadEventImage } from '@/lib/uploadEventImage'
 import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
@@ -41,6 +41,9 @@ export default function CreateEventPage() {
 
   const [selectedImage, setSelectedImage] = useState(defaultImages[0])
 
+  // label color class (computed from background image brightness)
+  const [labelColorClass, setLabelColorClass] = useState('text-gray-600')
+
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
 
   function handleRandomize() {
@@ -60,6 +63,72 @@ export default function CreateEventPage() {
       setSelectedImage(url)
     }
   }
+
+  // Compute a readable text color class based on the selected image's brightness.
+  // Uses a small canvas to sample pixels and compute average luminance.
+  useEffect(() => {
+    let cancelled = false
+
+    async function getContrastClassForImage(url: string | null) {
+      if (!url) return 'text-gray-800'
+
+      try {
+        // Return a promise that resolves when the image is loaded and analyzed
+        const cls = await new Promise<string>((resolve) => {
+          const img = new Image()
+          // allow same-origin images and blob URLs; crossOrigin helps for public images
+          img.crossOrigin = 'Anonymous'
+          img.src = url
+
+          img.onload = () => {
+            try {
+              const canvas = document.createElement('canvas')
+              const size = 40 // small sample
+              canvas.width = size
+              canvas.height = size
+              const ctx = canvas.getContext('2d')
+              if (!ctx) return resolve('text-gray-800')
+              ctx.drawImage(img, 0, 0, size, size)
+              const data = ctx.getImageData(0, 0, size, size).data
+
+              let totalL = 0
+              const step = 4 * 2 // sample every 2nd pixel to speed up
+              for (let i = 0; i < data.length; i += step) {
+                const r = data[i]
+                const g = data[i + 1]
+                const b = data[i + 2]
+                // relative luminance (Rec. 709)
+                const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+                totalL += lum
+              }
+              const samples = data.length / step
+              const avg = totalL / Math.max(1, samples)
+              // threshold ~128 (0-255) - dark background -> white text
+              resolve(avg < 128 ? 'text-white' : 'text-gray-800')
+            } catch (err) {
+              // canvas may be tainted due to CORS; fall back
+              resolve('text-gray-800')
+            }
+          }
+
+          img.onerror = () => resolve('text-gray-800')
+        })
+
+        return cls
+      } catch (err) {
+        return 'text-gray-800'
+      }
+    }
+
+    ; (async () => {
+      const cls = await getContrastClassForImage(selectedImage)
+      if (!cancelled) setLabelColorClass(cls)
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [selectedImage])
 
   function handleInputChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -175,8 +244,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-          )
+          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+        )
         : null
 
     if (startDateTime < now) {
@@ -323,7 +392,7 @@ export default function CreateEventPage() {
             </div>
           </div> */}
 
-        <label className="font-sans text-gray-600">
+        <label className={`font-sans ${labelColorClass}`}>
           Event name{' '}
           {touched.name && !formData.name && (
             <span className="text-red-500">*</span>
@@ -343,7 +412,7 @@ export default function CreateEventPage() {
           required
         />
 
-        <label className="font-sans text-gray-600">
+        <label className={`font-sans ${labelColorClass}`}>
           Location{' '}
           {touched.name && !formData.name && (
             <span className="text-red-500">*</span>
@@ -363,7 +432,7 @@ export default function CreateEventPage() {
           required
         />
 
-        <label className="font-sans text-gray-600">Date and time</label>
+        <label className={`font-sans ${labelColorClass}`}>Date and time</label>
         <div className="flex gap-2">
           <input
             type="date"
@@ -412,7 +481,7 @@ export default function CreateEventPage() {
           >
             {showEndFields ? '−' : '+'}
           </button>
-          <label className="font-sans text-gray-600">
+          <label className={`font-sans ${labelColorClass}`}>
             End date and time (optional)
           </label>
         </div>
@@ -470,7 +539,7 @@ export default function CreateEventPage() {
           >
             {showRSVPFields ? '−' : '+'}
           </button>
-          <label className="font-sans text-gray-600">
+          <label className={`font-sans ${labelColorClass}`}>
             RSVP date and time (optional)
           </label>
         </div>
@@ -504,7 +573,7 @@ export default function CreateEventPage() {
         )}
 
         {/*
-        <label className="font-sans text-gray-600">Description</label>
+  <label className={`font-sans ${labelColorClass}`}>Description</label>
         <input
           type="text"
           name="description"
@@ -513,7 +582,7 @@ export default function CreateEventPage() {
           className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
         /> */}
 
-        <label className="font-sans text-gray-600">Description</label>
+        <label className={`font-sans ${labelColorClass}`}>Description</label>
         <textarea
           name="description"
           value={formData.description}
@@ -540,10 +609,7 @@ export default function CreateEventPage() {
             }
             className="w-4 h-4 accent-pink-500"
           />
-          <label
-            htmlFor="allowInviteesToInvite"
-            className="font-sans text-gray-600"
-          >
+          <label htmlFor="allowInviteesToInvite" className={`font-sans ${labelColorClass}`}>
             Allow invitees to invite others
           </label>
         </div>
@@ -559,9 +625,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
