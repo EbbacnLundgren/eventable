@@ -19,7 +19,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
   }
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       let email: string | null = null
       const {
         data: { user: supabaseUser },
@@ -54,6 +54,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
       }
 
       const userId = gUser.id as string
+      const supaUserId = supabaseUser?.id
       const eid = Number(eventId)
       if (!Number.isFinite(eid)) {
         setMsg('Invalid event.')
@@ -67,7 +68,12 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
           .eq('id', eid)
           .single()
 
-        if (ev && ev.user_id && String(ev.user_id) === String(userId)) {
+        if (
+          ev &&
+          ev.user_id &&
+          (String(ev.user_id) === String(userId) ||
+            (supaUserId && String(ev.user_id) === String(supaUserId)))
+        ) {
           return
         }
       } catch (e) {
