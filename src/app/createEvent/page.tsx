@@ -481,6 +481,7 @@ export default function CreateEventPage() {
           </p>
         )}
 
+        {/*
         <label className="font-sans text-gray-600">Description</label>
         <input
           type="text"
@@ -488,6 +489,20 @@ export default function CreateEventPage() {
           value={formData.description}
           onChange={handleInputChange}
           className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
+        /> */}
+
+        <label className="font-sans text-gray-600">Description</label>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={(e) => {
+            handleInputChange(e)
+            e.target.style.height = 'auto'
+            e.target.style.height = `${e.target.scrollHeight}px`
+          }}
+          rows={1}
+          className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none overflow-hidden"
+          placeholder="Add a description..."
         />
 
         <div className="flex items-center gap-2 mt-2">
