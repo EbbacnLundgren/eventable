@@ -19,7 +19,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
   }
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       let email: string | null = null
       const {
         data: { user: supabaseUser },
