@@ -81,34 +81,30 @@ export default function CreateEventPage() {
           img.src = url
 
           img.onload = () => {
-            try {
-              const canvas = document.createElement('canvas')
-              const size = 40 // small sample
-              canvas.width = size
-              canvas.height = size
-              const ctx = canvas.getContext('2d')
-              if (!ctx) return resolve('text-gray-800')
-              ctx.drawImage(img, 0, 0, size, size)
-              const data = ctx.getImageData(0, 0, size, size).data
 
-              let totalL = 0
-              const step = 4 * 2 // sample every 2nd pixel to speed up
-              for (let i = 0; i < data.length; i += step) {
-                const r = data[i]
-                const g = data[i + 1]
-                const b = data[i + 2]
-                // relative luminance (Rec. 709)
-                const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
-                totalL += lum
-              }
-              const samples = data.length / step
-              const avg = totalL / Math.max(1, samples)
-              // threshold ~128 (0-255) - dark background -> white text
-              resolve(avg < 128 ? 'text-white' : 'text-gray-800')
-            } catch (err) {
-              // canvas may be tainted due to CORS; fall back
-              resolve('text-gray-800')
+            const canvas = document.createElement('canvas')
+            const size = 40 // small sample
+            canvas.width = size
+            canvas.height = size
+            const ctx = canvas.getContext('2d')
+            if (!ctx) return resolve('text-gray-800')
+            ctx.drawImage(img, 0, 0, size, size)
+            const data = ctx.getImageData(0, 0, size, size).data
+
+            let totalL = 0
+            const step = 4 * 2 // sample every 2nd pixel to speed up
+            for (let i = 0; i < data.length; i += step) {
+              const r = data[i]
+              const g = data[i + 1]
+              const b = data[i + 2]
+              // relative luminance (Rec. 709)
+              const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+              totalL += lum
             }
+            const samples = data.length / step
+            const avg = totalL / Math.max(1, samples)
+            // threshold ~128 (0-255) - dark background -> white text
+            resolve(avg < 128 ? 'text-white' : 'text-gray-800')
           }
 
           img.onerror = () => resolve('text-gray-800')
@@ -120,7 +116,7 @@ export default function CreateEventPage() {
       }
     }
 
-    ;(async () => {
+    ; (async () => {
       const cls = await getContrastClassForImage(selectedImage)
       if (!cancelled) setLabelColorClass(cls)
     })()
@@ -244,8 +240,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-          )
+          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+        )
         : null
 
     if (startDateTime < now) {
@@ -628,9 +624,8 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
