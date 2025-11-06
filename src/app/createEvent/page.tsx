@@ -586,7 +586,7 @@ export default function CreateEventPage() {
             e.target.style.height = 'auto'
             e.target.style.height = `${e.target.scrollHeight}px`
           }}
-          rows={1}
+          rows={3}
           className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none overflow-hidden"
           placeholder="Add a description..."
         />
