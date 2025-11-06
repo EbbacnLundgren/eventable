@@ -540,12 +540,11 @@ export default function CreateEventPage() {
           placeholder="Add a description..."
         />
 
-        <div className="mt-4">
+        <div className="mt-4 flex items-center gap-3">
           <button
             type="button"
             onClick={() => {
               if (showRSVPFields) {
-                // Nollställ värden när man stänger fälten
                 setFormData((prev) => ({
                   ...prev,
                   rsvpDate: '',
@@ -563,25 +562,22 @@ export default function CreateEventPage() {
                 setShowRSVPFields(true)
               }
             }}
-            className="text-xl  hover:scale-105 mr-3"
+            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${
+              showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
+            }`}
           >
-            <button
-              onClick={() => setShowRSVPFields(!showRSVPFields)}
-              className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${
-                showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
+            <span
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
+                showRSVPFields ? 'translate-x-5' : 'translate-x-1'
               }`}
-            >
-              <span
-                className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
-                  showRSVPFields ? 'translate-x-5' : 'translate-x-1'
-                }`}
-              />
-            </button>
+            />
           </button>
+
           <label className={`font-sans pt-2 ${labelColorClass}`}>
             RSVP date and time
           </label>
         </div>
+
         {showRSVPFields && (
           <div className="flex gap-2">
             <input
