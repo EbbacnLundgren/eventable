@@ -42,6 +42,8 @@ export default function CreateEventPage() {
 
   const [selectedImage, setSelectedImage] = useState(defaultImages[0])
 
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
+
   function handleRandomize() {
     let random = selectedImage
     while (random === selectedImage) {
@@ -65,6 +67,7 @@ export default function CreateEventPage() {
   ) {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    setTouched((prev) => ({ ...prev, [name]: true }))
   }
 
   //denna fixar närmsta nästa timme för-inställt
@@ -299,6 +302,7 @@ export default function CreateEventPage() {
             required
           /> */}
 
+        {/* 
         <div className="flex flex-col gap-3">
           <div className="flex justify-center w-full">
             <div className="relative inline-flex items-center">
@@ -318,169 +322,211 @@ export default function CreateEventPage() {
                 </span>
               )}
             </div>
-          </div>
+          </div> */}
 
-          <label className="font-sans text-gray-600">Location</label>
+        <label className="font-sans text-gray-600">
+          Event name{' '}
+          {touched.name && !formData.name && (
+            <span className="text-red-500">*</span>
+          )}
+        </label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+          onBlur={(e) =>
+            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
+          }
+          className={`text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border 
+    ${touched.name && !formData.name ? 'border-red-500' : 'border-white/50'}
+    focus:outline-none focus:ring-2 focus:ring-pink-400`}
+          required
+        />
+
+        <label className="font-sans text-gray-600">
+          Location{' '}
+          {touched.name && !formData.name && (
+            <span className="text-red-500">*</span>
+          )}
+        </label>
+        <input
+          type="text"
+          name="location"
+          value={formData.location}
+          onChange={handleInputChange}
+          onBlur={(e) =>
+            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
+          }
+          className={`text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border 
+    ${touched.name && !formData.name ? 'border-red-500' : 'border-white/50'}
+    focus:outline-none focus:ring-2 focus:ring-pink-400`}
+          required
+        />
+
+        <label className="font-sans text-gray-600">Date and time</label>
+        <div className="flex gap-2">
           <input
-            type="text"
-            name="location"
-            value={formData.location}
+            type="date"
+            name="date"
+            value={formData.date}
+            min={new Date().toISOString().split('T')[0]}
             onChange={handleInputChange}
-            className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400"
+            className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
             required
           />
+          <TimePicker
+            value={formData.time}
+            onChange={(v) => setFormData((prev) => ({ ...prev, time: v }))}
+          />
+        </div>
+        {formData.time && !isValidTime && (
+          <p className="text-red-500 text-sm">
+            Please enter a valid start time (HH:MM).
+          </p>
+        )}
 
-          <label className="font-sans text-gray-600">Date and time</label>
+        <div>
+          <button
+            type="button"
+            onClick={() => {
+              if (showEndFields) {
+                // Nollställ värden när man stänger fälten
+                setFormData((prev) => ({
+                  ...prev,
+                  endDate: '',
+                  endTime: '',
+                }))
+                setShowEndFields(false)
+              } else {
+                const defaultEndDate = formData.date
+                const defaultEndTime = addThreeHoursToTime(formData.time)
+                setFormData((prev) => ({
+                  ...prev,
+                  endDate: defaultEndDate,
+                  endTime: defaultEndTime,
+                }))
+                setShowEndFields(true)
+              }
+            }}
+            className="text-xl  hover:scale-105 mr-3"
+          >
+            {showEndFields ? '−' : '+'}
+          </button>
+          <label className="font-sans text-gray-600">
+            End date and time (optional)
+          </label>
+        </div>
+        {showEndFields && (
           <div className="flex gap-2">
             <input
               type="date"
-              name="date"
-              value={formData.date}
-              min={new Date().toISOString().split('T')[0]}
+              name="endDate"
+              min={formData.date}
+              value={formData.endDate || ''}
               onChange={handleInputChange}
               className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
-              required
             />
             <TimePicker
-              value={formData.time}
-              onChange={(v) => setFormData((prev) => ({ ...prev, time: v }))}
+              value={formData.endTime || ''}
+              onChange={(v) => setFormData((prev) => ({ ...prev, endTime: v }))}
             />
           </div>
-          {formData.time && !isValidTime && (
-            <p className="text-red-500 text-sm">
-              Please enter a valid start time (HH:MM).
-            </p>
-          )}
+        )}
+        {hasPartialEnd && (
+          <p className="text-red-500 text-sm">
+            Please provide both end date and end time.
+          </p>
+        )}
+        {formData.endTime && !isValidEndTime && (
+          <p className="text-red-500 text-sm">
+            Please enter a valid end time (HH:MM).
+          </p>
+        )}
 
-          <div>
-            <button
-              type="button"
-              onClick={() => {
-                if (showEndFields) {
-                  // Nollställ värden när man stänger fälten
-                  setFormData((prev) => ({
-                    ...prev,
-                    endDate: '',
-                    endTime: '',
-                  }))
-                  setShowEndFields(false)
-                } else {
-                  const defaultEndDate = formData.date
-                  const defaultEndTime = addThreeHoursToTime(formData.time)
-                  setFormData((prev) => ({
-                    ...prev,
-                    endDate: defaultEndDate,
-                    endTime: defaultEndTime,
-                  }))
-                  setShowEndFields(true)
-                }
-              }}
-              className="text-xl  hover:scale-105 mr-3"
-            >
-              {showEndFields ? '−' : '+'}
-            </button>
-            <label className="font-sans text-gray-600">
-              End date and time (optional)
-            </label>
-          </div>
-          {showEndFields && (
-            <div className="flex gap-2">
-              <input
-                type="date"
-                name="endDate"
-                min={formData.date}
-                value={formData.endDate || ''}
-                onChange={handleInputChange}
-                className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
-              />
-              <TimePicker
-                value={formData.endTime || ''}
-                onChange={(v) =>
-                  setFormData((prev) => ({ ...prev, endTime: v }))
-                }
-              />
-            </div>
-          )}
-          {hasPartialEnd && (
-            <p className="text-red-500 text-sm">
-              Please provide both end date and end time.
-            </p>
-          )}
-          {formData.endTime && !isValidEndTime && (
-            <p className="text-red-500 text-sm">
-              Please enter a valid end time (HH:MM).
-            </p>
-          )}
-
-          <div>
-            <button
-              type="button"
-              onClick={() => {
-                if (showRSVPFields) {
-                  // Nollställ värden när man stänger fälten
-                  setFormData((prev) => ({
-                    ...prev,
-                    rsvpDate: '',
-                    rsvpTime: '',
-                  }))
-                  setShowRSVPFields(false)
-                } else {
-                  const defaultRSVPDate = formData.date
-                  const defaultRSVPTime = addThreeHoursToTime(formData.time)
-                  setFormData((prev) => ({
-                    ...prev,
-                    rsvpDate: defaultRSVPDate,
-                    rsvpTime: defaultRSVPTime,
-                  }))
-                  setShowRSVPFields(true)
-                }
-              }}
-              className="text-xl  hover:scale-105 mr-3"
-            >
-              {showRSVPFields ? '−' : '+'}
-            </button>
-            <label className="font-sans text-gray-600">
-              RSVP date and time (optional)
-            </label>
-          </div>
-          {showRSVPFields && (
-            <div className="flex gap-2">
-              <input
-                type="date"
-                name="rsvpDate"
-                min={formData.date}
-                value={formData.rsvpDate || ''}
-                onChange={handleInputChange}
-                className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
-              />
-              <TimePicker
-                value={formData.rsvpTime || ''}
-                onChange={(v) =>
-                  setFormData((prev) => ({ ...prev, rsvpTime: v }))
-                }
-              />
-            </div>
-          )}
-          {hasPartialEnd && (
-            <p className="text-red-500 text-sm">
-              Please provide both date and time.
-            </p>
-          )}
-          {formData.rsvpTime && !isValidTime && (
-            <p className="text-red-500 text-sm">
-              Please enter a valid time (HH:MM).
-            </p>
-          )}
-
-          <label className="font-sans text-gray-600">Description</label>
-          <input
-            type="text"
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
-          />
+        <div>
+          <button
+            type="button"
+            onClick={() => {
+              if (showRSVPFields) {
+                // Nollställ värden när man stänger fälten
+                setFormData((prev) => ({
+                  ...prev,
+                  rsvpDate: '',
+                  rsvpTime: '',
+                }))
+                setShowRSVPFields(false)
+              } else {
+                const defaultRSVPDate = formData.date
+                const defaultRSVPTime = addThreeHoursToTime(formData.time)
+                setFormData((prev) => ({
+                  ...prev,
+                  rsvpDate: defaultRSVPDate,
+                  rsvpTime: defaultRSVPTime,
+                }))
+                setShowRSVPFields(true)
+              }
+            }}
+            className="text-xl  hover:scale-105 mr-3"
+          >
+            {showRSVPFields ? '−' : '+'}
+          </button>
+          <label className="font-sans text-gray-600">
+            RSVP date and time (optional)
+          </label>
         </div>
+        {showRSVPFields && (
+          <div className="flex gap-2">
+            <input
+              type="date"
+              name="rsvpDate"
+              min={formData.date}
+              value={formData.rsvpDate || ''}
+              onChange={handleInputChange}
+              className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
+            />
+            <TimePicker
+              value={formData.rsvpTime || ''}
+              onChange={(v) =>
+                setFormData((prev) => ({ ...prev, rsvpTime: v }))
+              }
+            />
+          </div>
+        )}
+        {hasPartialEnd && (
+          <p className="text-red-500 text-sm">
+            Please provide both date and time.
+          </p>
+        )}
+        {formData.rsvpTime && !isValidTime && (
+          <p className="text-red-500 text-sm">
+            Please enter a valid time (HH:MM).
+          </p>
+        )}
+
+        {/*
+        <label className="font-sans text-gray-600">Description</label>
+        <input
+          type="text"
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
+          className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
+        /> */}
+
+        <label className="font-sans text-gray-600">Description</label>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={(e) => {
+            handleInputChange(e)
+            e.target.style.height = 'auto'
+            e.target.style.height = `${e.target.scrollHeight}px`
+          }}
+          rows={1}
+          className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none overflow-hidden"
+          placeholder="Add a description..."
+        />
 
         <div className="flex items-center gap-2 mt-2">
           <input
