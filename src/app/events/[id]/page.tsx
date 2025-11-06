@@ -8,6 +8,8 @@ import { ArrowLeft } from 'lucide-react'
 import ShareEventButton from '@/components/shareEvents'
 import AutoAddInvite from '@/components/AutoAddInvite'
 
+import ShareAndInviteSection from '@/components/ShareAndInviteSection'
+
 import {
   MapPin,
   Calendar,
@@ -17,7 +19,6 @@ import {
 } from 'lucide-react'
 
 import { formatEventDuration } from '@/lib/formatEventDuration'
-import InviteStatusList from '@/components/InviteStatusList'
 import EditEventButton from '@/components/editEventsButton'
 
 import DynamicBackground from '@/components/DynamicBackground'
@@ -241,15 +242,25 @@ export default async function EventDetailsPage({
 
             <AutoAddInvite eventId={Number(event.id)} />
 
-            <InviteStatusList
-              acceptedIds={acceptedIds.filter((id) => id !== event.user_id)}
-              declinedIds={declinedIds.filter((id) => id !== event.user_id)}
-              pendingIds={pendingIds.filter((id) => id !== event.user_id)}
-            />
-
+            {/*
             <div className="mt-6 flex justify-center">
               <ShareEventButton eventId={Number(event.id)} />
-            </div>
+            </div> */}
+
+            {/*}
+              <InviteStatusList
+                acceptedIds={acceptedIds.filter((id) => id !== event.user_id)}
+                declinedIds={declinedIds.filter((id) => id !== event.user_id)}
+                pendingIds={pendingIds.filter((id) => id !== event.user_id)}
+              /> */}
+
+            <ShareAndInviteSection
+              eventId={Number(event.id)}
+              acceptedIds={acceptedIds}
+              declinedIds={declinedIds}
+              pendingIds={pendingIds}
+              userId={event.user_id}
+            />
           </div>
         </div>
 

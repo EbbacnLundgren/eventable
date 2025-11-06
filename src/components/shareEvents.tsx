@@ -4,8 +4,10 @@ import { Share2 } from 'lucide-react'
 
 export default function ShareEventButton({
   eventId,
+  onShared,
 }: {
   eventId: number | string
+  onShared?: () => void
 }) {
   const [copied, setCopied] = useState(false)
 
@@ -14,6 +16,8 @@ export default function ShareEventButton({
     await navigator.clipboard.writeText(url)
     setCopied(true)
     setTimeout(() => setCopied(false), 5000)
+
+    if (onShared) onShared()
   }
 
   return (
