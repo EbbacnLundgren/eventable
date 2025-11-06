@@ -6,6 +6,8 @@ import MovingBackground from '@/components/MovingBackground'
 import { GlassCard } from '@developer-hub/liquid-glass'
 
 export default function Home() {
+
+
   return (
     <div className="relative flex flex-col min-h-screen text-white">
       <MovingBackground />
@@ -42,9 +44,15 @@ export default function Home() {
         </GlassCard>
       </div>
 
+
+
       {/* Logga och slogan */}
       <div className="flex flex-col sm:flex-row items-center justify-start flex-1 px-10 sm:px-20 gap-10 pt-10 sm:pt-16 z-10">
         <div className="flex flex-col items-start sm:w-auto">
+
+
+
+
           <Image
             src="/nineth_version.png"
             alt="Eventable logo"
@@ -53,23 +61,16 @@ export default function Home() {
             priority
             className="drop-shadow-lg -translate-y-8 mb-[-1rem]"
           />
+
+
           <h2 className="text-3xl sm:text-4xl font-baloo font-bold text-white/90 drop-shadow-md -mt-16">
             PLAN. SHARE. CELEBRATE.
           </h2>
         </div>
 
-        {/** 
-        <div className="sm:w-1/2 flex justify-center relative z-10">
-          <Image
-            src="/frontpageexample.png"
-            alt="Friends celebrating"
-            width={450}
-            height={450}
-            className="rounded-2xl shadow-lg"
-          />
-        </div>
-        */}
+
       </div>
+
     </div>
   )
 }

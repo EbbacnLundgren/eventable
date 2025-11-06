@@ -9,6 +9,7 @@ import { useSession } from 'next-auth/react'
 import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
 import Link from 'next/link'
 import DynamicBackground from '@/components/DynamicBackground'
+import ImageCropper from '@/components/ImageCropper'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -30,6 +31,9 @@ export default function CreateEventPage() {
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
   const { data: session } = useSession()
+  const [showCropper, setShowCropper] = useState(false)
+  const [tempImage, setTempImage] = useState<string | null>(null)
+
 
   const defaultImages = [
     '/images/default1.jpg',
@@ -55,13 +59,30 @@ export default function CreateEventPage() {
     setFormData((prev) => ({ ...prev, image: null }))
   }
 
+  // function handleImageUpload(e: ChangeEvent<HTMLInputElement>) {
+  //   const file = e.target.files?.[0]
+  //   if (file) {
+  //     setFormData((prev) => ({ ...prev, image: file }))
+  //     const url = URL.createObjectURL(file)
+  //     setSelectedImage(url)
+  //   }
+  // }
+
   function handleImageUpload(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (file) {
-      setFormData((prev) => ({ ...prev, image: file }))
       const url = URL.createObjectURL(file)
-      setSelectedImage(url)
+      setTempImage(url)
+      setShowCropper(true)
     }
+  }
+
+  const handleCropComplete = (croppedFile: File) => {
+    setFormData((prev) => ({ ...prev, image: croppedFile }))
+    const url = URL.createObjectURL(croppedFile)
+    setSelectedImage(url)
+    setShowCropper(false)
+    setTempImage(null)
   }
 
   // Compute a readable text color class based on the selected image's brightness.
@@ -115,7 +136,7 @@ export default function CreateEventPage() {
       }
     }
 
-    ;(async () => {
+    ; (async () => {
       const cls = await getContrastClassForImage(selectedImage)
       if (!cancelled) setLabelColorClass(cls)
     })()
@@ -132,6 +153,7 @@ export default function CreateEventPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
     setTouched((prev) => ({ ...prev, [name]: true }))
   }
+
 
   //denna fixar närmsta nästa timme för-inställt
   function getNextHour() {
@@ -239,8 +261,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-          )
+          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+        )
         : null
 
     if (startDateTime < now) {
@@ -304,6 +326,8 @@ export default function CreateEventPage() {
     isValidDate &&
     isValidTime &&
     !hasInvalidEnd
+
+
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
@@ -462,18 +486,17 @@ export default function CreateEventPage() {
                 setShowEndFields(true)
               }
             }}
+            aria-label="Toggle end date and time"
             className="relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 
     hover:scale-105"
           >
             <div
-              className={`absolute inset-0 rounded-full transition-colors duration-300 ${
-                showEndFields ? 'bg-green-500' : 'bg-gray-400'
-              }`}
+              className={`absolute inset-0 rounded-full transition-colors duration-300 ${showEndFields ? 'bg-green-500' : 'bg-gray-400'
+                }`}
             />
             <span
-              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
-                showEndFields ? 'translate-x-5' : 'translate-x-1'
-              }`}
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showEndFields ? 'translate-x-5' : 'translate-x-1'
+                }`}
             />
           </button>
           <label className={`font-sans pt-1 ${labelColorClass}`}>
@@ -573,14 +596,13 @@ export default function CreateEventPage() {
                 setShowRSVPFields(true)
               }
             }}
-            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${
-              showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
-            }`}
+            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
+              }`}
+            aria-label="Toggle RSVP date and time"
           >
             <span
-              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
-                showRSVPFields ? 'translate-x-5' : 'translate-x-1'
-              }`}
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showRSVPFields ? 'translate-x-5' : 'translate-x-1'
+                }`}
             />
           </button>
 
@@ -650,14 +672,25 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-600' : 'text-red-500'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
+              }`}
           >
             {message}
           </p>
         )}
       </form>
+
+
+      {/* CROPPER MODAL */}
+      {showCropper && tempImage && (
+        <ImageCropper
+          imageSrc={tempImage}
+          onCancel={() => setShowCropper(false)}
+          onCropComplete={handleCropComplete}
+        />
+      )}
+
     </main>
+
   )
 }
