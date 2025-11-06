@@ -67,7 +67,7 @@ export default function EditEventButton({
     <Link
       href={`/events/${eventId}/edit`}
       className="inline-flex items-center gap-2 px-4 py-2 rounded-lg
-                 bg-gradient-to-r from-pink-500 to-orange-400 text-white font-medium
+                 bg-purple-400 text-white font-medium
                  shadow-lg transition-all duration-300 ease-out
                  hover:scale-105 hover:shadow-2xl"
       title="Edit event"
