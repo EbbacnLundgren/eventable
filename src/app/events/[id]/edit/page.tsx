@@ -217,10 +217,6 @@ export default function EditEventPage() {
           </div>
         </div>
 
-        <h2 className="font-bold text-3xl text-center text-black drop-shadow-lg">
-          Edit Event
-        </h2>
-
         <label className="text-black font-medium">Event name</label>
         <input
           type="text"
