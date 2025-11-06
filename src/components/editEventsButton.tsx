@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Pencil } from 'lucide-react'
 import { supabase } from '@/lib/client'
@@ -9,32 +10,52 @@ export default function EditEventButton({
   eventUserId,
   eventId,
 }: {
-  eventUserId: string
-  eventId: string
+  eventUserId: string | number | null | undefined
+  eventId: string | number
 }) {
   const [isHost, setIsHost] = useState(false)
+  const { data: session } = useSession()
 
   useEffect(() => {
     async function checkHost() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) return
+      // Try Supabase auth first
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
 
-      // Direkt match
-      if (user.id === eventUserId) {
-        setIsHost(true)
-        return
-      }
+        if (user && eventUserId && String(user.id) === String(eventUserId)) {
+          setIsHost(true)
+          return
+        }
 
-      // Kolla i google_users via email
-      if (user.email) {
-        const { data: gUser } = await supabase
-          .from('google_users')
-          .select('id')
-          .eq('email', user.email)
-          .single()
-        if (gUser?.id === eventUserId) setIsHost(true)
+        // If Supabase user exists, also attempt to match google_users by email
+        if (user?.email && eventUserId) {
+          const { data: gUser } = await supabase
+            .from('google_users')
+            .select('id')
+            .eq('email', user.email)
+            .single()
+          if (gUser && String(gUser.id) === String(eventUserId)) {
+            setIsHost(true)
+            return
+          }
+        }
+
+        // Fallback: if user did sign in via NextAuth (Google) but not via Supabase
+        if (session?.user?.email && eventUserId) {
+          const { data: gUser } = await supabase
+            .from('google_users')
+            .select('id')
+            .eq('email', session.user.email)
+            .single()
+          if (gUser && String(gUser.id) === String(eventUserId)) {
+            setIsHost(true)
+            return
+          }
+        }
+      } catch (err) {
+        console.error('Error checking host for edit button:', err)
       }
     }
     checkHost()

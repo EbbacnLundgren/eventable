@@ -42,7 +42,7 @@ const EventsSection = ({
   const filteredEvents = events.filter((event) => {
     //const eventDate = new Date(event.date)
 
-    // Basic filter
+
     let matchesFilter = true
     switch (activeFilter) {
       case 'upcoming':
@@ -64,14 +64,14 @@ const EventsSection = ({
         break
 
       case 'hosting':
-        // Visa egna event
+
         matchesFilter = ownEventIds.includes(event.id)
         break
       default:
         matchesFilter = true
     }
 
-    // Advanced filters
+
     if (advancedFilters.city) {
       matchesFilter =
         matchesFilter &&
@@ -84,7 +84,7 @@ const EventsSection = ({
       matchesFilter =
         matchesFilter &&
         new Date(event.date).toISOString().split('T')[0] ===
-          advancedFilters.dateFrom
+        advancedFilters.dateFrom
     }
 
     if (advancedFilters.host) {
@@ -149,11 +149,10 @@ const EventsSection = ({
 
                     {diffDays >= 0 && (
                       <span
-                        className={`ml-2 px-3 py-1 rounded-full text-sm font-semibold shadow-sm ${
-                          diffDays <= 7
+                        className={`ml-2 px-3 py-1 rounded-full text-sm font-semibold shadow-sm ${diffDays <= 7
                             ? 'bg-gradient-to-r from-pink-500 to-orange-400 text-white'
                             : 'bg-white/40 text-stone-800'
-                        }`}
+                          }`}
                       >
                         {diffDays === 0
                           ? 'Today'

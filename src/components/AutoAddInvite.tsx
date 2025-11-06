@@ -19,8 +19,8 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
   }
 
   useEffect(() => {
-    ;(async () => {
-      // 1) Hämta e-post
+    ; (async () => {
+
       let email: string | null = null
       const {
         data: { user: supabaseUser },
@@ -33,7 +33,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         return
       }
 
-      // 2) Säkerställ google_users-rad och hämta id
+
       const { data: gUser, error: upErr } = await supabase
         .from('google_users')
         .upsert(
@@ -62,9 +62,24 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         return
       }
 
+      try {
+        const { data: ev } = await supabase
+          .from('events')
+          .select('user_id')
+          .eq('id', eid)
+          .single()
+
+        if (ev && ev.user_id && String(ev.user_id) === String(userId)) {
+
+          return
+        }
+      } catch (e) {
+        console.error('Error checking event owner in AutoAddInvite:', e)
+      }
+
       const storageKey = `inviteToast:${userId}:${eid}`
 
-      // 3) Kolla befintlig invite
+
       const { data: existing, error: existErr } = await supabase
         .from('event_invites')
         .select('id, status')
@@ -77,12 +92,12 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         return
       }
 
-      // Visa aldrig popup om redan accepterad/avböjd
+
       if (existing?.status === 'accepted' || existing?.status === 'declined') {
         return
       }
 
-      // Första gången: skapa pending
+
       if (!existing) {
         const { error: insErr } = await supabase
           .from('event_invites')
@@ -97,7 +112,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
           }
         }
 
-        // Visa endast en gång
+
         if (!localStorage.getItem(storageKey)) {
           setMsg('This event has been added to your page')
           localStorage.setItem(storageKey, '1')
@@ -106,7 +121,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
         return
       }
 
-      // Finns redan som pending: visa endast första gången på den här enheten
+
       if (existing.status === 'pending' && !localStorage.getItem(storageKey)) {
         setMsg('This event already exists on your page.')
         localStorage.setItem(storageKey, '1')
