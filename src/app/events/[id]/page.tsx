@@ -148,7 +148,7 @@ export default async function EventDetailsPage({
       <div className="max-w-5xl mx-auto flex gap-6 items-start">
         {/* --- Left: Box containing event details --- */}
         <div className="flex-1 bg-white/20 backdrop-blur-md rounded-3xl p-8 shadow-lg border border-white/30">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex justify-end">
             <EditEventButton eventUserId={event.user_id} eventId={event.id} />
           </div>
 
