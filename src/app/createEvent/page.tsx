@@ -42,6 +42,8 @@ export default function CreateEventPage() {
 
   const [selectedImage, setSelectedImage] = useState(defaultImages[0])
 
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
+
   function handleRandomize() {
     let random = selectedImage
     while (random === selectedImage) {
@@ -65,6 +67,7 @@ export default function CreateEventPage() {
   ) {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    setTouched((prev) => ({ ...prev, [name]: true }))
   }
 
   //denna fixar närmsta nästa timme för-inställt
@@ -321,23 +324,43 @@ export default function CreateEventPage() {
             </div>
           </div> */}
 
-        <label className="font-sans text-gray-600">Event name</label>
+        <label className="font-sans text-gray-600">
+          Event name{' '}
+          {touched.name && !formData.name && (
+            <span className="text-red-500">*</span>
+          )}
+        </label>
         <input
           type="text"
           name="name"
           value={formData.name}
           onChange={handleInputChange}
-          className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400"
+          onBlur={(e) =>
+            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
+          }
+          className={`text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border 
+    ${touched.name && !formData.name ? 'border-red-500' : 'border-white/50'}
+    focus:outline-none focus:ring-2 focus:ring-pink-400`}
           required
         />
 
-        <label className="font-sans text-gray-600">Location</label>
+        <label className="font-sans text-gray-600">
+          Location{' '}
+          {touched.name && !formData.name && (
+            <span className="text-red-500">*</span>
+          )}
+        </label>
         <input
           type="text"
           name="location"
           value={formData.location}
           onChange={handleInputChange}
-          className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400"
+          onBlur={(e) =>
+            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
+          }
+          className={`text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border 
+    ${touched.name && !formData.name ? 'border-red-500' : 'border-white/50'}
+    focus:outline-none focus:ring-2 focus:ring-pink-400`}
           required
         />
 
