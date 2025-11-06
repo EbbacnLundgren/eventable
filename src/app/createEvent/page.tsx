@@ -120,7 +120,7 @@ export default function CreateEventPage() {
       }
     }
 
-    ; (async () => {
+    ;(async () => {
       const cls = await getContrastClassForImage(selectedImage)
       if (!cancelled) setLabelColorClass(cls)
     })()
@@ -244,8 +244,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-        )
+            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+          )
         : null
 
     if (startDateTime < now) {
@@ -609,7 +609,10 @@ export default function CreateEventPage() {
             }
             className="w-4 h-4 accent-pink-500"
           />
-          <label htmlFor="allowInviteesToInvite" className={`font-sans ${labelColorClass}`}>
+          <label
+            htmlFor="allowInviteesToInvite"
+            className={`font-sans ${labelColorClass}`}
+          >
             Allow invitees to invite others
           </label>
         </div>
@@ -625,8 +628,9 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
-              }`}
+            className={`text-center text-sm mt-2 ${
+              status === 'success' ? 'text-green-600' : 'text-red-500'
+            }`}
           >
             {message}
           </p>
