@@ -137,19 +137,18 @@ export default async function EventDetailsPage({
   return (
     <main className="min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white py-10 px-6">
       <DynamicBackground imageUrl={event.image} />
+      <Link
+        href="/main"
+        className="fixed top-4 left-4 text-pink-600 hover:text-pink-800 z-50"
+        aria-label="Back to main page"
+      >
+        <ArrowLeft size={26} />
+      </Link>
+
       <div className="max-w-5xl mx-auto flex gap-6 items-start">
         {/* --- Left: Box containing event details --- */}
         <div className="flex-1 bg-white/20 backdrop-blur-md rounded-3xl p-8 shadow-lg border border-white/30">
           <div className="mb-6 flex items-center justify-between">
-            <Link
-              href="/main"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 font-semibold shadow hover:bg-white/40 transition"
-              aria-label="Back to main page"
-            >
-              <ArrowLeft size={20} />
-              <span>Back</span>
-            </Link>
-
             <EditEventButton eventUserId={event.user_id} eventId={event.id} />
           </div>
 
