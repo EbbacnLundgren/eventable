@@ -115,7 +115,7 @@ export default function CreateEventPage() {
       }
     }
 
-    ; (async () => {
+    ;(async () => {
       const cls = await getContrastClassForImage(selectedImage)
       if (!cancelled) setLabelColorClass(cls)
     })()
@@ -239,8 +239,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-        )
+            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+          )
         : null
 
     if (startDateTime < now) {
@@ -466,12 +466,14 @@ export default function CreateEventPage() {
     hover:scale-105"
           >
             <div
-              className={`absolute inset-0 rounded-full transition-colors duration-300 ${showEndFields ? 'bg-green-500' : 'bg-gray-400'
-                }`}
+              className={`absolute inset-0 rounded-full transition-colors duration-300 ${
+                showEndFields ? 'bg-green-500' : 'bg-gray-400'
+              }`}
             />
             <span
-              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showEndFields ? 'translate-x-5' : 'translate-x-1'
-                }`}
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
+                showEndFields ? 'translate-x-5' : 'translate-x-1'
+              }`}
             />
           </button>
           <label className={`font-sans pt-1 ${labelColorClass}`}>
@@ -571,12 +573,14 @@ export default function CreateEventPage() {
                 setShowRSVPFields(true)
               }
             }}
-            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
-              }`}
+            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${
+              showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
+            }`}
           >
             <span
-              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showRSVPFields ? 'translate-x-5' : 'translate-x-1'
-                }`}
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
+                showRSVPFields ? 'translate-x-5' : 'translate-x-1'
+              }`}
             />
           </button>
 
@@ -646,8 +650,9 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
-              }`}
+            className={`text-center text-sm mt-2 ${
+              status === 'success' ? 'text-green-600' : 'text-red-500'
+            }`}
           >
             {message}
           </p>
