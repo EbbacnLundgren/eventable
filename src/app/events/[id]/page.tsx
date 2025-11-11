@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react'
 
 import ShareEventButton from '@/components/shareEvents'
 import AutoAddInvite from '@/components/AutoAddInvite'
+import DeleteEventButton from '@/components/DeleteButtonEvent'
 
 import {
   MapPin,
@@ -150,6 +151,7 @@ export default async function EventDetailsPage({
         <div className="flex-1 bg-white/20 backdrop-blur-md rounded-3xl p-8 shadow-lg border border-white/30">
           <div className="mb-6 flex justify-end">
             <EditEventButton eventUserId={event.user_id} eventId={event.id} />
+            <DeleteEventButton eventUserId={event.user_id} eventId={event.id} />
           </div>
 
           {event.image && (
