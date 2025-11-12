@@ -15,6 +15,7 @@
     "@fullcalendar/interaction": "^6.1.19",
     "@fullcalendar/react": "^6.1.19",
     "@navega/nominatim-client": "^1.0.8",
+    "@stream-io/stream-chat-css": "^5.16.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/supabase-js": "^2.57.4",
     "colorthief": "^2.6.0",
@@ -27,7 +28,7 @@
     "react-dom": "^18.3.1",
     "react-easy-crop": "^5.5.3",
     "stream-chat": "^9.25.0",
-    "stream-chat-react": "^13.10.0",
+    "stream-chat-react": "^13.7.0",
     "three": "^0.180.0",
     "vanta": "^0.5.24"
   },

@@ -1,93 +1,74 @@
-// 'use client'
+'use client'
 
-// import { useEffect, useState } from 'react'
-// import { StreamChat, UserResponse } from 'stream-chat'
-// import {
-//   Chat,
-//   Channel,
-//   ChannelHeader,
-//   MessageList,
-//   MessageInput,
-// } from 'stream-chat-react'
+import { useEffect, useState } from 'react'
+import { StreamChat } from 'stream-chat'
+import {
+    Chat,
+    Channel,
+    ChannelHeader,
+    MessageList,
+    MessageInput,
+} from 'stream-chat-react'
+import 'stream-chat-react/dist/css/v2/index.css'
 
-// interface EventChatProps {
-//   eventId: string
-//   supabaseUserId: string
-//   eventMemberIds: string[]
-//   eventName: string
-// }
+export default function EventChat() {
+    const [chatClient, setChatClient] = useState<StreamChat | null>(null)
+    const [channel, setChannel] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
 
-// export default function EventChat({
-//   eventId,
-//   supabaseUserId,
-//   eventMemberIds,
-//   eventName,
-// }: EventChatProps) {
-//   const [client, setClient] = useState<StreamChat | null>(null)
-//   const [channel, setChannel] = useState<any>(null)
+    useEffect(() => {
+        async function initChat() {
+            const res = await fetch('/api/stream-token')
+            const data = await res.json()
+            if (!data.token) {
+                console.error('Ingen token')
+                return
+            }
 
-//   useEffect(() => {
-//     async function initChat() {
-//       // Hämta token från API
-//       const res = await fetch('/api/stream-token', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ supabaseUserId }),
-//       })
+            const client = StreamChat.getInstance(
+                process.env.NEXT_PUBLIC_STREAM_API_KEY!
+            )
 
-//       const data = await res.json()
+            await client.connectUser(data.user, data.token)
 
-//       console.log('Stream user:', data.user)
-//       console.log('Stream token:', data.token)
+            // Hårdkodad testkanal
+            const ch = client.channel('messaging', 'test-channel', {
+                name: 'Test Chat',
+            } as any)
+            await ch.watch()
 
-//       if (!data.user || !data.token) return
+            setChatClient(client)
+            setChannel(ch)
+            setLoading(false)
+        }
 
-//       const chatClient = StreamChat.getInstance(
-//         process.env.NEXT_PUBLIC_STREAM_API_KEY!
-//       )
+        initChat()
 
-//       // data.user kan bara ha id och andra extra fält
-//       await chatClient.connectUser({ id: data.user.id }, data.token)
+        return () => {
+            chatClient?.disconnectUser()
+        }
+    }, [])
 
-//       const eventChannel = chatClient.channel('messaging', `event-${eventId}`, {
-//         members: eventMemberIds,
-//         // Lägg event name i extraData, inte direkt som name
-//         eventName,
-//       } as unknown as any)
+    if (loading) return <div>Laddar chatten...</div>
+    if (!chatClient || !channel) return <div>Misslyckades med att initiera chatten</div>
 
-//       try {
-//         await eventChannel.create()
-//       } catch {
-//         console.log('Channel already exists')
-//       }
+    return (
+        <div className="flex flex-col flex-1 h-[90vh] max-w-4xl mx-auto bg-white rounded-2xl shadow-md overflow-hidden">
+            <Chat client={chatClient} theme="messaging light">
+                <Channel channel={channel}>
+                    <div className="flex flex-col h-full w-full">
+                        <div className="flex-1 overflow-y-auto px-4">
+                            <ChannelHeader />
+                            <MessageList />
+                        </div>
+                        <div className="border-t p-2 bg-gray-50">
+                            <MessageInput focus />
+                        </div>
+                    </div>
+                </Channel>
+            </Chat>
+        </div>
+    )
 
-//       const membersToAdd = eventMemberIds.filter((id) => id !== supabaseUserId)
-//       if (membersToAdd.length > 0) {
-//         await eventChannel.addMembers(membersToAdd)
-//       }
 
-//       await eventChannel.watch()
-
-//       setClient(chatClient)
-//       setChannel(eventChannel)
-//     }
-
-//     initChat()
-
-//     return () => {
-//       client?.disconnectUser()
-//     }
-//   }, [eventId, supabaseUserId, eventMemberIds, eventName])
-
-//   if (!client || !channel) return <div>Laddar chat för {eventName}...</div>
-
-//   return (
-//     <Chat client={client} theme="messaging light">
-//       <Channel channel={channel}>
-//         <ChannelHeader />
-//         <MessageList />
-//         <MessageInput />
-//       </Channel>
-//     </Chat>
-//   )
-// }
+}
