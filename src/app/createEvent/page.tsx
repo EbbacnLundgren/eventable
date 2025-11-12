@@ -9,10 +9,14 @@ import { useSession } from 'next-auth/react'
 import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
 import Link from 'next/link'
 import DynamicBackground from '@/components/DynamicBackground'
-import ImageCropper from '@/components/ImageCropper'
+import ImageSelector from '@/components/ImageSelector' //Hanterar bildval 
+//import ImageCropper from '@/components/ImageAdjust'
+//import ImageAdjust from '@/components/ImageAdjust' //Justare placering och zooma av bild
 
 export default function CreateEventPage() {
   const router = useRouter()
+  const { data: session } = useSession()
+
   const [formData, setFormData] = useState({
     name: '',
     location: '',
@@ -26,67 +30,20 @@ export default function CreateEventPage() {
     rsvpDate: '',
     rsvpTime: '',
   })
+  //const [selectedImage, setSelectedImage] = useState(defaultImages[0])
+  const [selectedImage, setSelectedImage] = useState('/images/default1.jpg')
   const [showEndFields, setShowEndFields] = useState(false)
   const [showRSVPFields, setShowRSVPFields] = useState(false)
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
-  const { data: session } = useSession()
-  const [showCropper, setShowCropper] = useState(false)
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
+  const [labelColorClass, setLabelColorClass] = useState('text-gray-600')
+  //Hantering av ImageAdjust-modal
+  const [showAdjust, setShowAdjust] = useState(false)
   const [tempImage, setTempImage] = useState<string | null>(null)
 
 
-  const defaultImages = [
-    '/images/default1.jpg',
-    '/images/default2.jpg',
-    '/images/default3.jpg',
-    '/images/default4.jpg',
-    '/images/default5.jpg',
-  ]
 
-  const [selectedImage, setSelectedImage] = useState(defaultImages[0])
-
-  // label color class (computed from background image brightness)
-  const [labelColorClass, setLabelColorClass] = useState('text-gray-600')
-
-  const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
-
-  function handleRandomize() {
-    let random = selectedImage
-    while (random === selectedImage) {
-      random = defaultImages[Math.floor(Math.random() * defaultImages.length)]
-    }
-    setSelectedImage(random)
-    setFormData((prev) => ({ ...prev, image: null }))
-  }
-
-  // function handleImageUpload(e: ChangeEvent<HTMLInputElement>) {
-  //   const file = e.target.files?.[0]
-  //   if (file) {
-  //     setFormData((prev) => ({ ...prev, image: file }))
-  //     const url = URL.createObjectURL(file)
-  //     setSelectedImage(url)
-  //   }
-  // }
-
-  function handleImageUpload(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (file) {
-      const url = URL.createObjectURL(file)
-      setTempImage(url)
-      setShowCropper(true)
-    }
-  }
-
-  const handleCropComplete = (croppedFile: File) => {
-    setFormData((prev) => ({ ...prev, image: croppedFile }))
-    const url = URL.createObjectURL(croppedFile)
-    setSelectedImage(url)
-    setShowCropper(false)
-    setTempImage(null)
-  }
-
-  // Compute a readable text color class based on the selected image's brightness.
-  // Uses a small canvas to sample pixels and compute average luminance.
   useEffect(() => {
     let cancelled = false
 
@@ -347,80 +304,58 @@ export default function CreateEventPage() {
         }}
         className="w-full max-w-2xl flex flex-col gap-2 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
       >
-        {/* Image Header */}
-        <div className="relative h-48 w-full overflow-hidden rounded-2xl">
-          <img
-            key={selectedImage}
-            src={selectedImage}
-            alt="Event banner"
-            className="object-cover w-full h-full transition-all duration-300"
+
+
+        {/* IMAGE SELECTOR */}
+        <ImageSelector
+          selectedImage={selectedImage}
+          onImageSelect={(file, url) => {
+            if (file) {
+              // Användaren laddar upp egen fil → öppna ImageAdjust
+              setTempImage(url)
+              setShowAdjust(true)
+              setFormData(prev => ({ ...prev, image: file })) // spara filen, men previewen ändras inte än
+            } else if (url) {
+              // Default-bild → visa direkt
+              setSelectedImage(url)
+            }
+          }}
+        />
+
+
+
+        {/* IMAGE ADJUST -- Funkar inte och jag får damp, måste ta en paus*/}
+        {/* {showAdjust && tempImage && (
+          <ImageAdjust
+            imageUrl={tempImage}
+            onCancel={() => {
+              console.log('Cancel adjust, tempImage:', tempImage)
+              setShowAdjust(false)
+              setTempImage(null)
+            }}
+            onSave={(blob) => {
+              const file = new File([blob], `adjusted-${Date.now()}.jpg`, { type: 'image/jpeg' })
+              const url = URL.createObjectURL(blob)
+
+              console.log('ImageAdjust onSave called')
+              console.log('Blob:', blob)
+              console.log('Generated File:', file)
+              console.log('Generated URL:', url)
+
+              // Viktigt: uppdatera både formData.image och selectedImage
+              setFormData(prev => {
+                console.log('Updating formData.image from', prev.image, 'to', file)
+                return { ...prev, image: file }
+              }) // den som skickas till Supabase
+              setSelectedImage(url) // den som visas på eventkortet
+              console.log('Updated selectedImage to', url)
+
+              setShowAdjust(false)
+              setTempImage(null)
+            }}
           />
+        )} */}
 
-          <div className="absolute top-3 right-3 flex gap-2">
-            <button
-              type="button"
-              onClick={handleRandomize}
-              className="flex items-center justify-center w-10 h-10 rounded-full 
-             bg-gradient-to-r from-pink-500 to-orange-400 text-white 
-             shadow-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl"
-              title="Randomize image"
-            >
-              <Shuffle size={20} />
-            </button>
-            <label
-              className="flex items-center justify-center w-10 h-10 rounded-full 
-             bg-gradient-to-r from-pink-500 to-orange-400 text-white 
-             shadow-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl"
-              title="Upload image"
-            >
-              <ImageIcon size={20} />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-            </label>
-          </div>
-        </div>
-
-        {/*
-        <h2 className="font-sans text-2xl font-bold text-center text-gray-800">
-          Create Event
-        </h2>
-
-        <div className="flex flex-col gap-3">
-          <label className="font-sans text-gray-600">Event name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400"
-            required
-          /> */}
-
-        {/* 
-        <div className="flex flex-col gap-3">
-          <div className="flex justify-center w-full">
-            <div className="relative inline-flex items-center">
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="font-sans text-3xl font-bold text-center bg-transparent 
-       text-gray-800 focus:outline-none focus:ring-0 border-none pr-0"
-                required
-              />
-              {formData.name === '' && (
-                <span className="absolute inset-0 flex justify-center items-center pointer-events-none text-gray-600 font-bold text-3xl">
-                  Event name
-                  <Pencil size={18} className="ml-2 text-gray-500 opacity-70" />
-                </span>
-              )}
-            </div>
-          </div> */}
 
         <label className={`font-sans pt-1 ${labelColorClass}`}>
           Event name{' '}
@@ -550,16 +485,6 @@ export default function CreateEventPage() {
           required
         />
 
-        {/*
-  <label className={`font-sans ${labelColorClass}`}>Description</label>
-        <input
-          type="text"
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange}
-          className="text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
-        /> */}
-
         <label className={`font-sans ${labelColorClass}`}>Description</label>
         <textarea
           name="description"
@@ -679,18 +604,6 @@ export default function CreateEventPage() {
           </p>
         )}
       </form>
-
-
-      {/* CROPPER MODAL */}
-      {showCropper && tempImage && (
-        <ImageCropper
-          imageSrc={tempImage}
-          onCancel={() => setShowCropper(false)}
-          onCropComplete={handleCropComplete}
-        />
-      )}
-
     </main>
-
   )
 }
