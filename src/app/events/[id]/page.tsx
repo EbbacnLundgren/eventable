@@ -252,6 +252,15 @@ export default async function EventDetailsPage({
             <div className="mt-6 flex justify-center">
               <ShareEventButton eventId={Number(event.id)} />
             </div>
+
+            <div className="mt-6 flex justify-center">
+              <Link
+                href={`/events/${event.id}/chat`}
+                className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
+              >
+                Gå till chatten
+              </Link>
+            </div>
           </div>
         </div>
 

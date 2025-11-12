@@ -6,10 +6,10 @@ import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import TimePicker from '@/components/timePicker'
 import { useSession } from 'next-auth/react'
-import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import DynamicBackground from '@/components/DynamicBackground'
-import ImageSelector from '@/components/ImageSelector' //Hanterar bildval 
+import ImageSelector from '@/components/ImageSelector' //Hanterar bildval
 //import ImageCropper from '@/components/ImageAdjust'
 //import ImageAdjust from '@/components/ImageAdjust' //Justare placering och zooma av bild
 
@@ -39,10 +39,8 @@ export default function CreateEventPage() {
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
   const [labelColorClass, setLabelColorClass] = useState('text-gray-600')
   //Hantering av ImageAdjust-modal
-  const [showAdjust, setShowAdjust] = useState(false)
-  const [tempImage, setTempImage] = useState<string | null>(null)
-
-
+  const [, setShowAdjust] = useState(false)
+  const [, setTempImage] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -93,7 +91,7 @@ export default function CreateEventPage() {
       }
     }
 
-    ; (async () => {
+    ;(async () => {
       const cls = await getContrastClassForImage(selectedImage)
       if (!cancelled) setLabelColorClass(cls)
     })()
@@ -110,7 +108,6 @@ export default function CreateEventPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
     setTouched((prev) => ({ ...prev, [name]: true }))
   }
-
 
   //denna fixar närmsta nästa timme för-inställt
   function getNextHour() {
@@ -218,8 +215,8 @@ export default function CreateEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-        )
+            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+          )
         : null
 
     if (startDateTime < now) {
@@ -284,8 +281,6 @@ export default function CreateEventPage() {
     isValidTime &&
     !hasInvalidEnd
 
-
-
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
       <DynamicBackground imageUrl={selectedImage} />
@@ -304,8 +299,6 @@ export default function CreateEventPage() {
         }}
         className="w-full max-w-2xl flex flex-col gap-2 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
       >
-
-
         {/* IMAGE SELECTOR */}
         <ImageSelector
           selectedImage={selectedImage}
@@ -314,15 +307,13 @@ export default function CreateEventPage() {
               // Användaren laddar upp egen fil → öppna ImageAdjust
               setTempImage(url)
               setShowAdjust(true)
-              setFormData(prev => ({ ...prev, image: file })) // spara filen, men previewen ändras inte än
+              setFormData((prev) => ({ ...prev, image: file })) // spara filen, men previewen ändras inte än
             } else if (url) {
               // Default-bild → visa direkt
               setSelectedImage(url)
             }
           }}
         />
-
-
 
         {/* IMAGE ADJUST -- Funkar inte och jag får damp, måste ta en paus*/}
         {/* {showAdjust && tempImage && (
@@ -355,7 +346,6 @@ export default function CreateEventPage() {
             }}
           />
         )} */}
-
 
         <label className={`font-sans pt-1 ${labelColorClass}`}>
           Event name{' '}
@@ -426,12 +416,14 @@ export default function CreateEventPage() {
     hover:scale-105"
           >
             <div
-              className={`absolute inset-0 rounded-full transition-colors duration-300 ${showEndFields ? 'bg-green-500' : 'bg-gray-400'
-                }`}
+              className={`absolute inset-0 rounded-full transition-colors duration-300 ${
+                showEndFields ? 'bg-green-500' : 'bg-gray-400'
+              }`}
             />
             <span
-              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showEndFields ? 'translate-x-5' : 'translate-x-1'
-                }`}
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
+                showEndFields ? 'translate-x-5' : 'translate-x-1'
+              }`}
             />
           </button>
           <label className={`font-sans pt-1 ${labelColorClass}`}>
@@ -521,13 +513,15 @@ export default function CreateEventPage() {
                 setShowRSVPFields(true)
               }
             }}
-            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
-              }`}
+            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${
+              showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
+            }`}
             aria-label="Toggle RSVP date and time"
           >
             <span
-              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showRSVPFields ? 'translate-x-5' : 'translate-x-1'
-                }`}
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
+                showRSVPFields ? 'translate-x-5' : 'translate-x-1'
+              }`}
             />
           </button>
 
@@ -597,8 +591,9 @@ export default function CreateEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-600' : 'text-red-500'
-              }`}
+            className={`text-center text-sm mt-2 ${
+              status === 'success' ? 'text-green-600' : 'text-red-500'
+            }`}
           >
             {message}
           </p>

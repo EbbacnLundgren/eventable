@@ -1,6 +1,5 @@
 //Funkar inte just nu och jag måste verkligen ta en paus från detta
 
-
 // 'use client'
 
 // import { useRef, useState, useEffect } from 'react'
@@ -70,7 +69,6 @@
 //             else console.error('Failed to create blob')
 //         }, 'image/jpeg', 0.95)
 //     }
-
 
 //     // Stoppar drag utanför fönstret
 //     useEffect(() => {

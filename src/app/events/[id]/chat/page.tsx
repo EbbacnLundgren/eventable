@@ -7,7 +7,7 @@ export default function EventChatPage() {
   const params = useParams()
   const rawId = params?.id
 
-  // Om id är en array, ta första elementet
+  // Säkerställ att eventId alltid är string
   const eventId = Array.isArray(rawId) ? rawId[0] : (rawId ?? 'test')
 
   return <EventChat eventId={eventId} />
