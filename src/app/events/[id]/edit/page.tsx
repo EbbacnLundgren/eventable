@@ -39,7 +39,10 @@ export default function EditEventPage() {
     '/images/default4.jpg',
   ]
 
-  // --- 1) Ladda befintligt event ---
+  useEffect(() => {
+    console.log('FormData:', formData)
+  }, [formData])
+
   useEffect(() => {
     async function fetchEvent() {
       const { data, error } = await supabase
@@ -69,9 +72,8 @@ export default function EditEventPage() {
       setLoading(false)
     }
     fetchEvent()
-  }, [id, defaultImages])
+  }, [id])
 
-  // --- 2) Hantera input ---
   function handleInputChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
@@ -98,7 +100,6 @@ export default function EditEventPage() {
 
   // checkar för create event knappen ska gå från grå till klickbar
 
-  // --- 3) Uppdatera event ---
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setStatus('idle')
