@@ -42,9 +42,10 @@ export default function EventChat({ eventId }: EventChatProps) {
         await client.connectUser(data.user, data.token)
 
         // Skapar kanal unik per event
-        const ch = client.channel('messaging', `event-${eventId}`, {
-          name: `Event ${eventId}`,
-        } as any)
+        const ch: StreamChannel = client.channel(
+          'messaging',
+          `event-${eventId}`
+        )
 
         await ch.watch()
 
