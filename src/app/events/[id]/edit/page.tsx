@@ -124,8 +124,8 @@ export default function EditEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-          )
+          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+        )
         : null
 
     if (endDateTime && endDateTime < startDateTime) {
@@ -134,7 +134,7 @@ export default function EditEventPage() {
       return
     }
 
-    //console.log('Submitting changes:', formData)
+    console.log('Submitting changes:', formData)
 
     const { error } = await supabase
       .from('events')
@@ -305,9 +305,8 @@ export default function EditEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-200' : 'text-yellow-200'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-200' : 'text-yellow-200'
+              }`}
           >
             {message}
           </p>
