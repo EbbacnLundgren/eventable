@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import ColorThief from 'colorthief'
 
 declare global {
   interface Window {
@@ -70,14 +69,31 @@ export default function DynamicBackground({
         })
       }
 
-      // Extract main color from image
+      // Dynamically import ColorThief on the client to avoid server-side bundling issues
+      let ColorThief: any = null
+      try {
+        // Importing dynamically prevents Next from bundling colorthief on the server
+        ColorThief = (await import('colorthief')).default
+      } catch (e) {
+        // If import fails, we gracefully fallback to no color extraction
+        console.error('Could not load colorthief:', e)
+      }
+
+      // Extract main color from image (if ColorThief loaded)
       const img = new Image()
       img.crossOrigin = 'Anonymous'
       img.src = imageUrl
       img.onload = () => {
-        const colorThief = new ColorThief()
-        const color = colorThief.getColor(img)
-        const baseColor = rgbToHexNumber(color)
+        let baseColor = 0x000000
+        if (ColorThief) {
+          try {
+            const colorThief = new ColorThief()
+            const color = colorThief.getColor(img)
+            baseColor = rgbToHexNumber(color)
+          } catch (err) {
+            console.error('ColorThief failed:', err)
+          }
+        }
 
         // Recreate the VANTA effect each time image changes
         if (effectRef.current) effectRef.current.destroy()

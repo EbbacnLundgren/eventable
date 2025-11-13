@@ -309,7 +309,7 @@ export default function CreateEventPage() {
               setShowAdjust(true)
               setFormData((prev) => ({ ...prev, image: file })) // spara filen, men previewen ändras inte än
               if (url) {
-                setSelectedImage(url) //kanske inte bästa lösningen men helt plötsligt funkade inte bakgrunden att ändra? (men funkar med denna if-sats)
+                setSelectedImage(url) //kanske inte bästa lösningen men helt plötsligt funkade inte bakgrunden att ändra? (men funkar med denna)
               }
             } else if (url) {
               // Default-bild → visa direkt

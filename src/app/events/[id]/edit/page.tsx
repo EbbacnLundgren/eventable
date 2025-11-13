@@ -31,6 +31,10 @@ export default function EditEventPage() {
     rsvpTime: '',
   })
   const [selectedImage, setSelectedImage] = useState<string>('')
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
+  const [showEndFields, setShowEndFields] = useState(false)
+  const [showRSVPFields, setShowRSVPFields] = useState(false)
+  const [labelColorClass, setLabelColorClass] = useState('text-gray-600')
 
   const defaultImages = [
     '/images/default1.jpg',
@@ -42,6 +46,64 @@ export default function EditEventPage() {
   useEffect(() => {
     console.log('FormData:', formData)
   }, [formData])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function getContrastClassForImage(url: string | null) {
+      if (!url) return 'text-gray-800'
+
+      try {
+        const cls = await new Promise<string>((resolve) => {
+          const img = new Image()
+
+          img.crossOrigin = 'Anonymous'
+          img.src = url
+
+          img.onload = () => {
+            const canvas = document.createElement('canvas')
+            const size = 40
+            canvas.width = size
+            canvas.height = size
+            const ctx = canvas.getContext('2d')
+            if (!ctx) return resolve('text-gray-800')
+            ctx.drawImage(img, 0, 0, size, size)
+            const data = ctx.getImageData(0, 0, size, size).data
+
+            let totalL = 0
+            const step = 4 * 2 // sample every 2nd pixel to speed up
+            for (let i = 0; i < data.length; i += step) {
+              const r = data[i]
+              const g = data[i + 1]
+              const b = data[i + 2]
+              // relative luminance (Rec. 709)
+              const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+              totalL += lum
+            }
+            const samples = data.length / step
+            const avg = totalL / Math.max(1, samples)
+            // threshold ~128 (0-255) - dark background -> white text
+            resolve(avg < 128 ? 'text-white' : 'text-gray-800')
+          }
+
+          img.onerror = () => resolve('text-gray-800')
+        })
+
+        return cls
+      } catch {
+        return 'text-gray-800'
+      }
+    }
+
+    ;(async () => {
+      const cls = await getContrastClassForImage(selectedImage)
+      if (!cancelled) setLabelColorClass(cls)
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [selectedImage])
 
   useEffect(() => {
     async function fetchEvent() {
@@ -68,6 +130,8 @@ export default function EditEventPage() {
           rsvpTime: data.rsvp_time ?? '',
         })
         setSelectedImage(data.image ?? defaultImages[0])
+        setShowEndFields(!!(data.end_date || data.end_time))
+        setShowRSVPFields(!!(data.rsvp_date || data.rsvp_time))
       }
       setLoading(false)
     }
@@ -96,6 +160,28 @@ export default function EditEventPage() {
     }
     setSelectedImage(random)
     setFormData((prev) => ({ ...prev, image: random }))
+  }
+
+  function getNextHour() {
+    const now = new Date()
+    if (now.getMinutes() > 0) {
+      now.setHours(now.getHours() + 1)
+    }
+    now.setMinutes(0, 0, 0)
+    return now.toTimeString().slice(0, 5)
+  }
+
+  function addThreeHoursToTime(time: string): string {
+    const [hours, minutes] = time.split(':').map(Number)
+    const date = new Date()
+    date.setHours(hours)
+    date.setMinutes(minutes)
+    date.setHours(date.getHours() + 3)
+
+    const newHours = date.getHours().toString().padStart(2, '0')
+    const newMinutes = date.getMinutes().toString().padStart(2, '0')
+
+    return `${newHours}:${newMinutes}`
   }
 
   // checkar för create event knappen ska gå från grå till klickbar
@@ -171,6 +257,22 @@ export default function EditEventPage() {
       </main>
     )
 
+  // Form validation (same rules as createEvent)
+  const isValidDate =
+    formData.date &&
+    new Date(formData.date) >= new Date(new Date().toDateString())
+  const isValidTime = /^([01]\d|2[0-3]):([0-5]\d)$/.test(formData.time)
+  const isValidEndTime =
+    formData.endTime === '' ||
+    /^([01]\d|2[0-3]):([0-5]\d)$/.test(formData.endTime)
+
+  const hasPartialEnd =
+    (formData.endDate && !formData.endTime) ||
+    (!formData.endDate && formData.endTime)
+
+  const hasInvalidEnd =
+    (formData.endDate && formData.endTime && !isValidEndTime) || hasPartialEnd
+
   return (
     <main className="relative min-h-screen text-white py-10 px-6 flex items-center justify-center">
       <DynamicBackground imageUrl={selectedImage} />
@@ -191,12 +293,16 @@ export default function EditEventPage() {
       >
         {/* Image */}
         <div className="relative h-48 w-full overflow-hidden rounded-2xl">
-          <img
-            key={selectedImage + Date.now()}
-            src={selectedImage}
-            alt="Event banner"
-            className="object-cover w-full h-full transition-all duration-300"
-          />
+          {selectedImage ? (
+            <img
+              key={selectedImage}
+              src={selectedImage}
+              alt="Event banner"
+              className="object-cover w-full h-full transition-all duration-300"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200" />
+          )}
 
           <div className="absolute top-3 right-3 flex gap-2">
             <button
@@ -224,6 +330,9 @@ export default function EditEventPage() {
           name="name"
           value={formData.name}
           onChange={handleInputChange}
+          onBlur={(e) =>
+            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
+          }
           className="text-black p-3 rounded-xl bg-white/80 border border-white/50"
           required
         />
@@ -234,6 +343,9 @@ export default function EditEventPage() {
           name="location"
           value={formData.location}
           onChange={handleInputChange}
+          onBlur={(e) =>
+            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
+          }
           className="text-black p-3 rounded-xl bg-white/80 border border-white/50"
           required
         />
@@ -254,39 +366,62 @@ export default function EditEventPage() {
           />
         </div>
 
-        <label className="text-black font-medium">
-          End date and time (optional)
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="date"
-            name="endDate"
-            value={formData.endDate}
-            onChange={handleInputChange}
-            className="text-black flex-1 p-3 rounded-xl bg-white/80 border border-white/50"
-          />
-          <TimePicker
-            value={formData.endTime}
-            onChange={(v) => setFormData((prev) => ({ ...prev, endTime: v }))}
-          />
+        <div className="flex items-center gap-3 pt-1">
+          <button
+            type="button"
+            onClick={() => {
+              if (showEndFields) {
+                setFormData((prev) => ({
+                  ...prev,
+                  endDate: '',
+                  endTime: '',
+                }))
+                setShowEndFields(false)
+              } else {
+                const defaultEndDate = formData.date
+                const defaultEndTime = addThreeHoursToTime(
+                  formData.time || getNextHour()
+                )
+                setFormData((prev) => ({
+                  ...prev,
+                  endDate: defaultEndDate,
+                  endTime: defaultEndTime,
+                }))
+                setShowEndFields(true)
+              }
+            }}
+            aria-label="Toggle end date and time"
+            className="relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 hover:scale-105"
+          >
+            <div
+              className={`absolute inset-0 rounded-full transition-colors duration-300 ${
+                showEndFields ? 'bg-green-500' : 'bg-gray-400'
+              }`}
+            />
+            <span
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
+                showEndFields ? 'translate-x-5' : 'translate-x-1'
+              }`}
+            />
+          </button>
+          <label className="text-black font-medium">End date and time</label>
         </div>
-
-        <label className="text-black font-medium">
-          RSVP date and time (optional)
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="date"
-            name="rsvpDate"
-            value={formData.rsvpDate}
-            onChange={handleInputChange}
-            className="text-black flex-1 p-3 rounded-xl bg-white/80 border border-white/50"
-          />
-          <TimePicker
-            value={formData.rsvpTime}
-            onChange={(v) => setFormData((prev) => ({ ...prev, rsvpTime: v }))}
-          />
-        </div>
+        {showEndFields && (
+          <div className="flex gap-2">
+            <input
+              type="date"
+              name="endDate"
+              //max={formData.date}
+              value={formData.endDate || ''}
+              onChange={handleInputChange}
+              className="text-black flex-1 p-3 rounded-xl bg-white/80 border border-white/50"
+            />
+            <TimePicker
+              value={formData.endTime || ''}
+              onChange={(v) => setFormData((prev) => ({ ...prev, endTime: v }))}
+            />
+          </div>
+        )}
 
         <label className="text-black font-medium">Description</label>
         <textarea
@@ -296,9 +431,63 @@ export default function EditEventPage() {
           className="text-black p-3 rounded-xl bg-white/80 border border-white/50 resize-none"
         />
 
+        <div className="flex items-center gap-3 pt-1">
+          <button
+            type="button"
+            onClick={() => {
+              if (showRSVPFields) {
+                setFormData((prev) => ({ ...prev, rsvpDate: '', rsvpTime: '' }))
+                setShowRSVPFields(false)
+              } else {
+                const defaultRSVPDate = formData.date
+                const defaultRSVPTime = addThreeHoursToTime(
+                  formData.time || getNextHour()
+                )
+                setFormData((prev) => ({
+                  ...prev,
+                  rsvpDate: defaultRSVPDate,
+                  rsvpTime: defaultRSVPTime,
+                }))
+                setShowRSVPFields(true)
+              }
+            }}
+            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${
+              showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
+            }`}
+            aria-label="Toggle RSVP date and time"
+          >
+            <span
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
+                showRSVPFields ? 'translate-x-5' : 'translate-x-1'
+              }`}
+            />
+          </button>
+
+          <label className="text-black font-medium">RSVP date and time</label>
+        </div>
+        {showRSVPFields && (
+          <div className="flex gap-2">
+            <input
+              type="date"
+              name="rsvpDate"
+              max={formData.date}
+              value={formData.rsvpDate || ''}
+              onChange={handleInputChange}
+              className="text-black flex-1 p-3 rounded-xl bg-white/80 border border-white/50"
+            />
+            <TimePicker
+              value={formData.rsvpTime || ''}
+              onChange={(v) =>
+                setFormData((prev) => ({ ...prev, rsvpTime: v }))
+              }
+            />
+          </div>
+        )}
+
         <button
           type="submit"
-          className="px-6 py-3 bg-gradient-to-r from-pink-500 to-orange-400 text-white font-semibold rounded-lg hover:opacity-90 transition shadow-md mt-2"
+          className="group mx-auto w-fit inline-flex items-center justify-center font-semibold rounded-lg text-lg px-8 py-4 transition-all duration-300 ease-out
+    text-white bg-gradient-to-r from-pink-500 to-orange-400 shadow-lg hover:scale-105 hover:shadow-2xl"
         >
           Save Changes
         </button>
