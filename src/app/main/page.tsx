@@ -256,6 +256,9 @@ export default function MainPage() {
       console.error(error)
       return
     }
+    setEvents((prev) =>
+      prev.map((ev) => (ev.id === eventId ? { ...ev, status: 'accepted' } : ev))
+    )
 
     setPendingIds((prev) => prev.filter((id) => id !== eventId))
 
@@ -283,6 +286,10 @@ export default function MainPage() {
       console.error(error)
       return
     }
+
+    setEvents((prev) =>
+      prev.map((ev) => (ev.id === eventId ? { ...ev, status: 'declined' } : ev))
+    )
 
     setPendingIds((prev) => prev.filter((id) => id !== eventId))
 

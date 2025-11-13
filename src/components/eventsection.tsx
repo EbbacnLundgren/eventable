@@ -81,7 +81,7 @@ const EventsSection = ({
       matchesFilter =
         matchesFilter &&
         new Date(event.date).toISOString().split('T')[0] ===
-        advancedFilters.dateFrom
+          advancedFilters.dateFrom
     }
 
     if (advancedFilters.host) {
@@ -146,10 +146,11 @@ const EventsSection = ({
 
                     {diffDays >= 0 && (
                       <span
-                        className={`ml-2 px-3 py-1 rounded-full text-sm font-semibold shadow-sm ${diffDays <= 7
+                        className={`ml-2 px-3 py-1 rounded-full text-sm font-semibold shadow-sm ${
+                          diffDays <= 7
                             ? 'bg-gradient-to-r from-pink-500 to-orange-400 text-white'
                             : 'bg-white/40 text-stone-800'
-                          }`}
+                        }`}
                       >
                         {diffDays === 0
                           ? 'Today'
@@ -198,7 +199,12 @@ const EventsSection = ({
                           e.preventDefault()
                           onAcceptInvite?.(event.id)
                         }}
-                        className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition
+      ${
+        event.status === 'accepted'
+          ? 'bg-green-600 text-white'
+          : 'bg-green-600/30 text-white/70 hover:bg-green-600/60'
+      }`}
                       >
                         Accept invite
                       </button>
@@ -207,7 +213,12 @@ const EventsSection = ({
                           e.preventDefault()
                           onDeclineInvite?.(event.id)
                         }}
-                        className="px-3 py-1.5 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700"
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition
+      ${
+        event.status === 'declined'
+          ? 'bg-gray-600 text-white'
+          : 'bg-gray-600/30 text-white/70 hover:bg-gray-600/60'
+      }`}
                       >
                         Decline invite
                       </button>
