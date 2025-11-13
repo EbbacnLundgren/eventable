@@ -42,6 +42,18 @@ export default function SignupBox() {
       return
     }
 
+    const { data: existing } = await supabase
+      .from('users')
+      .select('email')
+      .eq('email', email)
+      .single()
+
+    if (existing) {
+      setMessage('This account already exists')
+      setStatus('error')
+      return
+    }
+
     // Skapa användaren via Supabase Auth
     const { error } = await supabase.auth.signUp({ email, password })
     if (error) {
