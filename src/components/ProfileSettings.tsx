@@ -37,6 +37,7 @@ export default function ProfileSettingsPage() {
         .from('avatars')
         .upload(filePath, file)
 
+      console.log('Upload data:', data)
       if (uploadError) throw uploadError
 
       // Hämta offentlig URL
