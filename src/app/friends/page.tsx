@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/client'
 import { useSession } from 'next-auth/react'
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import Sidebar from '@/components/Sidebar'
 
 type User = {
