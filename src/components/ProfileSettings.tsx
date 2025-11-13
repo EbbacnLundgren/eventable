@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
-import { Camera, Bell, Shield, Globe } from 'lucide-react'
+import { Camera, Bell, Globe } from 'lucide-react'
 import { supabase } from '@/lib/client'
 
 export default function ProfileSettingsPage() {
@@ -36,7 +36,8 @@ export default function ProfileSettingsPage() {
           .eq('email', session.user.email)
           .single()
 
-        if (error && error.code !== 'PGRST116') { // Ignorera "no row found" om första inlogg
+        if (error && error.code !== 'PGRST116') {
+          // Ignorera "no row found" om första inlogg
           console.error('Error fetching profile:', error)
           return
         }
@@ -50,7 +51,7 @@ export default function ProfileSettingsPage() {
           setProfileImage(
             profile.avatar_url?.startsWith('/')
               ? profile.avatar_url
-              : session.user.image ?? '/placeholder.svg'
+              : (session.user.image ?? '/placeholder.svg')
           )
         } else {
           // Om användaren inte finns i db än, använd Google-avatar
@@ -64,8 +65,10 @@ export default function ProfileSettingsPage() {
     fetchUser()
   }, [session])
 
-
   // Ladda upp avatar
+  // ----------------------------
+  // Ändra bara denna funktion
+  // ----------------------------
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('--- handleImageUpload called ---')
 
@@ -86,6 +89,17 @@ export default function ProfileSettingsPage() {
     }
 
     try {
+      // NY KOD: Hämta Supabase-användaren för att sätta owner
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser()
+      if (userError || !user) {
+        console.error('Failed to get Supabase user:', userError)
+        return
+      }
+      console.log('Supabase user:', user)
+
       const fileExt = file.name.split('.').pop()
       const fileName = `${userId}.${fileExt}`
       const filePath = `${fileName}`
@@ -93,9 +107,13 @@ export default function ProfileSettingsPage() {
       console.log('fileName:', fileName)
       console.log('filePath:', filePath)
 
+      // NY KOD: Lägg till metadata med owner för RLS
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file, { upsert: true })
+        .upload(filePath, file, {
+          upsert: true,
+          metadata: { owner: user.id }, // <--- viktigt för row-level security
+        })
 
       if (uploadError) {
         console.error('Upload error:', uploadError)
@@ -151,7 +169,9 @@ export default function ProfileSettingsPage() {
         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-pink-500 to-pink-700 bg-clip-text text-transparent">
           Profile Settings
         </h1>
-        <p className="text-gray-800">Manage your account settings and preferences</p>
+        <p className="text-gray-800">
+          Manage your account settings and preferences
+        </p>
 
         {/* Profilkort */}
         <div className="bg-white shadow rounded-lg p-6 space-y-6">
@@ -181,7 +201,10 @@ export default function ProfileSettingsPage() {
 
             <div className="flex-1 space-y-4 w-full">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-900">
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-medium text-gray-900"
+                >
                   First Name
                 </label>
                 <input
@@ -192,7 +215,10 @@ export default function ProfileSettingsPage() {
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-800">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium text-gray-800"
+                >
                   Last Name
                 </label>
                 <input
@@ -203,7 +229,10 @@ export default function ProfileSettingsPage() {
                 />
               </div>
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-800">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-800"
+                >
                   Phone
                 </label>
                 <input
@@ -215,7 +244,10 @@ export default function ProfileSettingsPage() {
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-800">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-800"
+                >
                   Email
                 </label>
                 <input
@@ -248,7 +280,10 @@ export default function ProfileSettingsPage() {
                 type="checkbox"
                 checked={notifications[type as keyof typeof notifications]}
                 onChange={(e) =>
-                  setNotifications({ ...notifications, [type]: e.target.checked })
+                  setNotifications({
+                    ...notifications,
+                    [type]: e.target.checked,
+                  })
                 }
                 className="w-5 h-5 accent-pink-500"
               />
