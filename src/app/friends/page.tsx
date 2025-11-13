@@ -23,6 +23,8 @@ export default function AddFriendsPage() {
   const [results, setResults] = useState<User[]>([])
   const [requests, setRequests] = useState<FriendRequest[]>([])
   const [loading, setLoading] = useState(false)
+  const [friends, setFriends] = useState<User[]>([])
+  const [activeTab, setActiveTab] = useState<'add' | 'list'>('add')
   const { data: session } = useSession()
 
   const resolveCurrentUserId = async (): Promise<string | null> => {
@@ -44,6 +46,7 @@ export default function AddFriendsPage() {
     return gUser?.id ?? supaUser?.id ?? null
   }
 
+  // hämta vänförfrågningar
   useEffect(() => {
     const fetchRequests = async () => {
       const userId = await resolveCurrentUserId()
@@ -56,20 +59,7 @@ export default function AddFriendsPage() {
     fetchRequests()
   }, [session])
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      const userId = await resolveCurrentUserId()
-      console.log('🔍 currentUserId:', userId)
-      if (!userId) return
-
-      const res = await fetch(`/api/friends/requests?userId=${userId}`)
-      const data = await res.json()
-      console.log('📬 fetched requests:', data)
-      setRequests(data.requests || [])
-    }
-    fetchRequests()
-  }, [session])
-
+  // sök efter användare
   const handleSearch = async () => {
     setLoading(true)
     const currentUserId = await resolveCurrentUserId()
@@ -94,6 +84,7 @@ export default function AddFriendsPage() {
     }
   }
 
+  // skicka vänförfrågan
   const sendRequest = async (receiverId: string) => {
     const currentUserId = await resolveCurrentUserId()
     if (!currentUserId) {
@@ -118,6 +109,7 @@ export default function AddFriendsPage() {
     }
   }
 
+  // svara på vänförfrågan
   const respondToRequest = async (
     requestId: string,
     action: 'accepted' | 'declined'
@@ -129,6 +121,53 @@ export default function AddFriendsPage() {
     })
     setRequests((prev) => prev.filter((r) => r.id !== requestId))
   }
+
+  // hämta vänner
+  const fetchFriends = async () => {
+    const userId = await resolveCurrentUserId()
+    if (!userId) return
+
+    const { data, error } = await supabase
+      .from('friendships')
+      .select(`
+      id,
+      requester_id,
+      receiver_id,
+      status,
+      requester:google_users!friendships_requester_id_fkey (
+        id,
+        email,
+        first_name,
+        last_name
+      ),
+      receiver:google_users!friendships_receiver_id_fkey (
+        id,
+        email,
+        first_name,
+        last_name
+      )
+    `)
+      .eq('status', 'accepted')
+      .or(`requester_id.eq.${userId},receiver_id.eq.${userId}`)
+
+    if (error) {
+      console.error('Error fetching friends:', error)
+      return
+    }
+
+    // Sortera ut rätt “andra personen” i relationen
+    const myFriends = data.map((f) => {
+      const requester = Array.isArray(f.requester) ? f.requester[0] : f.requester
+      const receiver = Array.isArray(f.receiver) ? f.receiver[0] : f.receiver
+      return f.requester_id === userId ? receiver : requester
+    })
+
+    setFriends(myFriends)
+  }
+
+  useEffect(() => {
+    fetchFriends()
+  }, [session])
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-pink-400 to-orange-400 text-white p-8">
@@ -214,6 +253,30 @@ export default function AddFriendsPage() {
                     >
                       Decline
                     </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* 👯 My friends list */}
+        {friends.length > 0 && (
+          <div className="mt-10">
+            <h2 className="text-xl font-semibold mb-3 text-center">My Friends</h2>
+            <ul className="space-y-3">
+              {friends.map((friend) => (
+                <li
+                  key={friend.id}
+                  className="flex justify-between items-center bg-white/10 p-3 rounded-lg"
+                >
+                  <div>
+                    <span className="font-medium">{friend.email}</span>
+                    {friend.first_name && (
+                      <span className="block text-white/70 text-sm">
+                        {friend.first_name} {friend.last_name || ''}
+                      </span>
+                    )}
                   </div>
                 </li>
               ))}
