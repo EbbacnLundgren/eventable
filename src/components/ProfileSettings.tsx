@@ -1,14 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/client'
-import { Camera, Bell, Shield, Globe } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import Image from 'next/image'
-import { v4 as uuidv4 } from 'uuid'
+import { Camera, Bell, Shield, Globe } from 'lucide-react'
+import { supabase } from '@/lib/client'
 
 export default function ProfileSettingsPage() {
   const router = useRouter()
+  const { data: session } = useSession()
+
   const [profileImage, setProfileImage] = useState<string>('/placeholder.svg')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -20,44 +22,107 @@ export default function ProfileSettingsPage() {
     push: false,
     sms: true,
   })
+  const [userId, setUserId] = useState<string | null>(null)
 
-  // Hantera uppladdning av profilbild
+  // Hämta profil när session finns
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!session?.user?.email) return
+
+      try {
+        const { data: profile, error } = await supabase
+          .from('google_users')
+          .select('*')
+          .eq('email', session.user.email)
+          .single()
+
+        if (error && error.code !== 'PGRST116') { // Ignorera "no row found" om första inlogg
+          console.error('Error fetching profile:', error)
+          return
+        }
+
+        if (profile) {
+          setUserId(profile.id)
+          setFirstName(profile.first_name ?? '')
+          setLastName(profile.last_name ?? '')
+          setPhone(profile.phone_nbr ?? '')
+
+          setProfileImage(
+            profile.avatar_url?.startsWith('/')
+              ? profile.avatar_url
+              : session.user.image ?? '/placeholder.svg'
+          )
+        } else {
+          // Om användaren inte finns i db än, använd Google-avatar
+          setProfileImage(session.user.image ?? '/placeholder.svg')
+        }
+      } catch (err) {
+        console.error('Unexpected error:', err)
+      }
+    }
+
+    fetchUser()
+  }, [session])
+
+
+  // Ladda upp avatar
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    console.log('--- handleImageUpload called ---')
+
+    if (!e.target.files?.[0]) {
+      console.log('No file selected')
+      return
+    }
+    const file = e.target.files[0]
+    console.log('Selected file:', file)
+
+    if (!userId) {
+      console.log('No userId, cannot upload')
+      return
+    }
+    if (!session) {
+      console.log('No next-auth session, cannot upload')
+      return
+    }
 
     try {
-      // Skapa unikt filnamn
       const fileExt = file.name.split('.').pop()
-      const fileName = `${uuidv4()}.${fileExt}`
-      const filePath = `avatars/${fileName}`
+      const fileName = `${userId}.${fileExt}`
+      const filePath = `${fileName}`
 
-      // Ladda upp filen till Supabase Storage
-      const { data, error: uploadError } = await supabase.storage
+      console.log('fileName:', fileName)
+      console.log('filePath:', filePath)
+
+      const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file)
+        .upload(filePath, file, { upsert: true })
 
-      console.log('Upload data:', data)
-      if (uploadError) throw uploadError
+      if (uploadError) {
+        console.error('Upload error:', uploadError)
+        alert('Failed to upload image')
+        return
+      }
 
-      // Hämta offentlig URL
       const { data: urlData } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath)
+
+      console.log('Public URL:', urlData.publicUrl)
       setProfileImage(urlData.publicUrl)
-    } catch (error) {
-      console.error('Error uploading file:', error)
+      alert('Image uploaded successfully!')
+    } catch (err) {
+      console.error('Unexpected error uploading file:', err)
       alert('Failed to upload image')
     }
+
+    console.log('--- handleImageUpload finished ---')
   }
 
-  // Spara profilinformationen
+  // Spara profil
   const handleSaveProfile = async () => {
-    try {
-      const user = supabase.auth.getUser() // hämta nuvarande användare
-      const userId = (await user).data.user?.id
-      if (!userId) throw new Error('User not found')
+    if (!userId) return alert('User not logged in')
 
+    try {
       const { error } = await supabase
         .from('google_users')
         .update({
@@ -71,13 +136,14 @@ export default function ProfileSettingsPage() {
       if (error) throw error
       alert('Profile saved!')
     } catch (error) {
-      console.error(error)
+      console.error('Error saving profile:', error)
       alert('Failed to save profile')
     }
   }
 
-  const handleChangePassword = () => alert('Password reset requested')
-  const handleDeleteAccount = () => alert('Account deletion initiated')
+  if (!session?.user) {
+    return <div>Please log in to access profile settings.</div>
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-pink-50 py-8">
@@ -85,9 +151,7 @@ export default function ProfileSettingsPage() {
         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-pink-500 to-pink-700 bg-clip-text text-transparent">
           Profile Settings
         </h1>
-        <p className="text-gray-800">
-          Manage your account settings and preferences
-        </p>
+        <p className="text-gray-800">Manage your account settings and preferences</p>
 
         {/* Profilkort */}
         <div className="bg-white shadow rounded-lg p-6 space-y-6">
@@ -117,10 +181,7 @@ export default function ProfileSettingsPage() {
 
             <div className="flex-1 space-y-4 w-full">
               <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-medium text-gray-900"
-                >
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-900">
                   First Name
                 </label>
                 <input
@@ -130,12 +191,8 @@ export default function ProfileSettingsPage() {
                   className="mt-1 w-full border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-pink-400 focus:outline-none"
                 />
               </div>
-
               <div>
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium text-gray-800"
-                >
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-800">
                   Last Name
                 </label>
                 <input
@@ -146,10 +203,7 @@ export default function ProfileSettingsPage() {
                 />
               </div>
               <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-medium text-gray-800"
-                >
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-800">
                   Phone
                 </label>
                 <input
@@ -157,6 +211,18 @@ export default function ProfileSettingsPage() {
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-pink-400 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-800">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="mt-1 w-full border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-pink-400 focus:outline-none"
                 />
               </div>
@@ -175,7 +241,6 @@ export default function ProfileSettingsPage() {
           <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
             <Bell /> Notifications
           </h2>
-
           {['email', 'push', 'sms'].map((type) => (
             <div key={type} className="flex items-center justify-between">
               <div className="capitalize">{type} Notifications</div>
@@ -183,49 +248,12 @@ export default function ProfileSettingsPage() {
                 type="checkbox"
                 checked={notifications[type as keyof typeof notifications]}
                 onChange={(e) =>
-                  setNotifications({
-                    ...notifications,
-                    [type]: e.target.checked,
-                  })
+                  setNotifications({ ...notifications, [type]: e.target.checked })
                 }
                 className="w-5 h-5 accent-pink-500"
               />
             </div>
           ))}
-        </div>
-
-        {/* Account */}
-        <div className="bg-white shadow rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <Shield /> Account Settings
-          </h2>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-800"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-pink-400 focus:outline-none"
-            />
-          </div>
-          <button
-            onClick={handleChangePassword}
-            className="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition"
-          >
-            Change Password
-          </button>
-          <button
-            onClick={handleDeleteAccount}
-            className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-          >
-            Delete Account
-          </button>
         </div>
 
         {/* Language */}
