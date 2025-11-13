@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   const { data, error } = await supabase
     .from('friendships')
     .select(
-      'id, requester_id, status, google_users (id, email, first_name, last_name)'
+      'id, requester_id, status, google_users!friendships_requester_id_fkey(id, email, first_name, last_name)'
     )
     .eq('receiver_id', userId)
     .eq('status', 'pending')
