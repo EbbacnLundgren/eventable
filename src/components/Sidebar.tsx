@@ -45,7 +45,7 @@ export default function Sidebar() {
           </Link>
 
           <Link
-            href="/my-events"
+            href="/friends"
             className="text-gray-500 hover:text-pink-500 transition-colors duration-200"
           >
             <UserStar className="h-8 w-8" />
