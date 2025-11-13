@@ -40,7 +40,9 @@ export default function ProfileSettingsPage() {
       if (uploadError) throw uploadError
 
       // Hämta offentlig URL
-      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(filePath)
+      const { data: urlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath)
       setProfileImage(urlData.publicUrl)
     } catch (error) {
       console.error('Error uploading file:', error)
@@ -72,7 +74,6 @@ export default function ProfileSettingsPage() {
       alert('Failed to save profile')
     }
   }
-
 
   const handleChangePassword = () => alert('Password reset requested')
   const handleDeleteAccount = () => alert('Account deletion initiated')
