@@ -131,7 +131,8 @@ export default function AddFriendsPage() {
 
     const { data, error } = await supabase
       .from('friendships')
-      .select(`
+      .select(
+        `
       id,
       requester_id,
       receiver_id,
@@ -148,7 +149,8 @@ export default function AddFriendsPage() {
         first_name,
         last_name
       )
-    `)
+    `
+      )
       .eq('status', 'accepted')
       .or(`requester_id.eq.${userId},receiver_id.eq.${userId}`)
 
@@ -159,7 +161,9 @@ export default function AddFriendsPage() {
 
     // Sortera ut rätt “andra personen” i relationen
     const myFriends = data.map((f) => {
-      const requester = Array.isArray(f.requester) ? f.requester[0] : f.requester
+      const requester = Array.isArray(f.requester)
+        ? f.requester[0]
+        : f.requester
       const receiver = Array.isArray(f.receiver) ? f.receiver[0] : f.receiver
       return f.requester_id === userId ? receiver : requester
     })
@@ -179,7 +183,9 @@ export default function AddFriendsPage() {
     const { error } = await supabase
       .from('friendships')
       .delete()
-      .or(`and(requester_id.eq.${userId},receiver_id.eq.${friendId}),and(requester_id.eq.${friendId},receiver_id.eq.${userId})`)
+      .or(
+        `and(requester_id.eq.${userId},receiver_id.eq.${friendId}),and(requester_id.eq.${friendId},receiver_id.eq.${userId})`
+      )
 
     if (error) {
       console.error('Error unfriending:', error)
@@ -205,15 +211,13 @@ export default function AddFriendsPage() {
         <div className="flex justify-center gap-4 mb-6">
           <button
             onClick={() => setActiveTab('add')}
-            className={`px-4 py-2 rounded ${activeTab === 'add' ? 'bg-yellow-500' : 'bg-white/20'
-              }`}
+            className={`px-4 py-2 rounded ${activeTab === 'add' ? 'bg-yellow-500' : 'bg-white/20'}`}
           >
             ➕ Add Friends
           </button>
           <button
             onClick={() => setActiveTab('list')}
-            className={`px-4 py-2 rounded ${activeTab === 'list' ? 'bg-yellow-500' : 'bg-white/20'
-              }`}
+            className={`px-4 py-2 rounded ${activeTab === 'list' ? 'bg-yellow-500' : 'bg-white/20'}`}
           >
             👯 My Friends
           </button>
