@@ -28,7 +28,9 @@ export default function EventChat({ eventId }: EventChatProps) {
       setLoading(true)
 
       try {
-        const res = await fetch('/api/stream-token')
+        //const res = await fetch('/api/stream-token')
+        const res = await fetch(`/api/stream-token?eventId=${eventId}`)
+
         const data: { token: string; user: UserResponse } = await res.json()
         if (!data.token || !data.user) {
           console.error('Ingen token eller user från API')

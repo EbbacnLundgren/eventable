@@ -14,11 +14,16 @@ const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await getServerSession(authOptions)
-
   if (!session?.user?.email) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+
+  const url = new URL(req.url)
+  const eventId = url.searchParams.get('eventId')
+  if (!eventId) {
+    return NextResponse.json({ error: 'Missing eventId' }, { status: 400 })
   }
 
   const { data: gUser } = await supabase
@@ -26,9 +31,28 @@ export async function GET() {
     .select('id, email')
     .eq('email', session.user.email)
     .single()
-
   if (!gUser) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 })
+  }
+
+  const { data: event } = await supabase
+    .from('events')
+    .select('user_id') // host
+    .eq('id', eventId)
+    .single()
+
+  const { data: invite } = await supabase
+    .from('event_invites')
+    .select('id')
+    .eq('event_id', eventId)
+    .eq('invited_user_id', gUser.id)
+    .single()
+
+  const isHost = event?.user_id === gUser.id
+  const isInvited = !!invite
+
+  if (!isHost && !isInvited) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 })
   }
 
   const serverClient = StreamChat.getInstance(
