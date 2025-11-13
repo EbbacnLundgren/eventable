@@ -81,7 +81,7 @@ const EventsSection = ({
       matchesFilter =
         matchesFilter &&
         new Date(event.date).toISOString().split('T')[0] ===
-          advancedFilters.dateFrom
+        advancedFilters.dateFrom
     }
 
     if (advancedFilters.host) {
@@ -146,11 +146,10 @@ const EventsSection = ({
 
                     {diffDays >= 0 && (
                       <span
-                        className={`ml-2 px-3 py-1 rounded-full text-sm font-semibold shadow-sm ${
-                          diffDays <= 7
+                        className={`ml-2 px-3 py-1 rounded-full text-sm font-semibold shadow-sm ${diffDays <= 7
                             ? 'bg-gradient-to-r from-pink-500 to-orange-400 text-white'
                             : 'bg-white/40 text-stone-800'
-                        }`}
+                          }`}
                       >
                         {diffDays === 0
                           ? 'Today'
@@ -192,32 +191,31 @@ const EventsSection = ({
                     </span>
                   </div>
 
-                  {pendingIds.includes(event.id) &&
-                    !ownEventIds.includes(event.id) && (
-                      <div className="mt-3 flex items-center gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault()
-                            onAcceptInvite?.(event.id)
-                          }}
-                          className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
-                        >
-                          Accept invite
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault()
-                            onDeclineInvite?.(event.id)
-                          }}
-                          className="px-3 py-1.5 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700"
-                        >
-                          Decline invite
-                        </button>
-                        <span className="ml-2 text-xs text-white/80">
-                          Invite pending
-                        </span>
-                      </div>
-                    )}
+                  {!ownEventIds.includes(event.id) && (
+                    <div className="mt-3 flex items-center gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          onAcceptInvite?.(event.id)
+                        }}
+                        className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+                      >
+                        Accept invite
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          onDeclineInvite?.(event.id)
+                        }}
+                        className="px-3 py-1.5 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700"
+                      >
+                        Decline invite
+                      </button>
+                      <span className="ml-2 text-xs text-white/80">
+                        Invite pending
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </Link>
