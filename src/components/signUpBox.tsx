@@ -55,29 +55,33 @@ export default function SignupBox() {
       return
     }
 
-    const { data: existing } = await supabase
-      .from('users')
-      .select('email')
-      .eq('email', email)
-      .single()
+    // const { data: existing } = await supabase
+    //   .from('users')
+    //   .select('email')
+    //   .eq('email', email)
+    //   .single()
 
-    if (existing) {
-      setMessage('This account already exists')
-      setStatus('error')
-      return
-    }
+    // if (existing) {
+    //   setMessage('This account already exists')
+    //   setStatus('error')
+    //   return
+    // }
 
     // Skapa användaren via Supabase Auth
-    const { error } = await supabase.auth.signUp({ email, password })
-    if (error) {
-      setMessage(error.message)
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
+      { email, password }
+    )
+    if (signUpError) {
+      setMessage(signUpError.message)
       setStatus('error')
       return
     }
 
     // Hämta användarens ID
-    const { data: authData } = await supabase.auth.getUser()
-    const userId = authData?.user?.id
+    //const { data: authData } = await supabase.auth.getUser()
+
+    //const userId = authData?.user?.id
+    const userId = signUpData.user?.id
 
     // await supabase.from('users').insert({    //insert till auth/users
     //   id: userId,
