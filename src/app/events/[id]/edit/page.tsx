@@ -31,9 +31,11 @@ export default function EditEventPage() {
     rsvpTime: '',
   })
   const [selectedImage, setSelectedImage] = useState<string>('')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
   const [showEndFields, setShowEndFields] = useState(false)
   const [showRSVPFields, setShowRSVPFields] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [labelColorClass, setLabelColorClass] = useState('text-gray-600')
 
   const defaultImages = [
