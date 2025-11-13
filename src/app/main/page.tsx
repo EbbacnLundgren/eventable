@@ -41,7 +41,7 @@ export default function MainPage() {
           .from('google_users')
           .select('id')
           .eq('email', email)
-          .single()
+          .maybeSingle()
         userId = googleUser?.id || supabaseUser.id
       }
 
@@ -53,7 +53,7 @@ export default function MainPage() {
           .from('auth.users')
           .select('id')
           .eq('email', email)
-          .single()
+          .maybeSingle()
         userId = supaUser?.id
 
         // Om inte finns → upsert i google_users
@@ -179,10 +179,10 @@ export default function MainPage() {
           if (event.user_id) {
             try {
               const { data: profile } = await supabase
-                .from('users')
+                .from('auth.users')
                 .select('first_name, last_name, email')
                 .eq('id', event.user_id)
-                .single()
+                .maybeSingle()
 
               if (profile) {
                 hostLabel = profile.first_name
@@ -193,7 +193,7 @@ export default function MainPage() {
                   .from('google_users')
                   .select('first_name, last_name, email')
                   .eq('id', event.user_id)
-                  .single()
+                  .maybeSingle()
 
                 if (g) {
                   hostLabel = g.first_name
@@ -201,7 +201,7 @@ export default function MainPage() {
                     : g.email || null
                 } else {
                   const { data: authUser } = await supabase
-                    .from('users')
+                    .from('auth.users')
                     .select('email')
                     .eq('id', event.user_id)
                     .single()
