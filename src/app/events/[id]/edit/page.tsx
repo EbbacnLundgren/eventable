@@ -54,7 +54,6 @@ export default function EditEventPage() {
       if (!url) return 'text-gray-800'
 
       try {
-
         const cls = await new Promise<string>((resolve) => {
           const img = new Image()
 
@@ -96,7 +95,7 @@ export default function EditEventPage() {
       }
     }
 
-    ; (async () => {
+    ;(async () => {
       const cls = await getContrastClassForImage(selectedImage)
       if (!cancelled) setLabelColorClass(cls)
     })()
@@ -211,8 +210,8 @@ export default function EditEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-        )
+            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+          )
         : null
 
     if (endDateTime && endDateTime < startDateTime) {
@@ -260,15 +259,19 @@ export default function EditEventPage() {
 
   // Form validation (same rules as createEvent)
   const isValidDate =
-    formData.date && new Date(formData.date) >= new Date(new Date().toDateString())
+    formData.date &&
+    new Date(formData.date) >= new Date(new Date().toDateString())
   const isValidTime = /^([01]\d|2[0-3]):([0-5]\d)$/.test(formData.time)
   const isValidEndTime =
-    formData.endTime === '' || /^([01]\d|2[0-3]):([0-5]\d)$/.test(formData.endTime)
+    formData.endTime === '' ||
+    /^([01]\d|2[0-3]):([0-5]\d)$/.test(formData.endTime)
 
   const hasPartialEnd =
-    (formData.endDate && !formData.endTime) || (!formData.endDate && formData.endTime)
+    (formData.endDate && !formData.endTime) ||
+    (!formData.endDate && formData.endTime)
 
-  const hasInvalidEnd = (formData.endDate && formData.endTime && !isValidEndTime) || hasPartialEnd
+  const hasInvalidEnd =
+    (formData.endDate && formData.endTime && !isValidEndTime) || hasPartialEnd
 
   return (
     <main className="relative min-h-screen text-white py-10 px-6 flex items-center justify-center">
@@ -327,7 +330,9 @@ export default function EditEventPage() {
           name="name"
           value={formData.name}
           onChange={handleInputChange}
-          onBlur={(e) => setTouched((prev) => ({ ...prev, [e.target.name]: true }))}
+          onBlur={(e) =>
+            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
+          }
           className="text-black p-3 rounded-xl bg-white/80 border border-white/50"
           required
         />
@@ -338,7 +343,9 @@ export default function EditEventPage() {
           name="location"
           value={formData.location}
           onChange={handleInputChange}
-          onBlur={(e) => setTouched((prev) => ({ ...prev, [e.target.name]: true }))}
+          onBlur={(e) =>
+            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
+          }
           className="text-black p-3 rounded-xl bg-white/80 border border-white/50"
           required
         />
@@ -372,7 +379,9 @@ export default function EditEventPage() {
                 setShowEndFields(false)
               } else {
                 const defaultEndDate = formData.date
-                const defaultEndTime = addThreeHoursToTime(formData.time || getNextHour())
+                const defaultEndTime = addThreeHoursToTime(
+                  formData.time || getNextHour()
+                )
                 setFormData((prev) => ({
                   ...prev,
                   endDate: defaultEndDate,
@@ -385,12 +394,14 @@ export default function EditEventPage() {
             className="relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 hover:scale-105"
           >
             <div
-              className={`absolute inset-0 rounded-full transition-colors duration-300 ${showEndFields ? 'bg-green-500' : 'bg-gray-400'
-                }`}
+              className={`absolute inset-0 rounded-full transition-colors duration-300 ${
+                showEndFields ? 'bg-green-500' : 'bg-gray-400'
+              }`}
             />
             <span
-              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showEndFields ? 'translate-x-5' : 'translate-x-1'
-                }`}
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
+                showEndFields ? 'translate-x-5' : 'translate-x-1'
+              }`}
             />
           </button>
           <label className="text-black font-medium">End date and time</label>
@@ -412,7 +423,6 @@ export default function EditEventPage() {
           </div>
         )}
 
-
         <label className="text-black font-medium">Description</label>
         <textarea
           name="description"
@@ -430,7 +440,9 @@ export default function EditEventPage() {
                 setShowRSVPFields(false)
               } else {
                 const defaultRSVPDate = formData.date
-                const defaultRSVPTime = addThreeHoursToTime(formData.time || getNextHour())
+                const defaultRSVPTime = addThreeHoursToTime(
+                  formData.time || getNextHour()
+                )
                 setFormData((prev) => ({
                   ...prev,
                   rsvpDate: defaultRSVPDate,
@@ -439,13 +451,15 @@ export default function EditEventPage() {
                 setShowRSVPFields(true)
               }
             }}
-            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
-              }`}
+            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${
+              showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
+            }`}
             aria-label="Toggle RSVP date and time"
           >
             <span
-              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showRSVPFields ? 'translate-x-5' : 'translate-x-1'
-                }`}
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
+                showRSVPFields ? 'translate-x-5' : 'translate-x-1'
+              }`}
             />
           </button>
 
@@ -463,11 +477,12 @@ export default function EditEventPage() {
             />
             <TimePicker
               value={formData.rsvpTime || ''}
-              onChange={(v) => setFormData((prev) => ({ ...prev, rsvpTime: v }))}
+              onChange={(v) =>
+                setFormData((prev) => ({ ...prev, rsvpTime: v }))
+              }
             />
           </div>
         )}
-
 
         <button
           type="submit"
@@ -479,8 +494,9 @@ export default function EditEventPage() {
 
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-200' : 'text-yellow-200'
-              }`}
+            className={`text-center text-sm mt-2 ${
+              status === 'success' ? 'text-green-200' : 'text-yellow-200'
+            }`}
           >
             {message}
           </p>
