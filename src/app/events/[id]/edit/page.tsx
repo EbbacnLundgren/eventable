@@ -18,6 +18,11 @@ export default function EditEventPage() {
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
 
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
+  const [labelColorClass, setLabelColorClass] = useState('text-gray-600')
+  const [, setShowAdjust] = useState(false)
+  const [, setTempImage] = useState<string | null>(null)
+
   const [formData, setFormData] = useState({
     name: '',
     location: '',
