@@ -18,19 +18,27 @@ export default function SignupBox() {
     setMessage('')
     setStatus('idle')
 
-    // Kontrollera om användaren redan finns i databasen
-    const { data: existingUser } = await supabase
+    // 1. Kolla users-tabellen
+    const { data: userMatch } = await supabase
       .from('users')
       .select('id')
       .eq('email', email)
-      .single()
+      .maybeSingle()
 
-    if (existingUser) {
+    // 2. Kolla google_users-tabellen
+    const { data: googleMatch } = await supabase
+      .from('google_users')
+      .select('id')
+      .eq('email', email)
+      .maybeSingle()
+
+    if (userMatch || googleMatch) {
       setMessage('This account already exists')
       setStatus('error')
       return
     }
 
+    // 3. Validera lösenord
     const passwordRegex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/
 
@@ -42,19 +50,7 @@ export default function SignupBox() {
       return
     }
 
-    const { data: existing } = await supabase
-      .from('users')
-      .select('email')
-      .eq('email', email)
-      .single()
-
-    if (existing) {
-      setMessage('This account already exists')
-      setStatus('error')
-      return
-    }
-
-    // Skapa användaren via Supabase Auth
+    // 4. Skapa auth-konto
     const { error } = await supabase.auth.signUp({ email, password })
     if (error) {
       setMessage(error.message)
@@ -62,14 +58,11 @@ export default function SignupBox() {
       return
     }
 
-    // Hämta användarens ID
+    // 5. Hämta userId om det redan finns (kan vara null före email verification)
     const { data: authData } = await supabase.auth.getUser()
-    const userId = authData?.user?.id
-    //if (!userId) return alert('Could not get user ID') denna kan vi inte ha med för userid skapas efter att användaren har klickat på mejlet och då komemr alltid denna upp..
+    const userId = authData?.user?.id || null
 
-    // Lägg till användaren i databasen (vi ignorerar svaret här för att undvika
-    // fel i klient-flödet när userId skapas först efter e-postverifiering).
-    // Om du vill hantera DB-fel, använd try/catch eller logga svaret.
+    // 6. Lägg till i users-tabellen (utan att bryta flödet om userId är null)
     await supabase.from('users').insert({
       id: userId,
       email,
@@ -80,17 +73,10 @@ export default function SignupBox() {
       phone_number: '',
     })
 
-    /*if (insertError) {
-      setMessage('Error creating user profile.')
-      setStatus('error')
-      return
-    }*/ //Detta kommer ju ske också
-
-    setMessage(
-      'Account created. Please check your email to verify your account.'
-    )
+    setMessage('Account created. Please check your email to verify your account.')
     setStatus('success')
   }
+
 
   return (
     <div className="border p-6 rounded-xl shadow-md w-80 bg-white/80 backdrop-blur-md border-pink-200 text-gray-800">
@@ -169,3 +155,84 @@ export default function SignupBox() {
     </div>
   )
 }
+
+
+
+/*const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setMessage('')
+    setStatus('idle')
+
+    // Kontrollera om användaren redan finns i databasen
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', email)
+      .single()
+
+    if (existingUser) {
+      setMessage('This account already exists')
+      setStatus('error')
+      return
+    }
+
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/
+
+    if (!passwordRegex.test(password)) {
+      setMessage(
+        'Password must be at least 8 characters long and include a number, a letter, and a special character.'
+      )
+      setStatus('error')
+      return
+    }
+
+    const { data: existing } = await supabase
+      .from('users')
+      .select('email')
+      .eq('email', email)
+      .single()
+
+    if (existing) {
+      setMessage('This account already exists')
+      setStatus('error')
+      return
+    }
+
+    // Skapa användaren via Supabase Auth
+    const { error } = await supabase.auth.signUp({ email, password })
+    if (error) {
+      setMessage(error.message)
+      setStatus('error')
+      return
+    }
+
+    // Hämta användarens ID
+    const { data: authData } = await supabase.auth.getUser()
+    const userId = authData?.user?.id
+    //if (!userId) return alert('Could not get user ID') denna kan vi inte ha med för userid skapas efter att användaren har klickat på mejlet och då komemr alltid denna upp..
+
+    // Lägg till användaren i databasen (vi ignorerar svaret här för att undvika
+    // fel i klient-flödet när userId skapas först efter e-postverifiering).
+    // Om du vill hantera DB-fel, använd try/catch eller logga svaret.
+    await supabase.from('users').insert({
+      id: userId,
+      email,
+      created_at: new Date().toISOString(),
+      first_name: '',
+      last_name: '',
+      avatar_url: '',
+      phone_number: '',
+    })
+
+    /*if (insertError) {
+      setMessage('Error creating user profile.')
+      setStatus('error')
+      return
+    }*/ //Detta kommer ju ske också
+
+//setMessage(
+//'Account created. Please check your email to verify your account.'
+//)
+//setStatus('success')
+//}*/
