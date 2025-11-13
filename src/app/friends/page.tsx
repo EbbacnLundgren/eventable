@@ -5,6 +5,7 @@ import { supabase } from '@/lib/client'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import Sidebar from '@/components/Sidebar'
 
 type User = {
   id: string
@@ -197,13 +198,7 @@ export default function AddFriendsPage() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-pink-400 to-orange-400 text-white p-8">
-      <Link
-        href="/main"
-        className="fixed top-4 left-4 text-pink-600 hover:text-pink-800 z-50"
-        aria-label="Back to main page"
-      >
-        <ArrowLeft size={26} />
-      </Link>
+      <Sidebar />
       <div className="bg-white/20 backdrop-blur-md rounded-3xl p-8 w-full max-w-md shadow-lg border border-white/30">
         <h1 className="text-2xl font-bold mb-6 text-center">Friends</h1>
 
