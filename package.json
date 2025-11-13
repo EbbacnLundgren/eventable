@@ -30,6 +30,7 @@
     "stream-chat": "^9.25.0",
     "stream-chat-react": "^13.7.0",
     "three": "^0.180.0",
+    "uuid": "^13.0.0",
     "vanta": "^0.5.24"
   },
   "devDependencies": {
@@ -40,6 +41,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.180.0",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.36.0",

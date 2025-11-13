@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/client'
 import { Camera, Bell, Shield, Globe } from 'lucide-react'
 import Image from 'next/image'
+import { v4 as uuidv4 } from 'uuid'
 
 export default function ProfileSettingsPage() {
   const router = useRouter()
@@ -21,16 +22,58 @@ export default function ProfileSettingsPage() {
   })
 
   // Hantera uppladdning av profilbild
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => setProfileImage(reader.result as string)
-      reader.readAsDataURL(file)
+    if (!file) return
+
+    try {
+      // Skapa unikt filnamn
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${uuidv4()}.${fileExt}`
+      const filePath = `avatars/${fileName}`
+
+      // Ladda upp filen till Supabase Storage
+      const { data, error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file)
+
+      if (uploadError) throw uploadError
+
+      // Hämta offentlig URL
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(filePath)
+      setProfileImage(urlData.publicUrl)
+    } catch (error) {
+      console.error('Error uploading file:', error)
+      alert('Failed to upload image')
     }
   }
 
-  const handleSaveProfile = () => alert('Profile saved!')
+  // Spara profilinformationen
+  const handleSaveProfile = async () => {
+    try {
+      const user = supabase.auth.getUser() // hämta nuvarande användare
+      const userId = (await user).data.user?.id
+      if (!userId) throw new Error('User not found')
+
+      const { error } = await supabase
+        .from('google_users')
+        .update({
+          first_name: firstName,
+          last_name: lastName,
+          phone_nbr: phone,
+          avatar_url: profileImage,
+        })
+        .eq('id', userId)
+
+      if (error) throw error
+      alert('Profile saved!')
+    } catch (error) {
+      console.error(error)
+      alert('Failed to save profile')
+    }
+  }
+
+
   const handleChangePassword = () => alert('Password reset requested')
   const handleDeleteAccount = () => alert('Account deletion initiated')
 
