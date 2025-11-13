@@ -18,14 +18,23 @@ export default function SignupBox() {
     setMessage('')
     setStatus('idle')
 
-    // Kontrollera om användaren redan finns i databasen
-    const { data: existingUser } = await supabase
+    // Normalize email (trim + lowercase) and check if it already exists in the users table
+    const normalizedEmail = email.trim().toLowerCase()
+
+    // Case-insensitive check for existing user record
+    const { data: existingUsers, error: existingError } = await supabase
       .from('users')
       .select('id')
-      .eq('email', email)
-      .single()
+      .ilike('email', normalizedEmail)
+      .limit(1)
 
-    if (existingUser) {
+    if (existingError) {
+      setMessage('Unable to verify account. Please try again later.')
+      setStatus('error')
+      return
+    }
+
+    if (existingUsers && existingUsers.length > 0) {
       setMessage('This account already exists')
       setStatus('error')
       return
@@ -42,20 +51,11 @@ export default function SignupBox() {
       return
     }
 
-    const { data: existing } = await supabase
-      .from('users')
-      .select('email')
-      .eq('email', email)
-      .single()
-
-    if (existing) {
-      setMessage('This account already exists')
-      setStatus('error')
-      return
-    }
-
-    // Skapa användaren via Supabase Auth
-    const { error } = await supabase.auth.signUp({ email, password })
+    // Skapa användaren via Supabase Auth (use normalized email)
+    const { error } = await supabase.auth.signUp({
+      email: normalizedEmail,
+      password,
+    })
     if (error) {
       setMessage(error.message)
       setStatus('error')
@@ -72,7 +72,7 @@ export default function SignupBox() {
     // Om du vill hantera DB-fel, använd try/catch eller logga svaret.
     await supabase.from('users').insert({
       id: userId,
-      email,
+      email: normalizedEmail,
       created_at: new Date().toISOString(),
       first_name: '',
       last_name: '',
