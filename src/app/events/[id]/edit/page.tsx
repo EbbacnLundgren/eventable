@@ -277,12 +277,13 @@ export default function EditEventPage() {
     <main className="relative min-h-screen text-white py-10 px-6 flex items-center justify-center">
       <DynamicBackground imageUrl={selectedImage} />
 
-      {/* Back button */}
       <Link
         href={`/events/${id}`}
-        className="fixed top-4 left-4 text-white hover:text-pink-200 z-50 flex items-center gap-1"
+        className="fixed top-4 left-4 z-50 flex items-center gap-1
+             text-white hover:text-pink-200
+             bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
       >
-        <ArrowLeft size={26} />
+        <ArrowLeft size={20} />
         <span className="font-semibold"></span>
       </Link>
 
