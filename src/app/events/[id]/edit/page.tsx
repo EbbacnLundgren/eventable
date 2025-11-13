@@ -8,6 +8,7 @@ import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
 import Link from 'next/link'
 import TimePicker from '@/components/timePicker'
 import DynamicBackground from '@/components/DynamicBackground'
+import DeleteEventButton from '@/components/DeleteButtonEvent'
 
 export default function EditEventPage() {
   const router = useRouter()
@@ -17,6 +18,7 @@ export default function EditEventPage() {
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
+  const [eventUserId, setEventUserId] = useState<string>('')
 
   const [formData, setFormData] = useState({
     name: '',
@@ -97,7 +99,7 @@ export default function EditEventPage() {
       }
     }
 
-    ;(async () => {
+    ; (async () => {
       const cls = await getContrastClassForImage(selectedImage)
       if (!cancelled) setLabelColorClass(cls)
     })()
@@ -134,6 +136,7 @@ export default function EditEventPage() {
         setSelectedImage(data.image ?? defaultImages[0])
         setShowEndFields(!!(data.end_date || data.end_time))
         setShowRSVPFields(!!(data.rsvp_date || data.rsvp_time))
+        setEventUserId(data.user_id)
       }
       setLoading(false)
     }
@@ -212,8 +215,8 @@ export default function EditEventPage() {
     const endDateTime =
       formData.endDate || formData.endTime
         ? new Date(
-            `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
-          )
+          `${formData.endDate || formData.date}T${formData.endTime || formData.time || '00:00'}`
+        )
         : null
 
     if (endDateTime && endDateTime < startDateTime) {
@@ -400,14 +403,12 @@ export default function EditEventPage() {
             className="relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 hover:scale-105"
           >
             <div
-              className={`absolute inset-0 rounded-full transition-colors duration-300 ${
-                showEndFields ? 'bg-green-500' : 'bg-gray-400'
-              }`}
+              className={`absolute inset-0 rounded-full transition-colors duration-300 ${showEndFields ? 'bg-green-500' : 'bg-gray-400'
+                }`}
             />
             <span
-              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
-                showEndFields ? 'translate-x-5' : 'translate-x-1'
-              }`}
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showEndFields ? 'translate-x-5' : 'translate-x-1'
+                }`}
             />
           </button>
           <label className="text-black font-medium">End date and time</label>
@@ -457,15 +458,13 @@ export default function EditEventPage() {
                 setShowRSVPFields(true)
               }
             }}
-            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${
-              showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
-            }`}
+            className={`relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 ${showRSVPFields ? 'bg-green-500' : 'bg-gray-400'
+              }`}
             aria-label="Toggle RSVP date and time"
           >
             <span
-              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
-                showRSVPFields ? 'translate-x-5' : 'translate-x-1'
-              }`}
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${showRSVPFields ? 'translate-x-5' : 'translate-x-1'
+                }`}
             />
           </button>
 
@@ -498,11 +497,14 @@ export default function EditEventPage() {
           Save Changes
         </button>
 
+        <div className="mt-6 flex justify-center">
+          <DeleteEventButton eventUserId={eventUserId} eventId={Number(id)} />
+        </div>
+
         {message && (
           <p
-            className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-200' : 'text-yellow-200'
-            }`}
+            className={`text-center text-sm mt-2 ${status === 'success' ? 'text-green-200' : 'text-yellow-200'
+              }`}
           >
             {message}
           </p>
