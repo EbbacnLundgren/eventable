@@ -69,13 +69,18 @@ export default function DynamicBackground({
         })
       }
 
+      type ColorThiefClass = {
+        new (): {
+          getColor: (img: HTMLImageElement) => number[]
+        }
+      }
+
       // Dynamically import ColorThief on the client to avoid server-side bundling issues
-      let ColorThief: any = null
+      let ColorThief: ColorThiefClass | null = null
       try {
-        // Importing dynamically prevents Next from bundling colorthief on the server
-        ColorThief = (await import('colorthief')).default
+        ColorThief = (await import('colorthief'))
+          .default as unknown as ColorThiefClass
       } catch (e) {
-        // If import fails, we gracefully fallback to no color extraction
         console.error('Could not load colorthief:', e)
       }
 

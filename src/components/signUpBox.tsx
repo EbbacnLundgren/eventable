@@ -18,9 +18,22 @@ export default function SignupBox() {
     setMessage('')
     setStatus('idle')
 
-    // Kontrollera om användaren redan finns i databasen
+    // Kontrollera om användaren redan finns i auth/users
+    // const { data: existingUser } = await supabase
+    //   .from('users')
+    //   .select('id')
+    //   .eq('email', email)
+    //   .single()
+
+    // if (existingUser) {
+    //   setMessage('This account already exists')
+    //   setStatus('error')
+    //   return
+    // }
+
+    // Kontrollera om användaren redan finns i google_users
     const { data: existingUser } = await supabase
-      .from('users')
+      .from('google_users')
       .select('id')
       .eq('email', email)
       .single()
@@ -42,37 +55,66 @@ export default function SignupBox() {
       return
     }
 
+    // const { data: existing } = await supabase
+    //   .from('users')
+    //   .select('email')
+    //   .eq('email', email)
+    //   .single()
+
+    // if (existing) {
+    //   setMessage('This account already exists')
+    //   setStatus('error')
+    //   return
+    // }
+
     // Skapa användaren via Supabase Auth
-    const { error } = await supabase.auth.signUp({ email, password })
-    if (error) {
-      setMessage(error.message)
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
+      { email, password }
+    )
+    if (signUpError) {
+      setMessage(signUpError.message)
       setStatus('error')
       return
     }
 
     // Hämta användarens ID
-    const { data: authData } = await supabase.auth.getUser()
-    const userId = authData?.user?.id
-    //if (!userId) return alert('Could not get user ID') denna kan vi inte ha med för userid skapas efter att användaren har klickat på mejlet och då komemr alltid denna upp..
+    //const { data: authData } = await supabase.auth.getUser()
 
-    // Lägg till användaren i databasen (vi ignorerar svaret här för att undvika
-    // fel i klient-flödet när userId skapas först efter e-postverifiering).
-    // Om du vill hantera DB-fel, använd try/catch eller logga svaret.
-    await supabase.from('users').insert({
-      id: userId,
-      email,
-      created_at: new Date().toISOString(),
-      first_name: '',
-      last_name: '',
-      avatar_url: '',
-      phone_number: '',
-    })
+    //const userId = authData?.user?.id
+    const userId = signUpData.user?.id
 
-    /*if (insertError) {
-      setMessage('Error creating user profile.')
-      setStatus('error')
-      return
-    }*/ //Detta kommer ju ske också
+    // await supabase.from('users').insert({    //insert till auth/users
+    //   id: userId,
+    //   email,
+    //   created_at: new Date().toISOString(),
+    //   first_name: '',
+    //   last_name: '',
+    //   avatar_url: '',
+    //   phone_number: '',
+    // })
+
+    if (userId) {
+      const { error: insertError } = await supabase
+        .from('google_users')
+        .upsert({
+          id: userId,
+          email,
+          created_at: new Date().toISOString(),
+          first_name: '',
+          last_name: '',
+          avatar_url: '',
+          phone_nbr: '',
+        })
+
+      if (insertError) {
+        console.error(
+          'Fel vid skapande av användare i google_users:',
+          insertError
+        )
+      } else {
+        console.log('Användare tillagd i google_users')
+      }
+    }
 
     setMessage(
       'Account created. Please check your email to verify your account.'

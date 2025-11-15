@@ -438,7 +438,7 @@ export default function CreateEventPage() {
             <input
               type="date"
               name="endDate"
-              max={formData.date}
+              //max={formData.date}
               value={formData.endDate || ''}
               onChange={handleInputChange}
               className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"

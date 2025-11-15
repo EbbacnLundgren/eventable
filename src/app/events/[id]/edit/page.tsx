@@ -8,6 +8,7 @@ import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
 import Link from 'next/link'
 import TimePicker from '@/components/timePicker'
 import DynamicBackground from '@/components/DynamicBackground'
+import DeleteEventButton from '@/components/DeleteButtonEvent'
 
 export default function EditEventPage() {
   const router = useRouter()
@@ -17,6 +18,7 @@ export default function EditEventPage() {
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
+  const [eventUserId, setEventUserId] = useState<string>('')
 
   const [formData, setFormData] = useState({
     name: '',
@@ -31,9 +33,11 @@ export default function EditEventPage() {
     rsvpTime: '',
   })
   const [selectedImage, setSelectedImage] = useState<string>('')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
   const [showEndFields, setShowEndFields] = useState(false)
   const [showRSVPFields, setShowRSVPFields] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [labelColorClass, setLabelColorClass] = useState('text-gray-600')
 
   const defaultImages = [
@@ -132,6 +136,7 @@ export default function EditEventPage() {
         setSelectedImage(data.image ?? defaultImages[0])
         setShowEndFields(!!(data.end_date || data.end_time))
         setShowRSVPFields(!!(data.rsvp_date || data.rsvp_time))
+        setEventUserId(data.user_id)
       }
       setLoading(false)
     }
@@ -258,9 +263,11 @@ export default function EditEventPage() {
     )
 
   // Form validation (same rules as createEvent)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isValidDate =
     formData.date &&
     new Date(formData.date) >= new Date(new Date().toDateString())
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isValidTime = /^([01]\d|2[0-3]):([0-5]\d)$/.test(formData.time)
   const isValidEndTime =
     formData.endTime === '' ||
@@ -270,6 +277,7 @@ export default function EditEventPage() {
     (formData.endDate && !formData.endTime) ||
     (!formData.endDate && formData.endTime)
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const hasInvalidEnd =
     (formData.endDate && formData.endTime && !isValidEndTime) || hasPartialEnd
 
@@ -277,12 +285,13 @@ export default function EditEventPage() {
     <main className="relative min-h-screen text-white py-10 px-6 flex items-center justify-center">
       <DynamicBackground imageUrl={selectedImage} />
 
-      {/* Back button */}
       <Link
         href={`/events/${id}`}
-        className="fixed top-4 left-4 text-white hover:text-pink-200 z-50 flex items-center gap-1"
+        className="fixed top-4 left-4 z-50 flex items-center gap-1
+             text-white hover:text-pink-200
+             bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
       >
-        <ArrowLeft size={26} />
+        <ArrowLeft size={20} />
         <span className="font-semibold"></span>
       </Link>
 
@@ -491,6 +500,10 @@ export default function EditEventPage() {
         >
           Save Changes
         </button>
+
+        <div className="mt-6 flex justify-center">
+          <DeleteEventButton eventUserId={eventUserId} eventId={Number(id)} />
+        </div>
 
         {message && (
           <p
