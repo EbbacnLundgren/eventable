@@ -205,7 +205,9 @@ const EventsSection = ({
           : 'bg-green-600/30 text-white/70 hover:bg-green-600/60'
       }`}
                       >
-                        Accept invite
+                        {event.status === 'accepted'
+                          ? 'Accepted'
+                          : 'Accept invite'}
                       </button>
                       <button
                         onClick={(e) => {
@@ -216,10 +218,12 @@ const EventsSection = ({
       ${
         event.status === 'declined'
           ? 'bg-red-600 text-white'
-          : 'bg-red-600/30 text-white/70 hover:bg-gray-600/60'
+          : 'bg-red-600/30 text-white/70 hover:bg-red-600/60'
       }`}
                       >
-                        Decline invite
+                        {event.status === 'declined'
+                          ? 'Declined'
+                          : 'Decline invite'}
                       </button>
                     </div>
                   )}
