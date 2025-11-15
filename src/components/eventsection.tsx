@@ -20,7 +20,6 @@ interface EventsSectionProps {
 
 const EventsSection = ({
   events,
-  pendingIds = [],
   onAcceptInvite,
   onDeclineInvite,
   ownEventIds = [],
