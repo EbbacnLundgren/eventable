@@ -215,8 +215,8 @@ const EventsSection = ({
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg transition
       ${
         event.status === 'declined'
-          ? 'bg-gray-600 text-white'
-          : 'bg-gray-600/30 text-white/70 hover:bg-gray-600/60'
+          ? 'bg-red-600 text-white'
+          : 'bg-red-600/30 text-white/70 hover:bg-gray-600/60'
       }`}
                       >
                         Decline invite
