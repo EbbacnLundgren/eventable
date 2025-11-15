@@ -221,9 +221,6 @@ const EventsSection = ({
                       >
                         Decline invite
                       </button>
-                      <span className="ml-2 text-xs text-white/80">
-                        Invite pending
-                      </span>
                     </div>
                   )}
                 </div>
