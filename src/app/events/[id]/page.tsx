@@ -241,15 +241,25 @@ export default async function EventDetailsPage({
 
             <AutoAddInvite eventId={Number(event.id)} />
 
+            <div className="flex flex-col items-center mb-4 gap-3">
+              <ShareEventButton eventId={Number(event.id)} />
+              <InviteStatusList
+                acceptedIds={acceptedIds.filter((id) => id !== event.user_id)}
+                declinedIds={declinedIds.filter((id) => id !== event.user_id)}
+                pendingIds={pendingIds.filter((id) => id !== event.user_id)}
+              />
+            </div>
+
+            {/*
             <InviteStatusList
               acceptedIds={acceptedIds.filter((id) => id !== event.user_id)}
               declinedIds={declinedIds.filter((id) => id !== event.user_id)}
               pendingIds={pendingIds.filter((id) => id !== event.user_id)}
-            />
+            /> 
 
             <div className="mt-6 flex justify-center">
               <ShareEventButton eventId={Number(event.id)} />
-            </div>
+            </div> */}
 
             <div className="mt-6 flex justify-center">
               <Link
