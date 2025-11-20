@@ -6,14 +6,43 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import type { Event } from '@/types/event'
 import { Plus } from 'lucide-react'
+import AdvancedFilters, {
+  AdvancedFilterState,
+} from '@/components/AdvancedFilters'
 
 type InviteStatus = 'pending' | 'accepted' | 'declined' | null
 interface InviteRow {
   event_id: number
   status: InviteStatus
 }
+const defaultFilters: AdvancedFilterState = {
+  city: '',
+  dateFrom: '',
+  dateTo: '',
+  dayOfWeek: '',
+  host: '',
+  keyword: '',
+}
+
+function applyFilters(events: Event[], filters: AdvancedFilterState) {
+  return events.filter((event) => {
+    if (!filters.dateFrom && !filters.dateTo) return true
+
+    const eventStart = event.date
+    const eventEnd = event.end_date || event.date
+
+    const from = filters.dateFrom
+    const to = filters.dateTo
+
+    if (from && eventEnd <= from) return false
+    if (to && eventStart >= to) return false
+
+    return true
+  })
+}
 
 export default function MainPage() {
+  const [filters, setFilters] = useState<AdvancedFilterState>(defaultFilters)
   const [events, setEvents] = useState<Event[]>([])
   const { data: session } = useSession()
   const [ownEventIds, setOwnEventIds] = useState<number[]>([])
@@ -222,11 +251,13 @@ export default function MainPage() {
         })
       )
 
-      setEvents(eventsWithHost)
+      //setEvents(eventsWithHost)
+      const filteredEvents = applyFilters(eventsWithHost, filters)
+      setEvents(filteredEvents)
     }
 
     fetchEvents()
-  }, [session])
+  }, [session, filters])
 
   const resolveCurrentUserId = async () => {
     let email: string | null = null
@@ -323,6 +354,7 @@ export default function MainPage() {
         Create Event
       </Link>
 
+      <AdvancedFilters filters={filters} onFiltersChange={setFilters} />
       <EventSection
         events={events}
         pendingIds={pendingIds}
