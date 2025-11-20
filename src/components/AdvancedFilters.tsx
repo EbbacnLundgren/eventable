@@ -41,6 +41,8 @@ export default function AdvancedFilters({
     setOpen(false)
   }
 
+  const today = new Date().toISOString().split('T')[0]
+
   const handleReset = () => {
     const reset: AdvancedFilterState = {
       city: '',
@@ -122,7 +124,7 @@ export default function AdvancedFilters({
                   <input
                     type="date"
                     value={localFilters.dateFrom}
-                    min={new Date().toISOString().split('T')[0]}
+                    min={today}
                     max={localFilters.dateTo || undefined}
                     onChange={(e) => {
                       const newDateFrom = e.target.value
@@ -142,10 +144,7 @@ export default function AdvancedFilters({
                   <input
                     type="date"
                     value={localFilters.dateTo}
-                    min={
-                      localFilters.dateFrom ||
-                      new Date().toISOString().split('T')[0]
-                    }
+                    min={localFilters.dateFrom || today}
                     onChange={(e) =>
                       setLocalFilters({
                         ...localFilters,
