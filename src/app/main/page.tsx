@@ -6,7 +6,9 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import type { Event } from '@/types/event'
 import { Plus } from 'lucide-react'
-import { AdvancedFilterState } from '@/components/AdvancedFilters'
+import AdvancedFilters, {
+  AdvancedFilterState,
+} from '@/components/AdvancedFilters'
 
 type InviteStatus = 'pending' | 'accepted' | 'declined' | null
 interface InviteRow {
@@ -352,6 +354,7 @@ export default function MainPage() {
         Create Event
       </Link>
 
+      <AdvancedFilters filters={filters} onFiltersChange={setFilters} />
       <EventSection
         events={events}
         pendingIds={pendingIds}
