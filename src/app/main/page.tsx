@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import type { Event } from '@/types/event'
 import { Plus } from 'lucide-react'
-import AdvancedFilters, {
+import {
   AdvancedFilterState,
 } from '@/components/AdvancedFilters'
 
