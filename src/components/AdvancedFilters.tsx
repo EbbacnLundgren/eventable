@@ -91,7 +91,6 @@ export default function AdvancedFilters({
                 <X size={20} />
               </button>
             </div>
-
             {/* Filters */}
             <div className="space-y-4">
               {/* City */}
@@ -222,7 +221,6 @@ export default function AdvancedFilters({
                 />
               </div>
             </div>
-
             {/* Footer Buttons */}
             <div className="flex justify-between mt-4">
               <button
