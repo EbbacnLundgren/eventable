@@ -7,6 +7,8 @@ import { EventClickArg, EventInput, DatesSetArg } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { supabase } from '@/lib/client'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 interface EventRow {
   id: string
@@ -21,6 +23,8 @@ const CalendarComponent: React.FC = () => {
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(
     null
   )
+  const router = useRouter()
+  const { data: session } = useSession()
   const [activeEvent, setActiveEvent] = useState<{
     id?: string
     title: string
@@ -34,25 +38,56 @@ const CalendarComponent: React.FC = () => {
   // Hämta events från Supabase
   useEffect(() => {
     const fetchEvents = async () => {
+      if (!session?.user?.email) {
+        setEvents([])
+        return
+      }
+
+      const email = session.user.email
+
+      // hitta google_users-raden för den inloggade
+      const { data: googleUser, error: gErr } = await supabase
+        .from('google_users')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle()
+
+      if (gErr) {
+        console.error('Error fetching google_user for calendar:', gErr)
+        setEvents([])
+        return
+      }
+
+      if (!googleUser) {
+        setEvents([])
+        return
+      }
+
+      const userId = googleUser.id
+
+      // hämta bara denna användares events
       const { data, error } = await supabase
         .from('events')
         .select('id, name, date')
+        .eq('user_id', userId)
         .order('date', { ascending: true })
 
       if (error) {
         console.error('Failed to fetch events:', error)
-      } else if (data) {
-        const formatted: EventInput[] = (data as EventRow[]).map((e) => ({
-          id: e.id,
-          title: e.name,
-          date: e.date,
-        }))
-        setEvents(formatted)
+        setEvents([])
+        return
       }
+
+      const formatted: EventInput[] = (data as EventRow[]).map((e) => ({
+        id: e.id,
+        title: e.name,
+        date: e.date,
+      }))
+      setEvents(formatted)
     }
 
     fetchEvents()
-  }, [])
+  }, [session])
 
   // Uppdatera veckonummer när månad ändras
   const handleDatesSet = (info: DatesSetArg) => {
@@ -148,12 +183,12 @@ const CalendarComponent: React.FC = () => {
             className="absolute bg-white shadow-md rounded p-2 z-50 border border-gray-200"
             style={{ top: eventPopupPos.y, left: eventPopupPos.x }}
           >
-            <a
-              href={`/eventdetails?id=${activeEvent.id}`}
-              className="bg-pink-200 text-gray-900 px-3 py-1 rounded hover:bg-pink-300 block"
+            <button
+              onClick={() => router.push(`/events/${activeEvent.id}`)}
+              className="bg-pink-200 text-gray-900 px-3 py-1 rounded hover:bg-pink-300 block w-full text-left"
             >
               Go to Event
-            </a>
+            </button>
             <button
               onClick={() => setActiveEvent(null)}
               className="text-sm text-gray-500 mt-1 block"
