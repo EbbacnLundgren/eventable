@@ -41,6 +41,8 @@ export default function AdvancedFilters({
     setOpen(false)
   }
 
+  const today = new Date().toISOString().split('T')[0]
+
   const handleReset = () => {
     const reset: AdvancedFilterState = {
       city: '',
@@ -89,7 +91,6 @@ export default function AdvancedFilters({
                 <X size={20} />
               </button>
             </div>
-
             {/* Filters */}
             <div className="space-y-4">
               {/* City */}
@@ -122,17 +123,37 @@ export default function AdvancedFilters({
                   <input
                     type="date"
                     value={localFilters.dateFrom}
-                    onChange={(e) =>
+                    min={today}
+                    max={localFilters.dateTo || undefined}
+                    onClick={(e) =>
+                      (e.target as HTMLInputElement).showPicker?.()
+                    }
+                    inputMode="none"
+                    onKeyDown={(e) => e.preventDefault()}
+                    onChange={(e) => {
+                      const newDateFrom = e.target.value
+
+                      const newDateTo =
+                        localFilters.dateTo && newDateFrom > localFilters.dateTo
+                          ? ''
+                          : localFilters.dateTo
                       setLocalFilters({
                         ...localFilters,
-                        dateFrom: e.target.value,
+                        dateFrom: newDateFrom,
+                        dateTo: newDateTo,
                       })
-                    }
+                    }}
                     className="flex-1 p-2 border rounded-md bg-white/50 text-stone-900"
                   />
                   <input
                     type="date"
                     value={localFilters.dateTo}
+                    min={localFilters.dateFrom || today}
+                    onClick={(e) =>
+                      (e.target as HTMLInputElement).showPicker?.()
+                    }
+                    inputMode="none"
+                    onKeyDown={(e) => e.preventDefault()}
                     onChange={(e) =>
                       setLocalFilters({
                         ...localFilters,
@@ -200,7 +221,6 @@ export default function AdvancedFilters({
                 />
               </div>
             </div>
-
             {/* Footer Buttons */}
             <div className="flex justify-between mt-4">
               <button
