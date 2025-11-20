@@ -50,9 +50,7 @@ export default function ProfileSettingsPage() {
 
           // VIKTIGT: använd avatar_url om den finns, inget startsWith eller fallback här
           setProfileImage(
-            profile.avatar_url
-            ?? session.user.image
-            ?? '/placeholder.svg'
+            profile.avatar_url ?? session.user.image ?? '/placeholder.svg'
           )
         } else {
           setEmail(session.user.email ?? '')
@@ -94,11 +92,9 @@ export default function ProfileSettingsPage() {
       console.log('filePath:', filePath)
 
       // valfritt: ta bort gamla varianter
-      await supabase.storage.from('avatars').remove([
-        `${userId}.jpeg`,
-        `${userId}.png`,
-        `${userId}.jpg`,
-      ])
+      await supabase.storage
+        .from('avatars')
+        .remove([`${userId}.jpeg`, `${userId}.png`, `${userId}.jpg`])
 
       const { error: uploadError } = await supabase.storage
         .from('avatars')
