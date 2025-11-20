@@ -126,6 +126,11 @@ export default function AdvancedFilters({
                     value={localFilters.dateFrom}
                     min={today}
                     max={localFilters.dateTo || undefined}
+                    onClick={(e) =>
+                      (e.target as HTMLInputElement).showPicker?.()
+                    }
+                    inputMode="none"
+                    onKeyDown={(e) => e.preventDefault()}
                     onChange={(e) => {
                       const newDateFrom = e.target.value
 
@@ -145,6 +150,11 @@ export default function AdvancedFilters({
                     type="date"
                     value={localFilters.dateTo}
                     min={localFilters.dateFrom || today}
+                    onClick={(e) =>
+                      (e.target as HTMLInputElement).showPicker?.()
+                    }
+                    inputMode="none"
+                    onKeyDown={(e) => e.preventDefault()}
                     onChange={(e) =>
                       setLocalFilters({
                         ...localFilters,
