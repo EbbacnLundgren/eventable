@@ -48,35 +48,40 @@ export default function MainPage() {
       // Google login via NextAuth
       else if (session?.user?.email) {
         email = session.user.email
-        // Kolla auth.users först
-        const { data: supaUser } = await supabase
-          .from('auth.users')
+
+        // 1. Försök hitta befintlig google_users-rad
+        const { data: existingGoogleUser, error: gErr } = await supabase
+          .from('google_users')
           .select('id')
           .eq('email', email)
           .maybeSingle()
-        userId = supaUser?.id
 
-        // Om inte finns → upsert i google_users
-        if (!userId) {
-          const { data: newGoogleUser, error } = await supabase
+        if (gErr) {
+          console.error('Error fetching google_user:', gErr)
+        }
+
+        if (existingGoogleUser) {
+          // Rad finns redan → använd den, rör inte avatar_url
+          userId = existingGoogleUser.id
+        } else {
+          // 2. Skapa ny rad EN gång vid första gången user går in
+          const { data: newGoogleUser, error: insertError } = await supabase
             .from('google_users')
-            .upsert(
-              {
-                email,
-                first_name: session.user.name?.split(' ')[0] || '',
-                last_name: session.user.name?.split(' ')[1] || '',
-                avatar_url: session.user.image || '',
-                created_at: new Date().toISOString(),
-                phone_nbr: '',
-              },
-              { onConflict: 'email' }
-            )
+            .insert({
+              email,
+              first_name: session.user.name?.split(' ')[0] || '',
+              last_name: session.user.name?.split(' ')[1] || '',
+              avatar_url: session.user.image || '',
+              created_at: new Date().toISOString(),
+              phone_nbr: '',
+            })
             .select()
             .single()
 
-          if (error) {
-            console.error('Error upserting google_user:', error)
+          if (insertError) {
+            console.error('Error inserting google_user:', insertError)
           }
+
           userId = newGoogleUser?.id || null
         }
       }
