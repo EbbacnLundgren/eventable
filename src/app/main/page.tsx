@@ -354,7 +354,6 @@ export default function MainPage() {
         Create Event
       </Link>
 
-      <AdvancedFilters filters={filters} onFiltersChange={setFilters} />
       <EventSection
         events={events}
         pendingIds={pendingIds}
