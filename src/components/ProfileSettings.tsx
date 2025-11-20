@@ -37,7 +37,6 @@ export default function ProfileSettingsPage() {
           .single()
 
         if (error && error.code !== 'PGRST116') {
-          // Ignorera "no row found" om första inlogg
           console.error('Error fetching profile:', error)
           return
         }
@@ -47,14 +46,16 @@ export default function ProfileSettingsPage() {
           setFirstName(profile.first_name ?? '')
           setLastName(profile.last_name ?? '')
           setPhone(profile.phone_nbr ?? '')
+          setEmail(profile.email ?? session.user.email ?? '')
 
+          // VIKTIGT: använd avatar_url om den finns, inget startsWith eller fallback här
           setProfileImage(
-            profile.avatar_url?.startsWith('/')
-              ? profile.avatar_url
-              : (session.user.image ?? '/placeholder.svg')
+            profile.avatar_url
+            ?? session.user.image
+            ?? '/placeholder.svg'
           )
         } else {
-          // Om användaren inte finns i db än, använd Google-avatar
+          setEmail(session.user.email ?? '')
           setProfileImage(session.user.image ?? '/placeholder.svg')
         }
       } catch (err) {
@@ -83,36 +84,26 @@ export default function ProfileSettingsPage() {
       console.log('No userId, cannot upload')
       return
     }
-    if (!session) {
-      console.log('No next-auth session, cannot upload')
-      return
-    }
 
     try {
-      // NY KOD: Hämta Supabase-användaren för att sätta owner
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser()
-      if (userError || !user) {
-        console.error('Failed to get Supabase user:', userError)
-        return
-      }
-      console.log('Supabase user:', user)
-
       const fileExt = file.name.split('.').pop()
       const fileName = `${userId}.${fileExt}`
-      const filePath = `${fileName}`
+      const filePath = fileName
 
       console.log('fileName:', fileName)
       console.log('filePath:', filePath)
 
-      // NY KOD: Lägg till metadata med owner för RLS
+      // valfritt: ta bort gamla varianter
+      await supabase.storage.from('avatars').remove([
+        `${userId}.jpeg`,
+        `${userId}.png`,
+        `${userId}.jpg`,
+      ])
+
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, {
           upsert: true,
-          metadata: { owner: user.id }, // <--- viktigt för row-level security
         })
 
       if (uploadError) {
@@ -125,9 +116,24 @@ export default function ProfileSettingsPage() {
         .from('avatars')
         .getPublicUrl(filePath)
 
-      console.log('Public URL:', urlData.publicUrl)
-      setProfileImage(urlData.publicUrl)
-      alert('Image uploaded successfully!')
+      const cacheBustedUrl = `${urlData.publicUrl}?t=${Date.now()}`
+      console.log('Public URL:', cacheBustedUrl)
+
+      // 1) uppdatera bilden i UI direkt
+      setProfileImage(cacheBustedUrl)
+
+      // 2) spara samma URL i DB, så den överlever reload
+      const { error: updateError } = await supabase
+        .from('google_users')
+        .update({ avatar_url: cacheBustedUrl })
+        .eq('id', userId)
+
+      if (updateError) {
+        console.error('Failed to update avatar_url in DB:', updateError)
+        alert('Image uploaded, but failed to save in profile')
+      } else {
+        alert('Image uploaded successfully!')
+      }
     } catch (err) {
       console.error('Unexpected error uploading file:', err)
       alert('Failed to upload image')
@@ -254,8 +260,8 @@ export default function ProfileSettingsPage() {
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-pink-400 focus:outline-none"
+                  disabled
+                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1 bg-gray-100 text-gray-500 cursor-not-allowed"
                 />
               </div>
             </div>
@@ -268,50 +274,8 @@ export default function ProfileSettingsPage() {
           </button>
         </div>
 
-        {/* Notifications */}
-        <div className="bg-white shadow rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <Bell /> Notifications
-          </h2>
-          {['email', 'push', 'sms'].map((type) => (
-            <div key={type} className="flex items-center justify-between">
-              <div className="capitalize">{type} Notifications</div>
-              <input
-                type="checkbox"
-                checked={notifications[type as keyof typeof notifications]}
-                onChange={(e) =>
-                  setNotifications({
-                    ...notifications,
-                    [type]: e.target.checked,
-                  })
-                }
-                className="w-5 h-5 accent-pink-500"
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Language */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Globe /> Language
-          </h2>
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="mt-2 w-full border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-pink-400 focus:outline-none"
-          >
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            <option value="fr">Français</option>
-            <option value="de">Deutsch</option>
-            <option value="ja">日本語</option>
-            <option value="zh">中文</option>
-          </select>
-        </div>
-
         {/* Logout */}
-        <div className="bg-white shadow rounded-lg p-6">
+        <div className="bg-white shadow rounded-lg p-6 flex justify-center">
           <button
             className="bg-red-500 text-white px-4 py-2 rounded"
             onClick={async () => {
