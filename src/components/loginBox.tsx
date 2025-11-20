@@ -17,46 +17,46 @@ export default function LoginBox() {
 
   // När användaren loggar in med Google, skapa/updatera rad i google_users
   useEffect(() => {
-    const createOrUpdateGoogleUser = async () => {
+    const createGoogleUserIfMissing = async () => {
       if (!session?.user?.email) return
 
       const email = session.user.email
 
-      // Om det redan finns en rad i auth.users med samma email → slå ihop
-      const { data: supaUser } = await supabase
-        .from('auth.users')
+      // 1. Finns redan en rad i google_users? Gör ingenting.
+      const { data: existing, error: gErr } = await supabase
+        .from('google_users')
         .select('id')
         .eq('email', email)
-        .single()
+        .maybeSingle()
 
-      let userId = supaUser?.id
+      if (gErr) {
+        console.error('Error checking google_users:', gErr)
+        return
+      }
 
-      if (!userId) {
-        const { data: newGoogleUser, error } = await supabase
-          .from('google_users')
-          .upsert(
-            {
-              email,
-              first_name: session.user.name?.split(' ')[0] || '',
-              last_name: session.user.name?.split(' ')[1] || '',
-              avatar_url: session.user.image || '',
-              created_at: new Date().toISOString(),
-              phone_nbr: '',
-            },
-            { onConflict: 'email' }
-          )
-          .select()
-          .single()
+      if (existing) {
+        // Rad finns redan → rör inte avatar_url
+        return
+      }
 
-        if (error) {
-          console.error('Error upserting google_user:', error)
-        } else {
-          userId = newGoogleUser?.id
-        }
+      // 2. Finns ingen rad → skapa EN gång, med Google-bild som startvärde
+      const { error: insertError } = await supabase
+        .from('google_users')
+        .insert({
+          email,
+          first_name: session.user.name?.split(' ')[0] || '',
+          last_name: session.user.name?.split(' ')[1] || '',
+          avatar_url: session.user.image || '',
+          created_at: new Date().toISOString(),
+          phone_nbr: '',
+        })
+
+      if (insertError) {
+        console.error('Error inserting google_user:', insertError)
       }
     }
 
-    createOrUpdateGoogleUser()
+    createGoogleUserIfMissing()
   }, [session])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
