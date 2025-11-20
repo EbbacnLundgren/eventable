@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react'
 
 import ShareEventButton from '@/components/shareEvents'
 import AutoAddInvite from '@/components/AutoAddInvite'
+import InviteForm from '@/components/InviteForm'
 
 import {
   MapPin,
@@ -250,6 +251,10 @@ export default async function EventDetailsPage({
             <div className="mt-6 flex justify-center">
               <ShareEventButton eventId={Number(event.id)} />
             </div>
+
+            <InviteForm
+              eventUrl={`${process.env.NEXT_PUBLIC_BASE_URL}/events/${event.id}`}
+            />
 
             <div className="mt-6 flex justify-center">
               <Link
