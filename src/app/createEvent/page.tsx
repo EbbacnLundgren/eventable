@@ -370,7 +370,9 @@ export default function CreateEventPage() {
           required
         />
 
-        <label className={`font-sans pt-1 ${labelColorClass}`}>Start</label>
+        <label className={`font-sans pt-1 ${labelColorClass}`}>
+          Start date and time
+        </label>
         <div className="flex gap-2">
           <input
             type="date"
@@ -438,7 +440,7 @@ export default function CreateEventPage() {
             <input
               type="date"
               name="endDate"
-              //max={formData.date}
+              min={formData.date}
               value={formData.endDate || ''}
               onChange={handleInputChange}
               className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"

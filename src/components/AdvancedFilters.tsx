@@ -122,17 +122,30 @@ export default function AdvancedFilters({
                   <input
                     type="date"
                     value={localFilters.dateFrom}
-                    onChange={(e) =>
+                    min={new Date().toISOString().split('T')[0]}
+                    max={localFilters.dateTo || undefined}
+                    onChange={(e) => {
+                      const newDateFrom = e.target.value
+
+                      const newDateTo =
+                        localFilters.dateTo && newDateFrom > localFilters.dateTo
+                          ? ''
+                          : localFilters.dateTo
                       setLocalFilters({
                         ...localFilters,
-                        dateFrom: e.target.value,
+                        dateFrom: newDateFrom,
+                        dateTo: newDateTo,
                       })
-                    }
+                    }}
                     className="flex-1 p-2 border rounded-md bg-white/50 text-stone-900"
                   />
                   <input
                     type="date"
                     value={localFilters.dateTo}
+                    min={
+                      localFilters.dateFrom ||
+                      new Date().toISOString().split('T')[0]
+                    }
                     onChange={(e) =>
                       setLocalFilters({
                         ...localFilters,
