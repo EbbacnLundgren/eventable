@@ -78,8 +78,9 @@ export default function SignupBox() {
     }
 
     // Hämta användarens ID
-    const { data: authData } = await supabase.auth.getUser()
-    const userId = authData?.user?.id
+    //const { data: authData } = await supabase.auth.getUser()
+    //const userId = authData?.user?.id
+    const userId = signUpData.user?.id
 
     // await supabase.from('users').insert({    //insert till auth/users
     //   id: userId,
