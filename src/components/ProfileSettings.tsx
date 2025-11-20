@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
-import { Camera, Bell, Globe } from 'lucide-react'
+import { Camera } from 'lucide-react'
 import { supabase } from '@/lib/client'
 
 export default function ProfileSettingsPage() {
@@ -16,12 +16,6 @@ export default function ProfileSettingsPage() {
   const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
-  const [language, setLanguage] = useState('en')
-  const [notifications, setNotifications] = useState({
-    email: true,
-    push: false,
-    sms: true,
-  })
   const [userId, setUserId] = useState<string | null>(null)
 
   // Hämta profil när session finns
