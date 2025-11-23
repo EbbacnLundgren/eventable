@@ -24,6 +24,8 @@ const defaultFilters: AdvancedFilterState = {
   keyword: '',
 }
 
+//comment
+
 function applyFilters(events: Event[], filters: AdvancedFilterState) {
   return events.filter((event) => {
     if (!filters.dateFrom && !filters.dateTo) return true
