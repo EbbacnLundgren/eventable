@@ -194,8 +194,8 @@ export default function AddFriendsPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-pink-400 to-orange-400 text-white p-8">
-      <div className="bg-white/20 backdrop-blur-md rounded-3xl p-8 w-full max-w-md shadow-lg border border-white/30">
+    <main className="min-h-screen flex flex-col items-center justify-center  text-white p-8">
+      <div className="bg-gradient-to-r from-pink-500 to-orange-400 shadow-lg backdrop-blur-md rounded-3xl p-8 w-full sm:max-w-md shadow-lg border border-white/30">
         <h1 className="text-2xl font-bold mb-6 text-center">Friends</h1>
 
         {/* 🔹 Flikar */}
