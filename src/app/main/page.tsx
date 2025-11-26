@@ -355,8 +355,8 @@ export default function MainPage() {
         <Plus className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
         Create Event
       </Link>
-
       <AdvancedFilters filters={filters} onFiltersChange={setFilters} />
+
       <EventSection
         events={events}
         pendingIds={pendingIds}

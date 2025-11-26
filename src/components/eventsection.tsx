@@ -6,9 +6,9 @@ import Link from 'next/link'
 import { formatEventDuration } from '@/lib/formatEventDuration'
 import { MapPin, Calendar, Clock, User } from 'lucide-react'
 import EventFilters, { FilterType } from '@/components/EventFilters'
-import AdvancedFilters, {
+/*import AdvancedFilters, {
   AdvancedFilterState,
-} from '@/components/AdvancedFilters'
+} from '@/components/AdvancedFilters'*/
 
 interface EventsSectionProps {
   events: Event[]
@@ -28,14 +28,14 @@ const EventsSection = ({
   const today = new Date()
   const [activeFilter, setActiveFilter] = useState<FilterType>('upcoming')
 
-  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilterState>({
+  /*const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilterState>({
     city: '',
     dateFrom: '',
     dateTo: '',
     dayOfWeek: '',
     host: '',
     keyword: '',
-  })
+  })*/
 
   // --- Filter events based on activeFilter + advancedFilters ---
   const filteredEvents = events.filter((event) => {
@@ -68,7 +68,7 @@ const EventsSection = ({
         matchesFilter = true
     }
 
-    if (advancedFilters.city) {
+    /*if (advancedFilters.city) {
       matchesFilter =
         matchesFilter &&
         event.location
@@ -96,7 +96,7 @@ const EventsSection = ({
       matchesFilter =
         matchesFilter &&
         event.name.toLowerCase().includes(advancedFilters.keyword.toLowerCase())
-    }
+    }*/
 
     return matchesFilter
   })
@@ -110,10 +110,12 @@ const EventsSection = ({
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
       />
+
+      {/*
       <AdvancedFilters
         filters={advancedFilters}
         onFiltersChange={setAdvancedFilters}
-      />
+      />*/}
 
       {/* Event cards */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full">
