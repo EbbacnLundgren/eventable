@@ -10,7 +10,7 @@ import AdvancedFilters, {
   AdvancedFilterState,
 } from '@/components/AdvancedFilters'
 
-type InviteStatus = 'pending' | 'accepted' | 'declined' | null
+type InviteStatus = 'pending' | 'accepted' | 'declined' | 'maybe' | null
 interface InviteRow {
   event_id: number
   status: InviteStatus
@@ -147,6 +147,10 @@ export default function MainPage() {
         .filter((i) => i.status === 'declined')
         .map((i) => i.event_id)
 
+      const maybe = invites
+        .filter((i) => i.status === 'maybe')
+        .map((i) => i.event_id)
+
       setPendingIds(pending)
       //setDeclinedIds(declined)
 
@@ -193,6 +197,18 @@ export default function MainPage() {
         declinedEvents = (decEvents as Event[]) || []
       }
 
+      //maybe events
+      let maybeEvents: Event[] = []
+      if (maybe.length > 0) {
+        const { data: mEvents, error: mErr } = await supabase
+          .from('events')
+          .select('*')
+          .in('id', maybe)
+
+        if (mErr) console.error('Error fetching maybe events:', mErr)
+        maybeEvents = (mEvents as Event[]) || []
+      }
+
       const statusMap = new Map(invites.map((i) => [i.event_id, i.status]))
       const mergedById = new Map<number, Event>()
       for (const ev of [
@@ -200,6 +216,7 @@ export default function MainPage() {
         ...invitedEvents,
         ...pendingEvents,
         ...declinedEvents,
+        ...maybeEvents,
       ]) {
         const status = statusMap.get(ev.id) || null
         mergedById.set(ev.id, { ...ev, status })
@@ -338,6 +355,29 @@ export default function MainPage() {
     )
   }
 
+  const handleMaybeInvite = async (eventId: number) => {
+    const currentUserId = await resolveCurrentUserId()
+    if (!currentUserId) return
+
+    const { error } = await supabase
+      .from('event_invites')
+      .update({ status: 'maybe' })
+      .eq('event_id', eventId)
+      .eq('invited_user_id', currentUserId)
+
+    if (error) {
+      console.error(error)
+      return
+    }
+
+    setEvents((prev) =>
+      prev.map((ev) => (ev.id === eventId ? { ...ev, status: 'maybe' } : ev))
+    )
+
+    // Remove from pending if needed
+    setPendingIds((prev) => prev.filter((id) => id !== eventId))
+  }
+
   useEffect(() => {
     if (userInfo) {
       console.log(`Hej ${userInfo.email} (ID: ${userInfo.id})`)
@@ -362,6 +402,7 @@ export default function MainPage() {
         pendingIds={pendingIds}
         onAcceptInvite={handleAcceptInvite}
         onDeclineInvite={handleDeclineInvite}
+        onMaybeInvite={handleMaybeInvite}
         ownEventIds={ownEventIds}
       />
     </div>

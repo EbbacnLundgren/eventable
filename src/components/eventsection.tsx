@@ -15,6 +15,7 @@ interface EventsSectionProps {
   pendingIds?: number[]
   onAcceptInvite?: (eventId: number) => void
   onDeclineInvite?: (eventId: number) => void
+  onMaybeInvite?: (eventId: number) => void
   ownEventIds?: number[]
 }
 
@@ -22,6 +23,7 @@ const EventsSection = ({
   events,
   onAcceptInvite,
   onDeclineInvite,
+  onMaybeInvite,
   ownEventIds = [],
 }: EventsSectionProps) => {
   //const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
@@ -47,6 +49,7 @@ const EventsSection = ({
         matchesFilter =
           (event.status === null ||
             event.status === 'accepted' ||
+            event.status === 'maybe' ||
             event.status === 'pending') &&
           new Date(event.date) >= today
         break
@@ -54,6 +57,7 @@ const EventsSection = ({
         matchesFilter =
           (event.status === null ||
             event.status === 'accepted' ||
+            event.status === 'maybe' ||
             event.status === 'pending') &&
           new Date(event.date) < today
         break
@@ -226,6 +230,21 @@ const EventsSection = ({
                         {event.status === 'declined'
                           ? 'Declined'
                           : 'Decline invite'}
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          onMaybeInvite?.(event.id)
+                        }}
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition
+    ${
+      event.status === 'maybe'
+        ? 'bg-orange-500 text-white'
+        : 'bg-orange-500/30 text-white/70 hover:bg-orange-500/60'
+    }`}
+                      >
+                        {event.status === 'maybe' ? 'Maybe' : 'Maybe'}
                       </button>
                     </div>
                   )}

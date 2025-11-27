@@ -7,7 +7,7 @@ export default function AutoAddInvite({ eventId }: { eventId: number }) {
   const { data: session } = useSession()
   const [msg, setMsg] = useState<string | null>(null)
 
-  type InviteStatus = 'pending' | 'accepted' | 'declined' | null
+  type InviteStatus = 'pending' | 'accepted' | 'declined' | 'maybe' | null
   interface InviteRow {
     id: string
     status: InviteStatus

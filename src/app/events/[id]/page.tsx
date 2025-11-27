@@ -113,6 +113,9 @@ export default async function EventDetailsPage({
   const acceptedIds: string[] = []
   const declinedIds: string[] = []
   const pendingIds: string[] = []
+  //maybe invites
+  const maybeIds: string[] = []
+
   try {
     const { data: invites } = await supabase
       .from('event_invites')
@@ -128,7 +131,9 @@ export default async function EventDetailsPage({
         if (inv.status === 'accepted') acceptedIds.push(inv.invited_user_id)
         else if (inv.status === 'declined')
           declinedIds.push(inv.invited_user_id)
-        else if (inv.status === 'pending') pendingIds.push(inv.invited_user_id) // <-- Lägg till
+        else if (inv.status === 'pending')
+          pendingIds.push(inv.invited_user_id) // <-- Lägg till
+        else if (inv.status === 'maybe') maybeIds.push(inv.invited_user_id) // maybe invites
       }
     }
   } catch (e) {
@@ -245,7 +250,10 @@ export default async function EventDetailsPage({
             <InviteStatusList
               acceptedIds={acceptedIds.filter((id) => id !== event.user_id)}
               declinedIds={declinedIds.filter((id) => id !== event.user_id)}
-              pendingIds={pendingIds.filter((id) => id !== event.user_id)}
+              pendingIds={[
+                ...pendingIds.filter((id) => id !== event.user_id),
+                ...maybeIds.filter((id) => id !== event.user_id),
+              ]}
             />
 
             <div className="mt-6 flex justify-center">
