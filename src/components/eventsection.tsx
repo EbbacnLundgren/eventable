@@ -128,6 +128,12 @@ const EventsSection = ({
           const diffTime = eventDate.getTime() - today.getTime()
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
+          const eventRSVPDateTime = event.rsvp_date
+            ? new Date(`${event.rsvp_date}T${event.rsvp_time || '23:59'}`)
+            : null
+
+          const isRSVPOpen = !eventRSVPDateTime || eventRSVPDateTime > today
+
           return (
             <Link
               href={`/events/${event.id}`}
@@ -202,30 +208,45 @@ const EventsSection = ({
                       <button
                         onClick={(e) => {
                           e.preventDefault()
-                          onAcceptInvite?.(event.id)
+                          if (isRSVPOpen && event.status !== 'accepted')
+                            onAcceptInvite?.(event.id)
                         }}
+                        disabled={!isRSVPOpen && event.status !== 'accepted'}
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg transition
       ${
         event.status === 'accepted'
           ? 'bg-green-600 text-white'
           : 'bg-green-600/30 text-white/70 hover:bg-green-600/60'
+      } 
+      ${
+        !isRSVPOpen && event.status !== 'accepted'
+          ? 'opacity-50 cursor-not-allowed hover:bg-green-600/30'
+          : ''
       }`}
                       >
                         {event.status === 'accepted'
                           ? 'Accepted'
                           : 'Accept invite'}
                       </button>
+
                       <button
                         onClick={(e) => {
                           e.preventDefault()
-                          onDeclineInvite?.(event.id)
+                          if (isRSVPOpen && event.status !== 'declined')
+                            onDeclineInvite?.(event.id)
                         }}
+                        disabled={!isRSVPOpen && event.status !== 'declined'}
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg transition
       ${
         event.status === 'declined'
           ? 'bg-red-600 text-white'
           : 'bg-red-600/30 text-white/70 hover:bg-red-600/60'
-      }`}
+      } 
+                          ${
+                            !isRSVPOpen && event.status !== 'declined'
+                              ? 'opacity-50 cursor-not-allowed hover:bg-red-600/30'
+                              : ''
+                          }`}
                       >
                         {event.status === 'declined'
                           ? 'Declined'
@@ -235,14 +256,21 @@ const EventsSection = ({
                       <button
                         onClick={(e) => {
                           e.preventDefault()
-                          onMaybeInvite?.(event.id)
+                          if (isRSVPOpen && event.status !== 'maybe')
+                            onMaybeInvite?.(event.id)
                         }}
+                        disabled={!isRSVPOpen && event.status !== 'maybe'}
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg transition
     ${
       event.status === 'maybe'
         ? 'bg-orange-500 text-white'
         : 'bg-orange-500/30 text-white/70 hover:bg-orange-500/60'
-    }`}
+    }
+                          ${
+                            !isRSVPOpen && event.status !== 'maybe'
+                              ? 'opacity-50 cursor-not-allowed hover:bg-orange-500/30'
+                              : ''
+                          }`}
                       >
                         {event.status === 'maybe' ? 'Maybe' : 'Maybe'}
                       </button>
