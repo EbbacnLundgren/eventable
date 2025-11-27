@@ -24,13 +24,6 @@ const Portal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return createPortal(children, document.body)
 }
 
-// helper för exclusive end (FullCalendar vill ha slutdagen + 1)
-function addOneDay(dateString: string) {
-  const d = new Date(dateString)
-  d.setDate(d.getDate() + 1)
-  return d.toISOString().split('T')[0]
-}
-
 const CalendarComponent: React.FC = () => {
   const [events, setEvents] = useState<EventInput[]>([])
   const [weekNumbers, setWeekNumbers] = useState<number[]>([])
@@ -104,7 +97,7 @@ const CalendarComponent: React.FC = () => {
           const start = new Date(e.date)
           const end = new Date(e.end_date as string)
 
-          let d = new Date(start)
+          const d = new Date(start)
           d.setDate(d.getDate() + 1)
 
           while (d <= end) {
