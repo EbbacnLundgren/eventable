@@ -37,7 +37,7 @@ export default function InviteStatusList({
   const [pendingUsers, setPendingUsers] = useState<ProfileLabel[] | null>(null)
 
   // maybe
-  const [maybeUsers, setMaybeUsers] = useState<ProfileLabel[] | null>(null)
+  const [maybeUsers] = useState<ProfileLabel[] | null>(null)
 
   const [allUsers, setAllUsers] = useState<AllInviteeRow[] | null>(null)
 
