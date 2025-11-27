@@ -16,9 +16,10 @@ export default function EventFilters({
   counts = { upcoming: 0, hosting: 0, past: 0, declined: 0 },
 }: EventFiltersProps) {
   const tabClass = (filter: FilterType) =>
-    `rounded-md font-medium py-2.5 transition-all ${activeFilter === filter
-      ? 'bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-lg'
-      : 'text-white/80 hover:text-white hover:bg-white/10'
+    `rounded-md font-medium py-2.5 transition-all ${
+      activeFilter === filter
+        ? 'bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-lg'
+        : 'text-white/80 hover:text-white hover:bg-white/10'
     }`
 
   return (
@@ -48,7 +49,6 @@ export default function EventFilters({
                 {counts.upcoming}
               </span>
               Upcoming
-
             </span>
           </TabsTrigger>
           <TabsTrigger
@@ -61,7 +61,6 @@ export default function EventFilters({
                 {counts.hosting}
               </span>
               Hosting
-
             </span>
           </TabsTrigger>
 
@@ -75,7 +74,6 @@ export default function EventFilters({
                 {counts.past}
               </span>
               Past
-
             </span>
           </TabsTrigger>
 
@@ -89,7 +87,6 @@ export default function EventFilters({
                 {counts.declined}
               </span>
               Declined
-
             </span>
           </TabsTrigger>
           {/**

@@ -52,9 +52,7 @@ const EventsSection = ({
       new Date(event.date) >= t
   )
 
-  const hostingEvents = events.filter((event) =>
-    ownEventIds.includes(event.id)
-  )
+  const hostingEvents = events.filter((event) => ownEventIds.includes(event.id))
 
   const pastEvents = events.filter(
     (event) =>
@@ -65,10 +63,7 @@ const EventsSection = ({
       new Date(event.date) < t
   )
 
-  const declinedEvents = events.filter(
-    (event) => event.status === 'declined'
-  )
-
+  const declinedEvents = events.filter((event) => event.status === 'declined')
 
   const filteredEvents = events.filter((event) => {
     //const eventDate = new Date(event.date)
@@ -193,10 +188,11 @@ const EventsSection = ({
 
                     {diffDays >= 0 && (
                       <span
-                        className={`ml-2 px-3 py-1 rounded-full text-sm font-semibold shadow-sm ${diffDays <= 7
-                          ? 'bg-gradient-to-r from-pink-500 to-orange-400 text-white'
-                          : 'bg-white/40 text-stone-800'
-                          }`}
+                        className={`ml-2 px-3 py-1 rounded-full text-sm font-semibold shadow-sm ${
+                          diffDays <= 7
+                            ? 'bg-gradient-to-r from-pink-500 to-orange-400 text-white'
+                            : 'bg-white/40 text-stone-800'
+                        }`}
                       >
                         {diffDays === 0
                           ? 'Today'
@@ -248,14 +244,16 @@ const EventsSection = ({
                         }}
                         disabled={!isRSVPOpen && event.status !== 'accepted'}
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg transition
-      ${event.status === 'accepted'
-                            ? 'bg-green-600 text-white'
-                            : 'bg-green-600/30 text-white/70 hover:bg-green-600/60'
-                          } 
-      ${!isRSVPOpen && event.status !== 'accepted'
-                            ? 'opacity-50 cursor-not-allowed hover:bg-green-600/30'
-                            : ''
-                          }`}
+      ${
+        event.status === 'accepted'
+          ? 'bg-green-600 text-white'
+          : 'bg-green-600/30 text-white/70 hover:bg-green-600/60'
+      } 
+      ${
+        !isRSVPOpen && event.status !== 'accepted'
+          ? 'opacity-50 cursor-not-allowed hover:bg-green-600/30'
+          : ''
+      }`}
                       >
                         {event.status === 'accepted'
                           ? 'Accepted'
@@ -270,13 +268,15 @@ const EventsSection = ({
                         }}
                         disabled={!isRSVPOpen && event.status !== 'declined'}
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg transition
-      ${event.status === 'declined'
-                            ? 'bg-red-600 text-white'
-                            : 'bg-red-600/30 text-white/70 hover:bg-red-600/60'
-                          } 
-                          ${!isRSVPOpen && event.status !== 'declined'
-                            ? 'opacity-50 cursor-not-allowed hover:bg-red-600/30'
-                            : ''
+      ${
+        event.status === 'declined'
+          ? 'bg-red-600 text-white'
+          : 'bg-red-600/30 text-white/70 hover:bg-red-600/60'
+      } 
+                          ${
+                            !isRSVPOpen && event.status !== 'declined'
+                              ? 'opacity-50 cursor-not-allowed hover:bg-red-600/30'
+                              : ''
                           }`}
                       >
                         {event.status === 'declined'
@@ -292,13 +292,15 @@ const EventsSection = ({
                         }}
                         disabled={!isRSVPOpen && event.status !== 'maybe'}
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg transition
-    ${event.status === 'maybe'
-                            ? 'bg-orange-500 text-white'
-                            : 'bg-orange-500/30 text-white/70 hover:bg-orange-500/60'
-                          }
-                          ${!isRSVPOpen && event.status !== 'maybe'
-                            ? 'opacity-50 cursor-not-allowed hover:bg-orange-500/30'
-                            : ''
+    ${
+      event.status === 'maybe'
+        ? 'bg-orange-500 text-white'
+        : 'bg-orange-500/30 text-white/70 hover:bg-orange-500/60'
+    }
+                          ${
+                            !isRSVPOpen && event.status !== 'maybe'
+                              ? 'opacity-50 cursor-not-allowed hover:bg-orange-500/30'
+                              : ''
                           }`}
                       >
                         {event.status === 'maybe' ? 'Maybe' : 'Maybe'}

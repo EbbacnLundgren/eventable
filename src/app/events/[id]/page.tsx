@@ -238,7 +238,9 @@ export default async function EventDetailsPage({
 
               {event.description && (
                 <div className="my-8">
-                  <h2 className="font-semibold text-lg mb-2">Information about the event</h2>
+                  <h2 className="font-semibold text-lg mb-2">
+                    Information about the event
+                  </h2>
 
                   <div className="bg-white rounded-xl shadow p-4 leading-relaxed">
                     {event.description}

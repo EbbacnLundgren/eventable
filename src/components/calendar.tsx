@@ -84,45 +84,43 @@ const CalendarComponent: React.FC = () => {
         return
       }
 
-      const formatted = (data as EventRow[])
-        .flatMap(e => {
-          const hasEnd = e.end_date && e.end_date !== "";
-          const eventsExpanded: EventInput[] = [];
+      const formatted = (data as EventRow[]).flatMap((e) => {
+        const hasEnd = e.end_date && e.end_date !== ''
+        const eventsExpanded: EventInput[] = []
 
-          let index = 0; // ny räknare
+        let index = 0 // ny räknare
 
-          // Start bubble
-          eventsExpanded.push({
-            id: `${e.id}-${index++}`,       // unikt id
-            groupId: e.id,                  // används för popup mm
-            title: e.name,
-            date: e.date,
-            extendedProps: { time: e.time }
-          });
-
-          // Extra days
-          if (hasEnd) {
-            const start = new Date(e.date);
-            const end = new Date(e.end_date as string);
-
-            let d = new Date(start);
-            d.setDate(d.getDate() + 1);
-
-            while (d <= end) {
-              eventsExpanded.push({
-                id: `${e.id}-${index++}`,   // unikt id
-                groupId: e.id,              // alla tillhör samma event
-                title: e.name,
-                date: d.toISOString().split("T")[0],
-                extendedProps: { time: null }
-              });
-              d.setDate(d.getDate() + 1);
-            }
-          }
-
-          return eventsExpanded;
+        // Start bubble
+        eventsExpanded.push({
+          id: `${e.id}-${index++}`, // unikt id
+          groupId: e.id, // används för popup mm
+          title: e.name,
+          date: e.date,
+          extendedProps: { time: e.time },
         })
 
+        // Extra days
+        if (hasEnd) {
+          const start = new Date(e.date)
+          const end = new Date(e.end_date as string)
+
+          let d = new Date(start)
+          d.setDate(d.getDate() + 1)
+
+          while (d <= end) {
+            eventsExpanded.push({
+              id: `${e.id}-${index++}`, // unikt id
+              groupId: e.id, // alla tillhör samma event
+              title: e.name,
+              date: d.toISOString().split('T')[0],
+              extendedProps: { time: null },
+            })
+            d.setDate(d.getDate() + 1)
+          }
+        }
+
+        return eventsExpanded
+      })
 
       setEvents(formatted)
     }
@@ -170,7 +168,7 @@ const CalendarComponent: React.FC = () => {
       id: clickInfo.event.groupId, // samma event-id, inte bubblans id
       title: clickInfo.event.title,
       start: clickInfo.event.startStr,
-    });
+    })
 
     setEventPopupPos({
       x: rect.left + rect.width / 2,
@@ -228,8 +226,9 @@ const CalendarComponent: React.FC = () => {
       ">
         <div>${info.event.title}</div>
 
-        ${time
-                    ? `<div style="
+        ${
+          time
+            ? `<div style="
                  font-size:11px;
                  opacity:0.55;
                  margin-top:2px;
@@ -237,13 +236,12 @@ const CalendarComponent: React.FC = () => {
                ">
                  ${time}
                </div>`
-                    : ""
-                  }
+            : ''
+        }
       </div>
-    `
+    `,
               }
             }}
-
             height="auto"
             firstDay={1}
             weekNumbers={false}
