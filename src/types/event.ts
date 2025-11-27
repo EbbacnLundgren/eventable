@@ -13,4 +13,6 @@ export interface Event {
   user_id?: string
   hostLabel?: string | null
   status?: 'pending' | 'accepted' | 'declined' | 'maybe' | null
+  rsvp_date?: string | null
+  rsvp_time?: string | null
 }
