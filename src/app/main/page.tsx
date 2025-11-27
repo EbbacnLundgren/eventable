@@ -24,7 +24,19 @@ const defaultFilters: AdvancedFilterState = {
   keyword: '',
 }
 
-//comment
+function getDayOfWeek(dateStr: string): string {
+  const date = new Date(dateStr)
+  const days = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ]
+  return days[date.getDay()]
+}
 
 function applyFilters(events: Event[], filters: AdvancedFilterState) {
   return events.filter((event) => {
@@ -33,6 +45,12 @@ function applyFilters(events: Event[], filters: AdvancedFilterState) {
       const eventCity = event.location.toLowerCase()
       const selectedCity = filters.city.toLowerCase()
       if (!eventCity.includes(selectedCity)) return false
+    }
+
+    // --- Day of Week filter ---
+    if (filters.dayOfWeek) {
+      const eventDay = getDayOfWeek(event.date)
+      if (eventDay !== filters.dayOfWeek) return false
     }
 
     // --- Date filter ---
