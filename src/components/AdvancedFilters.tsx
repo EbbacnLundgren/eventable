@@ -97,7 +97,7 @@ export default function AdvancedFilters({
                 <label className="block font-semibold text-sm mb-1">City</label>
                 <input
                   type="text"
-                  placeholder="Enter city"
+                  placeholder="Search by city..."
                   value={localFilters.city}
                   onChange={(e) =>
                     setLocalFilters({ ...localFilters, city: e.target.value })
