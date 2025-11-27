@@ -4,6 +4,7 @@ import './globals.css'
 import Providers from './providers'
 import Footer from '@/components/footer'
 import MovingBackground from '@/components/MovingBackground'
+import Sidebar from '@/components/Sidebar'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -43,6 +44,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Sidebar />
         <Providers>
           <div className="fixed inset-0 -z-10">
             <MovingBackground />
