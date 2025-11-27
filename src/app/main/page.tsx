@@ -60,6 +60,13 @@ function applyFilters(events: Event[], filters: AdvancedFilterState) {
       if (!host.includes(hostQuery)) return false
     }
 
+    // --- Keyword filter ---
+    if (filters.keyword && event.name) {
+      const keyword = filters.keyword.toLowerCase()
+      const title = event.name.toLowerCase()
+      if (!title.includes(keyword)) return false
+    }
+
     // --- Date filter ---
     if (!filters.dateFrom && !filters.dateTo) return true
 
