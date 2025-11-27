@@ -28,6 +28,14 @@ const defaultFilters: AdvancedFilterState = {
 
 function applyFilters(events: Event[], filters: AdvancedFilterState) {
   return events.filter((event) => {
+    // --- City filter ---
+    if (filters.city && event.location) {
+      const eventCity = event.location.toLowerCase()
+      const selectedCity = filters.city.toLowerCase()
+      if (!eventCity.includes(selectedCity)) return false
+    }
+
+    // --- Date filter ---
     if (!filters.dateFrom && !filters.dateTo) return true
 
     const eventStart = event.date
