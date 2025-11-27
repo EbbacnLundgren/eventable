@@ -53,6 +53,13 @@ function applyFilters(events: Event[], filters: AdvancedFilterState) {
       if (eventDay !== filters.dayOfWeek) return false
     }
 
+    // --- Host Email filter (baserat på hostLabel) ---
+    if (filters.host) {
+      const hostQuery = filters.host.toLowerCase()
+      const host = event.hostLabel?.toLowerCase() || ''
+      if (!host.includes(hostQuery)) return false
+    }
+
     // --- Date filter ---
     if (!filters.dateFrom && !filters.dateTo) return true
 
