@@ -96,22 +96,15 @@ export default function AdvancedFilters({
               {/* City */}
               <div>
                 <label className="block font-semibold text-sm mb-1">City</label>
-                <select
+                <input
+                  type="text"
+                  placeholder="Enter city"
                   value={localFilters.city}
                   onChange={(e) =>
                     setLocalFilters({ ...localFilters, city: e.target.value })
                   }
                   className="w-full p-2 border rounded-md bg-white/50 text-stone-900"
-                >
-                  {cities.map((city) => (
-                    <option
-                      key={city}
-                      value={city === 'All Cities' ? '' : city}
-                    >
-                      {city}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
 
               {/* Date Range */}
