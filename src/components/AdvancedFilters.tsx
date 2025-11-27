@@ -17,7 +17,6 @@ interface AdvancedFiltersProps {
   onFiltersChange: (filters: AdvancedFilterState) => void
 }
 
-const cities = ['All Cities', 'Lund', 'Malmö', 'Stockholm', 'Gothenburg']
 const daysOfWeek = [
   'Any Day',
   'Monday',
