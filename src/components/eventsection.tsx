@@ -40,6 +40,31 @@ const EventsSection = ({
   })*/
 
   // --- Filter events based on activeFilter + advancedFilters ---
+
+  const t = new Date()
+
+  const upcomingEvents = events.filter(
+    (event) =>
+      (event.status === null ||
+        event.status === 'accepted' ||
+        event.status === 'maybe' ||
+        event.status === 'pending') &&
+      new Date(event.date) >= t
+  )
+
+  const hostingEvents = events.filter((event) => ownEventIds.includes(event.id))
+
+  const pastEvents = events.filter(
+    (event) =>
+      (event.status === null ||
+        event.status === 'accepted' ||
+        event.status === 'maybe' ||
+        event.status === 'pending') &&
+      new Date(event.date) < t
+  )
+
+  const declinedEvents = events.filter((event) => event.status === 'declined')
+
   const filteredEvents = events.filter((event) => {
     //const eventDate = new Date(event.date)
 
@@ -113,6 +138,12 @@ const EventsSection = ({
       <EventFilters
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
+        counts={{
+          upcoming: upcomingEvents.length,
+          hosting: hostingEvents.length,
+          past: pastEvents.length,
+          declined: declinedEvents.length,
+        }}
       />
 
       {/*

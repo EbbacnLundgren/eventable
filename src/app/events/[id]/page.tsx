@@ -237,10 +237,14 @@ export default async function EventDetailsPage({
               )}
 
               {event.description && (
-                <div className="my-8 leading-relaxed">
-                  <p>
-                    <span className="font-bold">Info:</span> {event.description}
-                  </p>
+                <div className="my-8">
+                  <h2 className="font-semibold text-lg mb-2">
+                    Information about the event
+                  </h2>
+
+                  <div className="bg-white rounded-xl shadow p-4 leading-relaxed">
+                    {event.description}
+                  </div>
                 </div>
               )}
             </div>

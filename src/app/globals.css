@@ -5,6 +5,94 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Title */
+.fc .fc-toolbar-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: #111;
+  padding-left: 4px;
+}
+
+/* Toolbar buttons */
+.fc .fc-button {
+  background: #f2f2f7;
+  color: #111;
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+  padding: 4px 10px;
+  transition: background 0.15s;
+}
+.fc .fc-button:hover {
+  background: #e5e5ea;
+}
+.fc .fc-button:active {
+  background: #d1d1d6;
+}
+
+/* Today button */
+.fc .fc-today-button {
+  background: #007aff;
+  color: white;
+}
+.fc .fc-today-button:hover {
+  background: #0a84ff;
+}
+
+/* Day numbers */
+.fc .fc-daygrid-day-number {
+  font-size: 14px;
+  color: #555;
+  margin-right: 4px;
+}
+
+/* Today highlight (blue bubble like iOS) */
+.fc .fc-day-today {
+  background: #f7f7f8 !important;
+  position: relative;
+}
+.fc .fc-day-today .fc-daygrid-day-number {
+  background: #007aff;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+
+/* Remove strong borders */
+.fc .fc-scrollgrid,
+.fc .fc-scrollgrid td,
+.fc .fc-scrollgrid th {
+  border-color: #e0e0e5 !important;
+}
+
+/* Week header */
+.fc .fc-col-header-cell {
+  background: #fafafa;
+  font-size: 13px;
+  color: #666;
+  padding: 6px 0;
+  font-weight: 500;
+}
+
+/* Event bubbles (Apple iCloud style) */
+.fc-event {
+  border: 1px solid #d1d1d6 !important;
+  background: #fafafa !important;
+  color: #111 !important;
+  padding: 3px 6px !important;
+  border-radius: 12px !important;
+  font-size: 13px;
+  font-weight: 500;
+}
+.fc-event:hover {
+  background: #f2f2f7 !important;
+}
+
+/* Hover on days */
+.fc .fc-daygrid-day:hover {
+  background: #fafafa !important;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -100,4 +188,43 @@ body {
 
 .animate-fade-in-out {
   animation: fade-in-out 2s ease-in-out forwards;
+}
+
+/* Förflutna dagar – iOS gråton */
+.fc-day-past {
+  background: #fafafa !important;
+  opacity: 0.55;
+}
+
+/* Gör texten ännu tydligare avstängd */
+.fc-day-past .fc-daygrid-day-number {
+  color: #999 !important;
+}
+
+/* Vid hover ska inget hända */
+.fc-day-past:hover {
+  background: #fafafa !important;
+}
+
+/* Förhindra pointer events (man kan inte klicka) */
+.fc-day-past {
+  pointer-events: none;
+}
+
+.fc-event {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.fc-myEvent {
+  height: auto !important;
+}
+
+.fc-daygrid-event-harness {
+  height: auto !important;
+}
+
+.fc-daygrid-event {
+  white-space: normal !important;
 }

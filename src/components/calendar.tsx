@@ -9,11 +9,19 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { supabase } from '@/lib/client'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { createPortal } from 'react-dom'
 
 interface EventRow {
   id: string
   name: string
   date: string
+  end_date?: string | null
+  time?: string | null
+}
+
+const Portal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  if (typeof document === 'undefined') return null
+  return createPortal(children, document.body)
 }
 
 const CalendarComponent: React.FC = () => {
@@ -45,51 +53,75 @@ const CalendarComponent: React.FC = () => {
 
       const email = session.user.email
 
-      // hitta google_users-raden för den inloggade
       const { data: googleUser, error: gErr } = await supabase
         .from('google_users')
         .select('id')
         .eq('email', email)
         .maybeSingle()
 
-      if (gErr) {
-        console.error('Error fetching google_user for calendar:', gErr)
-        setEvents([])
-        return
-      }
-
-      if (!googleUser) {
+      if (gErr || !googleUser) {
         setEvents([])
         return
       }
 
       const userId = googleUser.id
 
-      // hämta bara denna användares events
       const { data, error } = await supabase
         .from('events')
-        .select('id, name, date')
+        .select('id, name, date, end_date, time')
         .eq('user_id', userId)
         .order('date', { ascending: true })
 
-      if (error) {
-        console.error('Failed to fetch events:', error)
+      if (error || !data) {
         setEvents([])
         return
       }
 
-      const formatted: EventInput[] = (data as EventRow[]).map((e) => ({
-        id: e.id,
-        title: e.name,
-        date: e.date,
-      }))
+      const formatted = (data as EventRow[]).flatMap((e) => {
+        const hasEnd = e.end_date && e.end_date !== ''
+        const eventsExpanded: EventInput[] = []
+
+        let index = 0 // ny räknare
+
+        // Start bubble
+        eventsExpanded.push({
+          id: `${e.id}-${index++}`, // unikt id
+          groupId: e.id, // används för popup mm
+          title: e.name,
+          date: e.date,
+          extendedProps: { time: e.time },
+        })
+
+        // Extra days
+        if (hasEnd) {
+          const start = new Date(e.date)
+          const end = new Date(e.end_date as string)
+
+          const d = new Date(start)
+          d.setDate(d.getDate() + 1)
+
+          while (d <= end) {
+            eventsExpanded.push({
+              id: `${e.id}-${index++}`, // unikt id
+              groupId: e.id, // alla tillhör samma event
+              title: e.name,
+              date: d.toISOString().split('T')[0],
+              extendedProps: { time: null },
+            })
+            d.setDate(d.getDate() + 1)
+          }
+        }
+
+        return eventsExpanded
+      })
+
       setEvents(formatted)
     }
 
     fetchEvents()
   }, [session])
 
-  // Uppdatera veckonummer när månad ändras
+  // Uppdatera veckonummer
   const handleDatesSet = (info: DatesSetArg) => {
     const monthStart = info.start
     const firstWeekStart = startOfWeek(monthStart, { weekStartsOn: 1 })
@@ -101,30 +133,48 @@ const CalendarComponent: React.FC = () => {
     setWeekNumbers(numbers)
   }
 
-  // Klick på dag → popup för skapa event
+  // Klick på dag → popup
   const handleDateClick = (arg: { dateStr: string; dayEl: HTMLElement }) => {
-    setActiveDate(arg.dateStr)
+    const clickedDate = new Date(arg.dateStr)
+    const today = new Date()
+
+    clickedDate.setHours(0, 0, 0, 0)
+    today.setHours(0, 0, 0, 0)
+
+    if (clickedDate < today) return
+
     const rect = arg.dayEl.getBoundingClientRect()
-    setPopupPos({ x: rect.left, y: rect.bottom + window.scrollY })
-    setActiveEvent(null) // stäng event-popup
+
+    setActiveDate(arg.dateStr)
+    setPopupPos({
+      x: rect.left + rect.width / 2,
+      y: rect.bottom + window.scrollY + 10,
+    })
+    setActiveEvent(null)
   }
 
-  // Klick på event → popup för eventdetails
+  // Klick på event → popup
   const handleEventClick = (clickInfo: EventClickArg) => {
     const rect = clickInfo.el.getBoundingClientRect()
+
     setActiveEvent({
-      id: clickInfo.event.id,
+      id: clickInfo.event.groupId, // samma event-id, inte bubblans id
       title: clickInfo.event.title,
       start: clickInfo.event.startStr,
     })
-    setEventPopupPos({ x: rect.left, y: rect.bottom + window.scrollY })
-    setActiveDate(null) //close day-popup
+
+    setEventPopupPos({
+      x: rect.left + rect.width / 2,
+      y: rect.bottom + window.scrollY + 10,
+    })
+
+    setActiveDate(null)
   }
 
   return (
     <div className="min-h-screen flex justify-center items-start p-4 pl-10 pr-10 pt-20">
-      <div className="relative flex p-4 shadow-md bg-white rounded-lg border border-pink-200">
-        {/* week nbr column */}
+      <div className="relative flex p-4 shadow-lg bg-white rounded-3xl border border-gray-200 max-w-[2000px] w-full mx-auto overflow-hidden">
+        {/* Week numbers */}
         <div className="flex flex-col items-center pt-[6rem]">
           {weekNumbers.map((weekNum, i) => (
             <div
@@ -147,20 +197,78 @@ const CalendarComponent: React.FC = () => {
             datesSet={handleDatesSet}
             dateClick={handleDateClick}
             eventClick={handleEventClick}
+            eventContent={(info) => {
+              let time = info.event.extendedProps.time
+
+              // Formatera tid: "16:00:00" → "16:00"
+              if (time && time.length === 8) {
+                time = time.slice(0, 5)
+              }
+
+              return {
+                html: `
+      <div style="
+        color:#111;
+        font-weight:500;
+        font-size:13px;
+        padding:4px 8px;
+        background:#fef1f4;
+        border:1px solid #f7cad7;
+        border-radius:12px;
+        margin:2px 0;
+      ">
+        <div>${info.event.title}</div>
+
+        ${
+          time
+            ? `<div style="
+                 font-size:11px;
+                 opacity:0.55;
+                 margin-top:2px;
+                 font-weight:400;
+               ">
+                 ${time}
+               </div>`
+            : ''
+        }
+      </div>
+    `,
+              }
+            }}
             height="auto"
             firstDay={1}
             weekNumbers={false}
-            dayHeaderClassNames="text-gray-900 font-semibold bg-pink-100"
-            dayCellClassNames="text-gray-900 bg-white"
-            eventClassNames="bg-pink-200 text-gray-900 border border-pink-300"
+            headerToolbar={{
+              left: 'title',
+              center: '',
+              right: 'addEvent prev,next today',
+            }}
+            customButtons={{
+              addEvent: {
+                text: '+',
+                click: () => {
+                  const today = new Date().toISOString().split('T')[0]
+                  router.push(`/createEvent?date=${today}`)
+                },
+              },
+            }}
+            dayHeaderClassNames="text-gray-600 font-medium bg-white border-b border-gray-200 tracking-wide"
+            dayCellClassNames="bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 transition-colors"
+            eventClassNames="fc-myEvent"
           />
         </div>
+      </div>
 
-        {/* Day-popup */}
-        {activeDate && popupPos && (
+      {/* Day popup via Portal */}
+      {activeDate && popupPos && (
+        <Portal>
           <div
-            className="absolute bg-white shadow-md rounded p-2 z-50 border border-gray-200"
-            style={{ top: popupPos.y, left: popupPos.x }}
+            className="fixed bg-white shadow-md rounded p-2 z-50 border border-gray-200"
+            style={{
+              top: popupPos.y,
+              left: popupPos.x,
+              transform: 'translateX(-50%)',
+            }}
           >
             <a
               href={`/createEvent?date=${activeDate}`}
@@ -175,13 +283,19 @@ const CalendarComponent: React.FC = () => {
               Cancel
             </button>
           </div>
-        )}
+        </Portal>
+      )}
 
-        {/* Event-popup */}
-        {activeEvent && eventPopupPos && (
+      {/* Event popup via Portal */}
+      {activeEvent && eventPopupPos && (
+        <Portal>
           <div
-            className="absolute bg-white shadow-md rounded p-2 z-50 border border-gray-200"
-            style={{ top: eventPopupPos.y, left: eventPopupPos.x }}
+            className="fixed bg-white shadow-md rounded p-2 z-50 border border-gray-200"
+            style={{
+              top: eventPopupPos.y,
+              left: eventPopupPos.x,
+              transform: 'translateX(-50%)',
+            }}
           >
             <button
               onClick={() => router.push(`/events/${activeEvent.id}`)}
@@ -196,8 +310,8 @@ const CalendarComponent: React.FC = () => {
               Cancel
             </button>
           </div>
-        )}
-      </div>
+        </Portal>
+      )}
     </div>
   )
 }
