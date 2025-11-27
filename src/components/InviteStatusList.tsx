@@ -162,10 +162,10 @@ export default function InviteStatusList({
           <h4 className="text-sm font-semibold mb-2">Accepted</h4>
           <ul className="text-sm">
             {acceptedUsers.length === 0 && (
-              <li className="text-white/80">No users</li>
+              <li className="text-gray/80">No users</li>
             )}
             {acceptedUsers.map((u) => (
-              <li key={u.id} className="text-white/90">
+              <li key={u.id} className="text-gray/90">
                 {u.label}
               </li>
             ))}
@@ -178,10 +178,10 @@ export default function InviteStatusList({
           <h4 className="text-sm font-semibold mb-2">Declined</h4>
           <ul className="text-sm">
             {declinedUsers.length === 0 && (
-              <li className="text-white/80">No users</li>
+              <li className="text-gray/80">No users</li>
             )}
             {declinedUsers.map((u) => (
-              <li key={u.id} className="text-white/90">
+              <li key={u.id} className="text-gray/90">
                 {u.label}
               </li>
             ))}
@@ -194,10 +194,10 @@ export default function InviteStatusList({
           <h4 className="text-sm font-semibold mb-2">All invitees</h4>
           <ul className="text-sm space-y-1">
             {allUsers.length === 0 && (
-              <li className="text-white/80">No users</li>
+              <li className="text-gray/80">No users</li>
             )}
             {allUsers.map((u) => (
-              <li key={`${u.id}-${u.status}`} className="text-white/90">
+              <li key={`${u.id}-${u.status}`} className="text-gray/90">
                 {u.label}{' '}
                 <span className="ml-2 text-xs opacity-80">({u.status})</span>
               </li>
