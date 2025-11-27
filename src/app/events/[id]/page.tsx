@@ -250,10 +250,8 @@ export default async function EventDetailsPage({
             <InviteStatusList
               acceptedIds={acceptedIds.filter((id) => id !== event.user_id)}
               declinedIds={declinedIds.filter((id) => id !== event.user_id)}
-              pendingIds={[
-                ...pendingIds.filter((id) => id !== event.user_id),
-                ...maybeIds.filter((id) => id !== event.user_id),
-              ]}
+              pendingIds={pendingIds.filter((id) => id !== event.user_id)}
+              maybeIds={maybeIds.filter((id) => id !== event.user_id)}
             />
 
             <div className="mt-6 flex justify-center">

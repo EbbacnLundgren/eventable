@@ -7,19 +7,22 @@ type Props = {
   declinedIds: string[]
   /** Valfritt: skicka in pending också om du har det */
   pendingIds?: string[]
+  // de som svarat maybe
+  maybeIds?: string[]
 }
 
 type ProfileLabel = { id: string; label: string }
 type AllInviteeRow = {
   id: string
   label: string
-  status: 'accepted' | 'declined' | 'pending'
+  status: 'accepted' | 'declined' | 'pending' | 'maybe'
 }
 
 export default function InviteStatusList({
   acceptedIds,
   declinedIds,
   pendingIds = [],
+  maybeIds = [],
 }: Props) {
   const [showAccepted, setShowAccepted] = useState(false)
   const [showDeclined, setShowDeclined] = useState(false)
@@ -32,6 +35,10 @@ export default function InviteStatusList({
     null
   )
   const [pendingUsers, setPendingUsers] = useState<ProfileLabel[] | null>(null)
+
+  // maybe
+  const [maybeUsers, setMaybeUsers] = useState<ProfileLabel[] | null>(null)
+
   const [allUsers, setAllUsers] = useState<AllInviteeRow[] | null>(null)
 
   const [loading, setLoading] = useState(false)
@@ -118,6 +125,10 @@ export default function InviteStatusList({
           ...u,
           status: 'pending' as const,
         })),
+        ...(maybeUsers ?? (await resolveProfiles(maybeIds))).map((u) => ({
+          ...u,
+          status: 'maybe' as const,
+        })),
       ]
       setAllUsers(all)
       setShowAll((s) => !s)
@@ -128,7 +139,11 @@ export default function InviteStatusList({
     }
   }
 
-  const allCount = acceptedIds.length + declinedIds.length + pendingIds.length
+  const allCount =
+    acceptedIds.length +
+    declinedIds.length +
+    pendingIds.length +
+    maybeIds.length
 
   return (
     <div className="mt-4">
