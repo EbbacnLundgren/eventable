@@ -166,9 +166,10 @@ export default function LoginBox() {
             disabled={!email || !password}
             className={`
               w-full p-2 mt-2 rounded-xl border border-pink-400 font-semibold transition
-              ${!email || !password
-                ? 'bg-pink-500/40 text-white cursor-not-allowed'
-                : 'bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white'
+              ${
+                !email || !password
+                  ? 'bg-pink-500/40 text-white cursor-not-allowed'
+                  : 'bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white'
               }
             `}
           >
