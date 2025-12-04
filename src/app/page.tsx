@@ -7,7 +7,6 @@ import { GlassCard } from '@developer-hub/liquid-glass'
 export default function Home() {
   return (
     <div className="relative flex flex-col min-h-screen text-white overflow-hidden">
-
       {/* Background */}
       <div className="absolute inset-0 -z-10">
         <Image
@@ -48,7 +47,6 @@ export default function Home() {
 
       {/* HERO */}
       <div className="flex flex-col lg:flex-row items-center justify-center gap-12 px-6 sm:px-20 pt-24">
-
         {/* LEFT SIDE: LOGO + TEXT */}
         <div className="flex flex-col items-center text-center">
           <Image
@@ -89,7 +87,6 @@ export default function Home() {
             />
           </GlassCard>
         </div>
-
       </div>
 
       {/* FOOTER */}
