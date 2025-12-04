@@ -565,27 +565,6 @@ export default function CreateEventPage() {
           </p>
         )}
 
-        <div className="flex items-center gap-2 mt-2">
-          <input
-            type="checkbox"
-            id="allowInviteesToInvite"
-            checked={formData.allowInviteesToInvite}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                allowInviteesToInvite: e.target.checked,
-              }))
-            }
-            className="w-4 h-4 accent-pink-500"
-          />
-          <label
-            htmlFor="allowInviteesToInvite"
-            className={`font-sans ${labelColorClass}`}
-          >
-            Allow invitees to invite others
-          </label>
-        </div>
-
         <button
           type="submit"
           disabled={!isFormComplete}
