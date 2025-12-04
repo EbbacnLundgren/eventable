@@ -141,8 +141,9 @@ export default async function EventDetailsPage({
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white py-10 px-6">
+    <main className="min-h-screen  text-white py-10 px-6">
       <DynamicBackground imageUrl={event.image} />
+      {/*
       <Link
         href="/main"
         className="fixed top-4 left-4 text-pink-600 hover:text-pink-800 z-50"
@@ -150,6 +151,7 @@ export default async function EventDetailsPage({
       >
         <ArrowLeft size={26} />
       </Link>
+      */}
 
       <div className="max-w-5xl mx-auto flex gap-6 items-start">
         {/* --- Left: Box containing event details --- */}
