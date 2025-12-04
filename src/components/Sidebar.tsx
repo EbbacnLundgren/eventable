@@ -103,6 +103,7 @@ export default function Sidebar() {
           >
             <Link
               href="/profile-settings"
+              onClick={() => setShowMenu(false)}
               className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-pink-50 transition-colors"
             >
               <UserCog className="h-5 w-5" />
@@ -112,6 +113,7 @@ export default function Sidebar() {
             <button
               className="flex items-center gap-3 w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 transition-colors"
               onClick={async () => {
+                setShowMenu(false)
                 await supabase.auth.signOut()
                 router.push('/')
               }}
