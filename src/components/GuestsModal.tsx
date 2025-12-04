@@ -22,6 +22,13 @@ export default function GuestsModal({
 
   const count = invitedProfiles.length
 
+  const isShared =
+    acceptedIds.length +
+      declinedIds.length +
+      pendingIds.length +
+      maybeIds.length >
+    0
+
   return (
     <>
       {/* CLICKABLE INVITED TEXT */}
@@ -29,10 +36,13 @@ export default function GuestsModal({
         className="flex items-center gap-2 cursor-pointer"
         onClick={() => setOpen(true)}
       >
-        <Users size={20} />
-        <span>
-          <span className="font-bold">Invited:</span> {count} people
-        </span>
+        {isShared && <Users size={20} />}
+
+        {isShared && (
+          <span>
+            <span className="font-bold">Invited:</span> {count} people
+          </span>
+        )}
       </div>
 
       {/* AVATAR ROW */}
