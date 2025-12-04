@@ -6,8 +6,8 @@ import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import TimePicker from '@/components/timePicker'
 import { useSession } from 'next-auth/react'
-import { ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
+//import { ArrowLeft } from 'lucide-react'
+//import Link from 'next/link'
 import DynamicBackground from '@/components/DynamicBackground'
 import ImageSelector from '@/components/ImageSelector' //Hanterar bildval
 //import ImageCropper from '@/components/ImageAdjust'
@@ -284,13 +284,14 @@ export default function CreateEventPage() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
       <DynamicBackground imageUrl={selectedImage} />
+      {/*
       <Link
         href="/main"
         className="fixed top-4 left-4 text-pink-600 hover:text-pink-800 z-50"
         aria-label="Back to main page"
       >
         <ArrowLeft size={26} />
-      </Link>
+      </Link>*/}
 
       <form
         onSubmit={handleSubmit}
