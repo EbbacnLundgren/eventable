@@ -63,13 +63,34 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="absolute right-20 top-1/2 -translate-y-1/2 flex flex-col gap-6 z-20 w-[32rem] h-[32rem]">
+      <div
+        className="
+    absolute 
+    right-4 
+    top-1/2 
+    -translate-y-1/2 
+    flex flex-col 
+    gap-6 
+    z-20 
+
+    w-[18rem] h-[18rem]     /* mobil */
+    sm:w-[24rem] sm:h-[24rem]  /* tablets */
+    lg:w-[32rem] lg:h-[32rem]  /* desktop */
+  "
+      >
         <GlassCard
           displacementScale={20}
           blurAmount={0.2}
           cornerRadius={18}
           padding="0"
-          className="overflow-hidden border border-white/20 bg-white/10 max-w-none w-[32rem] h-[32rem]"
+          className="
+      overflow-hidden 
+      border border-white/20 
+      bg-white/10 
+      max-w-none 
+      w-full 
+      h-full
+    "
         >
           <Image
             src="/images/create-3.png"
@@ -80,7 +101,6 @@ export default function Home() {
           />
         </GlassCard>
       </div>
-
       {/* FOOTER LINE (super thin, elegant) */}
       <div className="absolute bottom-0 left-0 w-full text-center text-xs text-white/40 pb-2">
         © {new Date().getFullYear()} Eventable
