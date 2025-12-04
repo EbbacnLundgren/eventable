@@ -1,16 +1,16 @@
 import LoginBox from '@/components/loginBox'
-import Link from 'next/link'
+//import Link from 'next/link'
 import Image from 'next/image'
 
 export default function LoginPage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-pink-100 relative">
-      <Link
+      {/*<Link
         href="/"
         className="absolute left-4 top-4 px-3 py-1.5 rounded border border-black/20 bg-white/80 text-black text-sm hover:bg-white"
       >
         ← Back
-      </Link>
+      </Link>*/}
 
       {/* <Image
         src="/images/icon.png"
