@@ -14,7 +14,8 @@ export default function LayoutWrapper({
     pathname === '/' ||
     pathname === '/login' ||
     pathname.startsWith('/events/') ||
-    pathname === '/createEvent'
+    pathname === '/createEvent' ||
+    pathname === '/signup'
 
   return (
     <>
