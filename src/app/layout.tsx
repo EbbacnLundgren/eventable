@@ -4,6 +4,7 @@ import './globals.css'
 import Providers from './providers'
 import LayoutWrapper from '@/components/LayoutWrapper'
 //import Iridescence from '@/components/Iridescence'
+import MovingBackground from '@/components/MovingBackground'
 //import MetallicBackground from '@/components/MetallicBackground' // NY FIL
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
@@ -38,9 +39,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          {/* <div className="fixed inset-0 -z-10">
+          <div className="fixed inset-0 -z-10">
             <MovingBackground />
-          </div> */}
+          </div>
           {/* <MetallicBackground />  */}
           {/* <Iridescence
             color={[1.0, 0.7, 0.9]}

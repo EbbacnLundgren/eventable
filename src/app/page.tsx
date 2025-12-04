@@ -46,7 +46,7 @@ export default function Home() {
       <div className="flex flex-col sm:flex-row items-center justify-start flex-1 px-10 sm:px-20 gap-10 pt-10 sm:pt-16 z-10">
         <div className="flex flex-col items-start sm:w-auto">
           <Image
-            src="/nineth_version.png"
+            src="/NEW.png"
             alt="Eventable logo"
             width={1000}
             height={1000}
