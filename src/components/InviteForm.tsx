@@ -26,7 +26,6 @@ export default function InviteForm({ eventUrl }: { eventUrl: string }) {
         setStatus('Fel vid skickning: ' + error.message)
         return
       }
-
       setStatus('Skickat!')
       setEmail('')
     } catch (err) {
@@ -35,6 +34,7 @@ export default function InviteForm({ eventUrl }: { eventUrl: string }) {
     }
   }
 
+  //Testkommenter
   return (
     <form onSubmit={sendInvite}>
       <label>
