@@ -9,8 +9,12 @@ export default function LayoutWrapper({
 }: {
   children: React.ReactNode
 }) {
-  const pathname = usePathname()
-  const hideLayout = pathname === '/' || pathname === '/login'
+  const pathname = usePathname() || ''
+  const hideLayout =
+    pathname === '/' ||
+    pathname === '/login' ||
+    pathname.startsWith('/events/') ||
+    pathname === '/createEvent'
 
   return (
     <>
