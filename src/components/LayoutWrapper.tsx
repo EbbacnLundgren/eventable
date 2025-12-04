@@ -2,7 +2,7 @@
 'use client'
 import { usePathname } from 'next/navigation'
 import Sidebar from './Sidebar'
-import Footer from './footer'
+//import Footer from './footer'
 
 export default function LayoutWrapper({
   children,
@@ -17,7 +17,6 @@ export default function LayoutWrapper({
       {!hideLayout && <Sidebar />}
       <div className="flex flex-col min-h-screen">
         <main className="flex-1">{children}</main>
-        {!hideLayout && <Footer />}
       </div>
     </>
   )
