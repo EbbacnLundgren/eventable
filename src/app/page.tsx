@@ -45,9 +45,10 @@ export default function Home() {
       </div>
 
       {/* HERO CONTENT */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-6 sm:px-20 max-w-5xl h-full 
-                -translate-y-10 sm:-translate-y-16">
-
+      <div
+        className="relative z-10 flex flex-col items-center justify-center px-6 sm:px-20 max-w-5xl h-full 
+                -translate-y-10 sm:-translate-y-16"
+      >
         <Image
           src="/tenth-version.png"
           alt="Eventable Logo"
