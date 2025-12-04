@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import Providers from './providers'
-import MovingBackground from '@/components/MovingBackground'
 import LayoutWrapper from '@/components/LayoutWrapper'
+import Image from 'next/image'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -45,7 +45,15 @@ export default function RootLayout({
       >
         <Providers>
           <div className="fixed inset-0 -z-10">
-            <MovingBackground />
+            <div className="absolute inset-0 -z-10">
+              <Image
+                src="/images/background-picture.jpg"
+                alt="Background"
+                fill
+                priority
+                className="object-cover"
+              />
+            </div>
           </div>
           <LayoutWrapper>{children}</LayoutWrapper>
         </Providers>
