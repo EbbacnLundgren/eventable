@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/client'
 import { signIn } from 'next-auth/react'
 import { Eye, EyeOff } from 'lucide-react'
+import { FcGoogle } from "react-icons/fc";
 
 export default function SignupBox() {
   const [email, setEmail] = useState('')
@@ -17,19 +18,6 @@ export default function SignupBox() {
     e.preventDefault()
     setMessage('')
     setStatus('idle')
-
-    // Kontrollera om användaren redan finns i auth/users
-    // const { data: existingUser } = await supabase
-    //   .from('users')
-    //   .select('id')
-    //   .eq('email', email)
-    //   .single()
-
-    // if (existingUser) {
-    //   setMessage('This account already exists')
-    //   setStatus('error')
-    //   return
-    // }
 
     // Kontrollera om användaren redan finns i google_users
     const { data: existingUser } = await supabase
@@ -55,19 +43,7 @@ export default function SignupBox() {
       return
     }
 
-    // const { data: existing } = await supabase
-    //   .from('users')
-    //   .select('email')
-    //   .eq('email', email)
-    //   .single()
 
-    // if (existing) {
-    //   setMessage('This account already exists')
-    //   setStatus('error')
-    //   return
-    // }
-
-    // Skapa användaren via Supabase Auth
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
       { email, password }
     )
@@ -77,20 +53,7 @@ export default function SignupBox() {
       return
     }
 
-    // Hämta användarens ID
-    //const { data: authData } = await supabase.auth.getUser()
-    //const userId = authData?.user?.id
     const userId = signUpData.user?.id
-
-    // await supabase.from('users').insert({    //insert till auth/users
-    //   id: userId,
-    //   email,
-    //   created_at: new Date().toISOString(),
-    //   first_name: '',
-    //   last_name: '',
-    //   avatar_url: '',
-    //   phone_number: '',
-    // })
 
     if (userId) {
       const { error: insertError } = await supabase
@@ -122,36 +85,72 @@ export default function SignupBox() {
   }
 
   return (
-    <div className="border p-6 rounded-xl shadow-md w-80 bg-white/80 backdrop-blur-md border-pink-200 text-gray-800">
-      <h2 className="text-2xl font-bold mb-2 text-center text-pink-700">
-        Create your Eventable account
-      </h2>
-      <p className="text-sm text-gray-700 text-center mb-4">
-        Sign up to start planning, sharing, and celebrating events with friends.
+    <div className="border px-12 py-10 rounded-2xl shadow-lg w-full max-w-md bg-white/80 backdrop-blur-xl border-pink-200">
+      <h1 className="text-5xl font-extrabold text-center text-pink-600 drop-shadow-sm tracking-tight mb-2">
+        Eventable
+      </h1>
+      <p className="text-gray-700 text-center font-medium mb-4">
+        Create your account to start planning, sharing, and celebrating events with friends!
       </p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
-          type="email"
-          placeholder="example@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400"
-          required
-        />
-        <div className="relative">
+      <p className="mb-3 text-sm text-gray-800 text-center pb-3">
+        Already have an account?{' '}
+        <Link
+          href="/signin"
+          className="text-pink-600 hover:text-pink-700 underline font-semibold"
+        >
+          Sign in
+        </Link>
+      </p>
+
+      <button
+        onClick={() => signIn('google', { callbackUrl: '/main' })}
+        className="relative flex items-center justify-center px-4 py-2 border border-pink-500 rounded-xl bg-white text-black w-full hover:bg-pink-50 transition font-semibold"
+      >
+        <FcGoogle className="absolute left-4 w-5 h-5" />
+        Sign up with Google
+      </button>
+
+      <div className="flex items-center gap-4 w-full p-5">
+        <div className="flex-1 h-px bg-gray-300"></div>
+        <span className="text-gray-500 text-sm">or</span>
+        <div className="flex-1 h-px bg-gray-300"></div>
+      </div>
+
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+        <div className="flex flex-col">
+          <label htmlFor="email" className="mb-1 text-sm font-medium text-gray-700">
+            E-mail
+          </label>
           <input
+            id="email"
+            type="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-2 rounded-xl border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+            required
+          />
+        </div>
+
+        <div className="flex flex-col relative">
+          <label htmlFor="password" className="mb-1 text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <input
+            id="password"
             type={showPassword ? 'text' : 'password'}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400 w-full"
+            className="w-full p-2 rounded-xl border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
             required
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+            className="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
@@ -159,24 +158,20 @@ export default function SignupBox() {
 
         <button
           type="submit"
-          className="p-2 mt-2 rounded text-white bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 transition font-semibold"
+          className={`
+      w-full p-2 mt-2 rounded-xl border border-pink-400 font-semibold transition
+      ${!email || !password
+              ? "bg-pink-500/40 text-white cursor-not-allowed"
+              : "bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white"
+            }
+    `}
+          disabled={!email || !password}
         >
           Sign up
         </button>
       </form>
 
-      <div className="flex items-center my-4">
-        <hr className="flex-grow border-pink-200" />
-        <span className="mx-2 text-sm text-gray-500">or</span>
-        <hr className="flex-grow border-pink-200" />
-      </div>
 
-      <button
-        onClick={() => signIn('google', { callbackUrl: '/main' })}
-        className="px-4 py-2 bg-blue-500 text-white rounded w-full hover:bg-blue-600 transition font-medium"
-      >
-        Sign up with Google
-      </button>
 
       {message && (
         <p

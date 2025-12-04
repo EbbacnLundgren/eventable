@@ -12,14 +12,14 @@ export default function LoginPage() {
         ← Back
       </Link>
 
-      <Image
+      {/* <Image
         src="/images/icon.png"
         alt="Eventable logo"
         width={200}
         height={200}
         unoptimized
         className="mb-4 mix-blend-multiply rounded-full drop-shadow-[0_0_35px_rgba(255,192,203,0.7)]"
-      />
+      /> */}
       <LoginBox />
     </main>
   )

@@ -10,6 +10,7 @@ export default function Home() {
     <div className="relative flex flex-col min-h-screen text-white">
       <MovingBackground />
 
+
       <div className="absolute top-0 right-0 m-5 flex flex-wrap gap-4 z-20">
         <GlassCard
           displacementScale={100}
@@ -54,9 +55,7 @@ export default function Home() {
             className="drop-shadow-lg -translate-y-8 mb-[-1rem]"
           />
 
-          <h2 className="text-3xl sm:text-4xl font-baloo font-bold text-white/90 drop-shadow-md -mt-16">
-            PLAN. SHARE. CELEBRATE.
-          </h2>
+
         </div>
       </div>
     </div>
