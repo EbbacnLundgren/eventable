@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -17,6 +17,26 @@ import {
 export default function Sidebar() {
   const router = useRouter()
   const [showMenu, setShowMenu] = useState(false)
+
+  const menuRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  // --- Close popup when clicking outside ---
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(e.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node)
+      ) {
+        setShowMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <aside
@@ -63,6 +83,7 @@ export default function Sidebar() {
       {/* Profile Icon + Popup */}
       <div className="relative z-50">
         <button
+          ref={buttonRef}
           onClick={() => setShowMenu(!showMenu)}
           className="h-12 w-12 flex items-center justify-center rounded-full
                      bg-white bg-opacity-20 backdrop-blur-md bg-white bg-opacity-30
@@ -74,6 +95,7 @@ export default function Sidebar() {
 
         {showMenu && (
           <div
+            ref={menuRef}
             className="absolute left-14 bottom-2 w-48
                        bg-white bg-opacity-90 backdrop-blur-xl
                        border border-white border-opacity-20
