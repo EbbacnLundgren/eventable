@@ -6,6 +6,7 @@ import LayoutWrapper from '@/components/LayoutWrapper'
 //import Iridescence from '@/components/Iridescence'
 import MovingBackground from '@/components/MovingBackground'
 //import MetallicBackground from '@/components/MetallicBackground' // NY FIL
+import Image from 'next/image'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({
@@ -40,7 +41,15 @@ export default function RootLayout({
       >
         <Providers>
           <div className="fixed inset-0 -z-10">
-            <MovingBackground />
+            <div className="absolute inset-0 -z-10">
+              <Image
+                src="/images/background-picture.jpg"
+                alt="Background"
+                fill
+                priority
+                className="object-cover"
+              />
+            </div>
           </div>
           {/* <MetallicBackground />  */}
           {/* <Iridescence
