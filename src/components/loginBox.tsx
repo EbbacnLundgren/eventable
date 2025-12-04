@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
-import { FcGoogle } from "react-icons/fc";
+import { FcGoogle } from 'react-icons/fc'
 import Image from 'next/image'
 
 export default function LoginBox() {
@@ -102,7 +102,6 @@ export default function LoginBox() {
         </Link>
       </p>
 
-
       <button
         onClick={() => signIn('google', { callbackUrl: '/main' })}
         className="relative flex items-center justify-center px-4 py-2 border border-pink-500 rounded-xl bg-white text-black w-full hover:bg-pink-50 transition font-semibold"
@@ -110,7 +109,6 @@ export default function LoginBox() {
         <FcGoogle className="absolute left-4 w-5 h-5" />
         Log in with Google
       </button>
-
 
       <div className="flex items-center gap-4 w-full p-5">
         <div className="flex-1 h-px bg-gray-300"></div>
@@ -120,7 +118,10 @@ export default function LoginBox() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
         <div className="flex flex-col">
-          <label htmlFor="email" className="mb-1 text-sm font-medium text-gray-700">
+          <label
+            htmlFor="email"
+            className="mb-1 text-sm font-medium text-gray-700"
+          >
             E-mail
           </label>
           <input
@@ -135,7 +136,10 @@ export default function LoginBox() {
         </div>
 
         <div className="flex flex-col relative">
-          <label htmlFor="password" className="mb-1 text-sm font-medium text-gray-700">
+          <label
+            htmlFor="password"
+            className="mb-1 text-sm font-medium text-gray-700"
+          >
             Password
           </label>
           <input
@@ -157,23 +161,20 @@ export default function LoginBox() {
         </div>
 
         <div className="text-center mt-1 flex flex-col items-center gap-2">
-
-
           <button
             type="submit"
             disabled={!email || !password}
             className={`
               w-full p-2 mt-2 rounded-xl border border-pink-400 font-semibold transition
-              ${!email || !password
-                ? "bg-pink-500/40 text-white cursor-not-allowed"
-                : "bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white"
+              ${
+                !email || !password
+                  ? 'bg-pink-500/40 text-white cursor-not-allowed'
+                  : 'bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white'
               }
             `}
           >
             Log in
           </button>
-
-
 
           <Link
             href="/reset-password"
@@ -183,12 +184,6 @@ export default function LoginBox() {
           </Link>
         </div>
       </form>
-
-
-
-
-
-
 
       {message && <p className="mt-2 text-red-500">{message}</p>}
     </div>

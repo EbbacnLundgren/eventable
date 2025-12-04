@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/client'
 import { signIn } from 'next-auth/react'
 import { Eye, EyeOff } from 'lucide-react'
-import { FcGoogle } from "react-icons/fc";
+import { FcGoogle } from 'react-icons/fc'
 
 export default function SignupBox() {
   const [email, setEmail] = useState('')
@@ -42,7 +42,6 @@ export default function SignupBox() {
       setStatus('error')
       return
     }
-
 
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
       { email, password }
@@ -90,7 +89,8 @@ export default function SignupBox() {
         Eventable
       </h1>
       <p className="text-gray-700 text-center font-medium mb-4">
-        Create your account to start planning, sharing, and celebrating events with friends!
+        Create your account to start planning, sharing, and celebrating events
+        with friends!
       </p>
 
       <p className="mb-3 text-sm text-gray-800 text-center pb-3">
@@ -117,10 +117,12 @@ export default function SignupBox() {
         <div className="flex-1 h-px bg-gray-300"></div>
       </div>
 
-
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
         <div className="flex flex-col">
-          <label htmlFor="email" className="mb-1 text-sm font-medium text-gray-700">
+          <label
+            htmlFor="email"
+            className="mb-1 text-sm font-medium text-gray-700"
+          >
             E-mail
           </label>
           <input
@@ -135,7 +137,10 @@ export default function SignupBox() {
         </div>
 
         <div className="flex flex-col relative">
-          <label htmlFor="password" className="mb-1 text-sm font-medium text-gray-700">
+          <label
+            htmlFor="password"
+            className="mb-1 text-sm font-medium text-gray-700"
+          >
             Password
           </label>
           <input
@@ -160,18 +165,17 @@ export default function SignupBox() {
           type="submit"
           className={`
       w-full p-2 mt-2 rounded-xl border border-pink-400 font-semibold transition
-      ${!email || !password
-              ? "bg-pink-500/40 text-white cursor-not-allowed"
-              : "bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white"
-            }
+      ${
+        !email || !password
+          ? 'bg-pink-500/40 text-white cursor-not-allowed'
+          : 'bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white'
+      }
     `}
           disabled={!email || !password}
         >
           Sign up
         </button>
       </form>
-
-
 
       {message && (
         <p

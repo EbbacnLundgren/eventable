@@ -10,7 +10,6 @@ export default function Home() {
     <div className="relative flex flex-col min-h-screen text-white">
       <MovingBackground />
 
-
       <div className="absolute top-0 right-0 m-5 flex flex-wrap gap-4 z-20">
         <GlassCard
           displacementScale={100}
@@ -54,8 +53,6 @@ export default function Home() {
             priority
             className="drop-shadow-lg -translate-y-8 mb-[-1rem]"
           />
-
-
         </div>
       </div>
     </div>
