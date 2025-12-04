@@ -4,12 +4,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { GlassCard } from '@developer-hub/liquid-glass'
 
-
 export default function Home() {
-
   return (
     <div className="relative flex flex-col justify-between h-screen text-white overflow-hidden">
-
       <div className="absolute inset-0 -z-10">
         <Image
           src="/images/background-picture.jpg"
@@ -71,7 +68,6 @@ export default function Home() {
           padding="0"
           className="overflow-hidden border border-white/20 bg-white/10 max-w-none w-[32rem] h-[32rem]"
         >
-
           <Image
             src="/images/create-3.png"
             alt="Example event 1"

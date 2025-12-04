@@ -4,7 +4,6 @@ import './globals.css'
 import Providers from './providers'
 import LayoutWrapper from '@/components/LayoutWrapper'
 //import Iridescence from '@/components/Iridescence'
-import MovingBackground from '@/components/MovingBackground'
 //import MetallicBackground from '@/components/MetallicBackground' // NY FIL
 import Image from 'next/image'
 
