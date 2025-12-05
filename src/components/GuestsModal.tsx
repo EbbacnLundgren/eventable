@@ -31,9 +31,9 @@ export default function GuestsModal({
 
   const isShared =
     acceptedIds.length +
-    declinedIds.length +
-    pendingIds.length +
-    maybeIds.length >
+      declinedIds.length +
+      pendingIds.length +
+      maybeIds.length >
     0
 
   const getProfiles = (ids: string[]) =>
@@ -117,10 +117,11 @@ export default function GuestsModal({
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
-                    className={`pb-2 ${activeTab === tab.key
+                    className={`pb-2 ${
+                      activeTab === tab.key
                         ? 'font-bold border-b-2 border-black'
                         : 'text-gray-500'
-                      }`}
+                    }`}
                   >
                     ({tab.ids.length}) {tab.label}
                   </button>
@@ -153,10 +154,10 @@ export default function GuestsModal({
 
                 {getProfiles(tabs.find((t) => t.key === activeTab)!.ids)
                   .length === 0 && (
-                    <p className="text-gray-500 text-center mt-6">
-                      No guests in this category.
-                    </p>
-                  )}
+                  <p className="text-gray-500 text-center mt-6">
+                    No guests in this category.
+                  </p>
+                )}
               </div>
             </div>
           </div>
