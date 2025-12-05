@@ -26,7 +26,6 @@ export default function Home() {
           cornerRadius={12}
           padding="16px 24px"
           className="border border-white/40 bg-white/20 hover:bg-white/50 cursor-pointer"
-
         >
           <Link href="/login" className="text-white text-lg font-semibold">
             Login
