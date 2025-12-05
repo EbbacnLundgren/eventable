@@ -51,7 +51,7 @@ export default function GuestsModal({
 
   return (
     <>
-      {/* CLICKABLE INVITED TEXT */}
+      {/* Clickable text */}
       <div
         className="flex items-center gap-2 cursor-pointer"
         onClick={() => setOpen(true)}
@@ -65,7 +65,7 @@ export default function GuestsModal({
         )}
       </div>
 
-      {/* AVATAR ROW */}
+      {/* Row of invited users */}
       <div className="flex items-center mt-2 gap-2">
         {invitedProfiles.slice(0, 12).map((p) => (
           <div
@@ -87,8 +87,7 @@ export default function GuestsModal({
         ))}
       </div>
 
-      {/* POPUP OVERLAY */}
-      {/* MODAL */}
+      {/* Pop-up window */}
       {open && (
         <div className="fixed inset-0 flex items-start mt-[18.5rem] justify-center z-[9999]">
           <div
@@ -104,7 +103,7 @@ export default function GuestsModal({
 
             <h2 className="text-xl font-bold mb-4 text-center">Invites</h2>
 
-            {/* TABS — 4 columns */}
+            {/* Tabs with invite status*/}
             <div className="grid grid-cols-4 text-center mb-6 gap-2">
               {tabs.map((tab) => (
                 <button
@@ -120,7 +119,7 @@ export default function GuestsModal({
               ))}
             </div>
 
-            {/* LIST OF PROFILES */}
+            {/* List with invited users*/}
             <div className="space-y-4">
               {getProfiles(tabs.find((t) => t.key === activeTab)!.ids).map(
                 (p) => (
@@ -144,7 +143,7 @@ export default function GuestsModal({
                 )
               )}
 
-              {/* EMPTY STATE */}
+              {/*If there are no users in a certain category*/}
               {getProfiles(tabs.find((t) => t.key === activeTab)!.ids)
                 .length === 0 && (
                 <p className="text-gray-500 text-center mt-6">
