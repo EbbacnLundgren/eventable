@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Users, X } from 'lucide-react'
 import Image from 'next/image'
+import Portal from './Portal'
 
 type Props = {
   acceptedIds: string[]
@@ -30,9 +31,9 @@ export default function GuestsModal({
 
   const isShared =
     acceptedIds.length +
-    declinedIds.length +
-    pendingIds.length +
-    maybeIds.length >
+      declinedIds.length +
+      pendingIds.length +
+      maybeIds.length >
     0
 
   const getProfiles = (ids: string[]) =>
@@ -89,70 +90,78 @@ export default function GuestsModal({
 
       {/* Pop-up window */}
       {open && (
-        <div className="absolute inset-0 flex items-start mt-[18.5rem] justify-center z-[9999]">
+        // BACKDROP
+        <Portal>
           <div
-            className="bg-white rounded-3xl p-8 w-[90%] max-w-3xl text-black relative max-h-[95vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999]"
+            onClick={() => setOpen(false)} // click outside closes modal
           >
-            <button
-              onClick={() => setOpen(false)}
-              className="absolute top-4 right-4 text-black"
+            {/* MODAL */}
+            <div
+              className="bg-white rounded-3xl p-8 w-[90%] max-w-4xl text-black relative max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
             >
-              <X size={22} />
-            </button>
+              {/* Close button */}
+              <button
+                onClick={() => setOpen(false)}
+                className="absolute top-4 right-4 text-black"
+              >
+                <X size={22} />
+              </button>
 
-            <h2 className="text-xl font-bold mb-4 text-center">Invites</h2>
+              <h2 className="text-2xl font-bold mb-6 text-center">Invites</h2>
 
-            {/* Tabs with invite status*/}
-            <div className="grid grid-cols-4 text-center mb-6 gap-2">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`
-                    pb-2 
-                    ${activeTab === tab.key ? 'font-bold border-b-2 border-black' : 'text-gray-500'}
-                  `}
-                >
-                  ({tab.ids.length}) {tab.label}
-                </button>
-              ))}
-            </div>
+              {/* Tabs */}
+              <div className="grid grid-cols-4 text-center mb-6 gap-2">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`pb-2 ${
+                      activeTab === tab.key
+                        ? 'font-bold border-b-2 border-black'
+                        : 'text-gray-500'
+                    }`}
+                  >
+                    ({tab.ids.length}) {tab.label}
+                  </button>
+                ))}
+              </div>
 
-            {/* List with invited users*/}
-            <div className="space-y-4">
-              {getProfiles(tabs.find((t) => t.key === activeTab)!.ids).map(
-                (p) => (
-                  <div key={p.id} className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300">
-                      {p.avatar_url ? (
-                        <img
-                          src={p.avatar_url}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-300" />
-                      )}
+              {/* List */}
+              <div className="space-y-4">
+                {getProfiles(tabs.find((t) => t.key === activeTab)!.ids).map(
+                  (p) => (
+                    <div key={p.id} className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300">
+                        {p.avatar_url ? (
+                          <img
+                            src={p.avatar_url}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-300" />
+                        )}
+                      </div>
+
+                      <div className="text-lg">
+                        {(p.first_name || p.last_name) &&
+                          `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim()}
+                      </div>
                     </div>
+                  )
+                )}
 
-                    <div className="text-lg">
-                      {(p.first_name || p.last_name) &&
-                        `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim()}
-                    </div>
-                  </div>
-                )
-              )}
-
-              {/*If there are no users in a certain category*/}
-              {getProfiles(tabs.find((t) => t.key === activeTab)!.ids)
-                .length === 0 && (
+                {getProfiles(tabs.find((t) => t.key === activeTab)!.ids)
+                  .length === 0 && (
                   <p className="text-gray-500 text-center mt-6">
                     No guests in this category.
                   </p>
                 )}
+              </div>
             </div>
           </div>
-        </div>
+        </Portal>
       )}
     </>
   )
