@@ -2,13 +2,19 @@
 
 import { useState } from 'react'
 import { Users, X } from 'lucide-react'
+import Image from 'next/image'
 
 type Props = {
   acceptedIds: string[]
   declinedIds: string[]
   maybeIds: string[]
   pendingIds: string[]
-  invitedProfiles: { id: string; avatar_url: string | null }[]
+  invitedProfiles: {
+    id: string
+    avatar_url: string | null
+    first_name: string | null
+    last_name: string | null
+  }[]
 }
 
 export default function GuestsModal({
@@ -28,6 +34,20 @@ export default function GuestsModal({
       pendingIds.length +
       maybeIds.length >
     0
+
+  const getProfiles = (ids: string[]) =>
+    invitedProfiles.filter((p) => ids.includes(p.id))
+
+  const tabs = [
+    { key: 'accepted', label: 'Accepted', ids: acceptedIds },
+    { key: 'declined', label: 'Declined', ids: declinedIds },
+    { key: 'maybe', label: 'Maybe', ids: maybeIds },
+    { key: 'pending', label: 'Pending', ids: pendingIds },
+  ] as const
+
+  const [activeTab, setActiveTab] = useState<
+    'accepted' | 'declined' | 'maybe' | 'pending'
+  >('accepted')
 
   return (
     <>
@@ -53,7 +73,13 @@ export default function GuestsModal({
             className="w-10 h-10 rounded-full overflow-hidden bg-white border border-black"
           >
             {p.avatar_url ? (
-              <img src={p.avatar_url} className="w-full h-full object-cover" />
+              <Image
+                src={p.avatar_url}
+                alt="Guest avatar"
+                width={40}
+                height={40}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <div className="w-full h-full bg-gray-300" />
             )}
@@ -62,14 +88,11 @@ export default function GuestsModal({
       </div>
 
       {/* POPUP OVERLAY */}
+      {/* MODAL */}
       {open && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]"
-          onClick={() => setOpen(false)}
-        >
-          {/* MODAL */}
+        <div className="fixed inset-0 flex items-start mt-[18.5rem] justify-center z-[9999]">
           <div
-            className="bg-white rounded-3xl p-6 w-80 text-black relative"
+            className="bg-white rounded-3xl p-8 w-[90%] max-w-3xl text-black relative max-h-[95vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -79,13 +102,55 @@ export default function GuestsModal({
               <X size={22} />
             </button>
 
-            <h2 className="text-xl font-bold mb-4">Guests</h2>
+            <h2 className="text-xl font-bold mb-4 text-center">Invites</h2>
 
-            <div className="space-y-3">
-              <p>( {acceptedIds.length} ) Accepted</p>
-              <p>( {declinedIds.length} ) Declined</p>
-              <p>( {maybeIds.length} ) Maybe</p>
-              <p>( {pendingIds.length} ) Pending</p>
+            {/* TABS — 4 columns */}
+            <div className="grid grid-cols-4 text-center mb-6 gap-2">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`
+                    pb-2 
+                    ${activeTab === tab.key ? 'font-bold border-b-2 border-black' : 'text-gray-500'}
+                  `}
+                >
+                  ({tab.ids.length}) {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* LIST OF PROFILES */}
+            <div className="space-y-4">
+              {getProfiles(tabs.find((t) => t.key === activeTab)!.ids).map(
+                (p) => (
+                  <div key={p.id} className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300">
+                      {p.avatar_url ? (
+                        <img
+                          src={p.avatar_url}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-300" />
+                      )}
+                    </div>
+
+                    <div className="text-lg">
+                      {(p.first_name || p.last_name) &&
+                        `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim()}
+                    </div>
+                  </div>
+                )
+              )}
+
+              {/* EMPTY STATE */}
+              {getProfiles(tabs.find((t) => t.key === activeTab)!.ids)
+                .length === 0 && (
+                <p className="text-gray-500 text-center mt-6">
+                  No guests in this category.
+                </p>
+              )}
             </div>
           </div>
         </div>
