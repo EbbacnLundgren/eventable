@@ -31,9 +31,9 @@ export default function GuestsModal({
 
   const isShared =
     acceptedIds.length +
-      declinedIds.length +
-      pendingIds.length +
-      maybeIds.length >
+    declinedIds.length +
+    pendingIds.length +
+    maybeIds.length >
     0
 
   const getProfiles = (ids: string[]) =>
@@ -98,7 +98,7 @@ export default function GuestsModal({
           >
             {/* MODAL */}
             <div
-              className="bg-white rounded-3xl p-8 w-[90%] max-w-4xl text-black relative max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-3xl  p-8 w-[90%] max-w-4xl  text-black relative max-h-[90vh] overflow-y-auto min-h-[400px]"
               onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
             >
               {/* Close button */}
@@ -109,7 +109,7 @@ export default function GuestsModal({
                 <X size={22} />
               </button>
 
-              <h2 className="text-2xl font-bold mb-6 text-center">Invites</h2>
+              <h2 className="text-2xl font-bold mb-12 text-center">Invites</h2>
 
               {/* Tabs */}
               <div className="grid grid-cols-4 text-center mb-6 gap-2">
@@ -117,11 +117,10 @@ export default function GuestsModal({
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
-                    className={`pb-2 ${
-                      activeTab === tab.key
+                    className={`pb-2 ${activeTab === tab.key
                         ? 'font-bold border-b-2 border-black'
                         : 'text-gray-500'
-                    }`}
+                      }`}
                   >
                     ({tab.ids.length}) {tab.label}
                   </button>
@@ -132,7 +131,7 @@ export default function GuestsModal({
               <div className="space-y-4">
                 {getProfiles(tabs.find((t) => t.key === activeTab)!.ids).map(
                   (p) => (
-                    <div key={p.id} className="flex items-center gap-4">
+                    <div key={p.id} className="flex items-center gap-4 pl-7">
                       <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300">
                         {p.avatar_url ? (
                           <img
@@ -154,10 +153,10 @@ export default function GuestsModal({
 
                 {getProfiles(tabs.find((t) => t.key === activeTab)!.ids)
                   .length === 0 && (
-                  <p className="text-gray-500 text-center mt-6">
-                    No guests in this category.
-                  </p>
-                )}
+                    <p className="text-gray-500 text-center mt-6">
+                      No guests in this category.
+                    </p>
+                  )}
               </div>
             </div>
           </div>
