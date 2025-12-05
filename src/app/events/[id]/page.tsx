@@ -8,6 +8,7 @@ import { ArrowLeft } from 'lucide-react'
 import ShareEventButton from '@/components/shareEvents'
 import AutoAddInvite from '@/components/AutoAddInvite'
 import InviteForm from '@/components/InviteForm'
+import GuestsModal from '@/components/GuestsModal'
 
 import {
   MapPin,
@@ -15,6 +16,7 @@ import {
   Clock,
   User,
   MessageCircleWarning,
+  Users,
 } from 'lucide-react'
 
 import { formatEventDuration } from '@/lib/formatEventDuration'
@@ -140,6 +142,23 @@ export default async function EventDetailsPage({
     console.error('Error fetching invites for event detail:', e)
   }
 
+  // Fetch invited user profiles
+  let invitedProfiles: any[] = []
+  try {
+    const allIds = [...acceptedIds, ...declinedIds, ...pendingIds, ...maybeIds]
+
+    if (allIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from('google_users')
+        .select('id, first_name, last_name, avatar_url')
+        .in('id', allIds)
+
+      invitedProfiles = profiles || []
+    }
+  } catch (e) {
+    console.error('Error fetching invited profiles:', e)
+  }
+
   return (
     <main className="min-h-screen  text-white py-10 px-6">
       <DynamicBackground imageUrl={event.image} />
@@ -238,6 +257,14 @@ export default async function EventDetailsPage({
                 </div>
               )}
 
+              <GuestsModal
+                acceptedIds={acceptedIds}
+                declinedIds={declinedIds}
+                pendingIds={pendingIds}
+                maybeIds={maybeIds}
+                invitedProfiles={invitedProfiles}
+              />
+
               {event.description && (
                 <div className="my-8">
                   <h2 className="font-semibold text-lg mb-2">
@@ -249,9 +276,16 @@ export default async function EventDetailsPage({
                   </div>
                 </div>
               )}
-            </div>
 
-            <AutoAddInvite eventId={Number(event.id)} />
+              <div className="-mt-4 flex justify-start">
+                <ShareEventButton eventId={event.id} />
+              </div>
+            </div>
+          </div>
+
+          <AutoAddInvite eventId={Number(event.id)} />
+
+          {/*
 
             <InviteStatusList
               acceptedIds={acceptedIds.filter((id) => id !== event.user_id)}
@@ -277,29 +311,32 @@ export default async function EventDetailsPage({
               </Link>
             </div>
           </div>
-        </div>
+        </div> */}
 
-        {/* --- Right: Placeholder icons --- */}
-        <div className="flex flex-col items-center gap-6">
-          <a
-            href="https://open.spotify.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-4 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 shadow-md transition transform hover:scale-105 hover:shadow-md"
-            title="Open Spotify Playlist"
-          >
-            <Music size={36} className="text-white" />
-          </a>
+          {/* --- Right: Placeholder icons --- */}
+          {/*
+          <div className="flex flex-col items-center gap-6">
+            <a
+              href="https://open.spotify.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 shadow-md transition transform hover:scale-105 hover:shadow-md"
+              title="Open Spotify Playlist"
+            >
+              <Music size={36} className="text-white" />
+            </a>
 
-          <a
-            href="https://www.google.com/intl/en/photos/about/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-4 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 shadow-md transition transform hover:scale-105 hover:shadow-md"
-            title="Open Photo Album"
-          >
-            <Camera size={36} className="text-white" />
-          </a>
+            <a
+              href="https://www.google.com/intl/en/photos/about/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 shadow-md transition transform hover:scale-105 hover:shadow-md"
+              title="Open Photo Album"
+            >
+              <Camera size={36} className="text-white" />
+            </a>
+          </div>
+          */}
         </div>
       </div>
     </main>

@@ -22,7 +22,7 @@ export default function ShareEventButton({
         <button
           type="button"
           onClick={onClick}
-          className="flex items-center gap-2 bg-purple-400 px-4 py-2 rounded-lg hover:bg-white/30 transition text-white"
+          className="border border-black text-black bg-transparent px-4 py-2 rounded-lg hover:bg-black/10 flex items-center gap-2"
         >
           <Share2 size={24} /> Share event
         </button>
