@@ -49,37 +49,49 @@ export default function UpdatePasswordPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-pink-100">
+    <main className="min-h-screen flex items-center justify-center bg-pink-100 px-4">
       <div className="flex flex-col items-center">
-        <Image
-          src="/images/icon.png"
-          alt="Eventable logo"
-          width={200}
-          height={200}
-          unoptimized
-          className="mb-4 mix-blend-multiply rounded-full drop-shadow-[0_0_35px_rgba(255,192,203,0.7)]"
-        />
-        <div className="border p-6 rounded-xl shadow-md w-80 bg-white/80 backdrop-blur-md border-pink-200 text-gray-800">
-          <h2 className="text-xl font-bold mb-2 text-center text-pink-700">
+        <div
+          className="
+            border px-10 py-8 rounded-2xl shadow-lg w-full max-w-md
+            bg-white/80 backdrop-blur-xl border-pink-200 text-gray-800
+          "
+        >
+          <h1 className="text-4xl font-extrabold text-center text-pink-600 drop-shadow-sm tracking-tight mb-1">
+            Eventable
+          </h1>
+
+          <p className="text-gray-700 text-center font-medium -mt-1 mb-6">
             Set a new password
-          </h2>
-          <p className="text-sm text-gray-700 text-center mb-4">
-            Enter your new password below.
           </p>
 
-          <form onSubmit={handleUpdate} className="flex flex-col gap-3">
-            <input
-              type="password"
-              placeholder="New password"
-              title="Must be at least 8 characters long and include a number, a letter, and a special character."
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="border p-2 rounded text-black focus:ring-2 focus:ring-pink-400"
-              required
-            />
+          <form onSubmit={handleUpdate} className="flex flex-col gap-4">
+            <div className="flex flex-col">
+              <label className="mb-1 text-sm font-medium text-gray-700">
+                New password
+              </label>
+
+              <input
+                type="password"
+                placeholder="Enter a new password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="
+                  w-full p-2 rounded-xl border border-gray-300 text-black 
+                  focus:outline-none focus:ring-2 focus:ring-blue-400 
+                  focus:border-transparent transition
+                "
+                required
+              />
+            </div>
+
             <button
               type="submit"
-              className="p-2 rounded text-white bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 transition font-semibold"
+              className="
+                w-full p-2 mt-2 rounded-xl border border-pink-400 font-semibold transition
+                bg-gradient-to-r from-pink-500 to-pink-600
+                hover:from-pink-600 hover:to-pink-700 text-white
+              "
             >
               Update password
             </button>
@@ -87,9 +99,10 @@ export default function UpdatePasswordPage() {
 
           {message && (
             <p
-              className={`mt-3 text-center text-sm ${
-                status === 'success' ? 'text-green-600' : 'text-red-500'
-              }`}
+              className={`
+                mt-4 text-center text-sm
+                ${status === 'success' ? 'text-green-600' : 'text-red-500'}
+              `}
             >
               {message}
             </p>
