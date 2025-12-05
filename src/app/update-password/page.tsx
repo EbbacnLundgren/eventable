@@ -3,7 +3,6 @@
 import { useState, FormEvent, useEffect } from 'react'
 import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 
 export default function UpdatePasswordPage() {
   const [password, setPassword] = useState('')
