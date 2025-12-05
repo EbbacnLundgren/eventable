@@ -25,7 +25,8 @@ export default function Home() {
           blurAmount={0.3}
           cornerRadius={12}
           padding="16px 24px"
-          className="border border-white/40 bg-white/20 cursor-pointer"
+          className="border border-white/40 bg-white/20 hover:bg-white/50 cursor-pointer"
+
         >
           <Link href="/login" className="text-white text-lg font-semibold">
             Login
@@ -37,9 +38,9 @@ export default function Home() {
           blurAmount={0.3}
           cornerRadius={12}
           padding="16px 24px"
-          className="border border-white/40 bg-white/20 cursor-pointer"
+          className="border border-white/40 bg-white/20 hover:bg-white/50 cursor-pointer"
         >
-          <Link href="/signup" className="text-white text-lg font-semibold">
+          <Link href="/signup" className="text-white text-lg font-semibold ">
             Sign up
           </Link>
         </GlassCard>
