@@ -30,9 +30,9 @@ export default function GuestsModal({
 
   const isShared =
     acceptedIds.length +
-      declinedIds.length +
-      pendingIds.length +
-      maybeIds.length >
+    declinedIds.length +
+    pendingIds.length +
+    maybeIds.length >
     0
 
   const getProfiles = (ids: string[]) =>
@@ -89,7 +89,7 @@ export default function GuestsModal({
 
       {/* Pop-up window */}
       {open && (
-        <div className="fixed inset-0 flex items-start mt-[18.5rem] justify-center z-[9999]">
+        <div className="absolute inset-0 flex items-start mt-[18.5rem] justify-center z-[9999]">
           <div
             className="bg-white rounded-3xl p-8 w-[90%] max-w-3xl text-black relative max-h-[95vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
@@ -146,10 +146,10 @@ export default function GuestsModal({
               {/*If there are no users in a certain category*/}
               {getProfiles(tabs.find((t) => t.key === activeTab)!.ids)
                 .length === 0 && (
-                <p className="text-gray-500 text-center mt-6">
-                  No guests in this category.
-                </p>
-              )}
+                  <p className="text-gray-500 text-center mt-6">
+                    No guests in this category.
+                  </p>
+                )}
             </div>
           </div>
         </div>
