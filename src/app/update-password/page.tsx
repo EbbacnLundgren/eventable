@@ -3,6 +3,8 @@
 import { useState, FormEvent, useEffect } from 'react'
 import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
+import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 
 export default function UpdatePasswordPage() {
   const [password, setPassword] = useState('')
@@ -49,6 +51,16 @@ export default function UpdatePasswordPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-pink-100 px-4">
+      <Link
+        href={`/`}
+        className="fixed top-4 left-4 z-50 flex items-center gap-1
+             text-white hover:text-pink-200
+             bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
+      >
+        <ArrowLeft size={20} />
+        <span className="font-semibold"></span>
+      </Link>
+
       <div className="flex flex-col items-center">
         <div
           className="

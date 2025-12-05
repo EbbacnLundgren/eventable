@@ -10,6 +10,9 @@ import { useSession } from 'next-auth/react'
 //import Link from 'next/link'
 import DynamicBackground from '@/components/DynamicBackground'
 import ImageSelector from '@/components/ImageSelector' //Hanterar bildval
+import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
+
 //import ImageCropper from '@/components/ImageAdjust'
 //import ImageAdjust from '@/components/ImageAdjust' //Justare placering och zooma av bild
 
@@ -284,15 +287,16 @@ export default function CreateEventPage() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
       <DynamicBackground imageUrl={selectedImage} />
-      {/*
-      <Link
-        href="/main"
-        className="fixed top-4 left-4 text-pink-600 hover:text-pink-800 z-50"
-        aria-label="Back to main page"
-      >
-        <ArrowLeft size={26} />
-      </Link>*/}
 
+      <Link
+        href={`/main`}
+        className="fixed top-4 left-4 z-50 flex items-center gap-1
+             text-white hover:text-pink-200
+             bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
+      >
+        <ArrowLeft size={20} />
+        <span className="font-semibold"></span>
+      </Link>
       <form
         onSubmit={handleSubmit}
         onKeyDown={(e) => {
