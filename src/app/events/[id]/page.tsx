@@ -142,8 +142,15 @@ export default async function EventDetailsPage({
     console.error('Error fetching invites for event detail:', e)
   }
 
+  type InvitedProfile = {
+    id: string
+    first_name: string | null
+    last_name: string | null
+    avatar_url: string | null
+  }
+
   // Fetch invited user profiles
-  let invitedProfiles: any[] = []
+  let invitedProfiles: InvitedProfile[] = []
   try {
     const allIds = [...acceptedIds, ...declinedIds, ...pendingIds, ...maybeIds]
 
