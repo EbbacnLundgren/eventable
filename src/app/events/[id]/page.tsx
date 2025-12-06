@@ -2,12 +2,12 @@ import { supabase } from '@/lib/client'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Camera, Music } from 'lucide-react'
+//import { Camera, Music } from 'lucide-react'
 import { ArrowLeft } from 'lucide-react'
 
 import ShareEventButton from '@/components/shareEvents'
 import AutoAddInvite from '@/components/AutoAddInvite'
-import InviteForm from '@/components/InviteForm'
+//import InviteForm from '@/components/InviteForm'
 import GuestsModal from '@/components/GuestsModal'
 
 import {
@@ -16,11 +16,11 @@ import {
   Clock,
   User,
   MessageCircleWarning,
-  Users,
+  //Users,
 } from 'lucide-react'
 
 import { formatEventDuration } from '@/lib/formatEventDuration'
-import InviteStatusList from '@/components/InviteStatusList'
+//import InviteStatusList from '@/components/InviteStatusList'
 import EditEventButton from '@/components/editEventsButton'
 
 import DynamicBackground from '@/components/DynamicBackground'
