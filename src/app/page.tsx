@@ -3,8 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { GlassCard } from '@developer-hub/liquid-glass'
+import { useState } from 'react'
+import Intro from '@/components/intro'
 
 export default function Home() {
+  const [openIntro, setOpenIntro] = useState(false)
   return (
     <div className="relative flex flex-col min-h-screen text-white overflow-hidden">
       {/* Background */}
@@ -73,6 +76,19 @@ export default function Home() {
           <p className="text-2xl sm:text-3xl md:text-4xl font-semibold font-sans text-[#1B0D6B] -mt-20">
             A seamless way to create, find and explore events. Enjoy!
           </p>
+
+          <GlassCard
+            displacementScale={80}
+            blurAmount={0.3}
+            cornerRadius={12}
+            padding="16px 24px"
+            className="border border-white/40 bg-white/20 hover:bg-white/50 mt-8 cursor-pointer"
+            onClick={() => setOpenIntro(true)}
+          >
+            <span className="text-white text-lg font-semibold">
+              What is Eventable?
+            </span>
+          </GlassCard>
         </div>
 
         {/* RIGHT SIDE IMAGE */}
@@ -104,6 +120,7 @@ export default function Home() {
       <div className="mt-auto pb-4 text-center text-xs text-white/50">
         © {new Date().getFullYear()} Eventable
       </div>
+      <Intro open={openIntro} onClose={() => setOpenIntro(false)} />
     </div>
   )
 }
