@@ -84,7 +84,7 @@ export default function SignupBox() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-pink-100 relative">
+    <main className="min-h-screen flex items-center justify-center relative">
       {/* Tillbaka-knapp – ligger UTANFÖR kortet */}
       <Link
         href="/"

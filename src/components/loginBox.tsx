@@ -75,7 +75,7 @@ export default function LoginBox() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-pink-100 relative">
+    <main className="min-h-screen flex items-center justify-center relative">
       {/* Tillbaka-knapp – ligger UTANFÖR kortet */}
       <Link
         href="/"
@@ -85,7 +85,7 @@ export default function LoginBox() {
       >
         <ArrowLeft size={20} />
       </Link>
-      <div className="border px-10 py-8 rounded-2xl shadow-lg w-full max-w-md bg-white/80 backdrop-blur-xl border-pink-200">
+      <div className="border px-20 py-8 rounded-2xl shadow-lg w-full max-w-md bg-white/80 backdrop-blur-xl border-pink-200">
         {/* <Image
         src="/images/icon.png"
         alt="Eventable logo"
