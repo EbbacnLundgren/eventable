@@ -2,10 +2,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/client'
 import EventSection from '@/components/eventsection'
-import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import type { Event } from '@/types/event'
-import { Plus } from 'lucide-react'
 import AdvancedFilters, {
   AdvancedFilterState,
 } from '@/components/AdvancedFilters'
@@ -426,15 +424,16 @@ export default function MainPage() {
 
   return (
     <div className="min-h-screen text-white flex flex-col items-center pt-8">
-      <Link
+      {/* <Link
         href="/createEvent"
-        className="group w-fit inline-flex items-center mb-8 text-white bg-gradient-to-r from-pink-500 to-orange-400 
+        className="group w-fit inline-flex items-center mb-8 text-white bg-gradient-to-r from-[#4C80A8] to-[#89BEE3] 
              shadow-lg font-semibold rounded-lg text-lg px-8 py-4 
              transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl"
       >
         <Plus className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
         Create Event
-      </Link>
+      </Link> */}
+
       <AdvancedFilters filters={filters} onFiltersChange={setFilters} />
 
       <EventSection

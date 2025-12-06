@@ -1,8 +1,8 @@
 // components/LayoutWrapper.tsx
 'use client'
 import { usePathname } from 'next/navigation'
-import Sidebar from './Sidebar'
 //import Footer from './footer'
+import Header from './header'
 
 export default function LayoutWrapper({
   children,
@@ -21,10 +21,16 @@ export default function LayoutWrapper({
 
   return (
     <>
-      {!hideLayout && <Sidebar />}
-      <div className="flex flex-col min-h-screen">
-        <main className="flex-1">{children}</main>
-      </div>
+      {/* {!hideLayout && <Sidebar />} */}
+      {!hideLayout && (
+        <div className="flex flex-col min-h-screen">
+          {' '}
+          {/* ml-24 för att ge plats åt sidebar */}
+          <Header />
+          <main className="flex-1">{children}</main>
+        </div>
+      )}
+      {hideLayout && <main className="flex-1">{children}</main>}
     </>
   )
 }

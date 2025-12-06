@@ -14,7 +14,18 @@ export default function Home() {
           alt="Background"
           fill
           priority
-          className="object-cover"
+          className="object-cover scale-x-[-1]"
+        />
+      </div>
+      {/* Overlay för mörkare topp*/}
+      <div className="absolute top-0 left-0 w-full h-[25%] pointer-events-none">
+        <div
+          className="w-full h-full"
+          style={{
+            background:
+              'linear-gradient(to bottom, rgba(35, 106, 168, 0.6), rgba(249, 198, 244, 0))',
+            mixBlendMode: 'multiply',
+          }}
         />
       </div>
 
@@ -65,24 +76,27 @@ export default function Home() {
         </div>
 
         {/* RIGHT SIDE IMAGE */}
-        <div className="flex justify-center overflow-hidden lg:justify-end w-full lg:w-auto mt-10 lg:mt-20 rounded-xl ">
-          <Image
-            src="/images/create-3.png"
-            alt="Example event 1"
-            width={400}
-            height={400}
-            className="
-  object-contain 
-  rounded-xl 
-  shadow-xl
-  
-  w-[14rem] h-[14rem]
-  sm:w-[18rem] sm:h-[18rem]
-  md:w-[22rem] md:h-[22rem]
-  lg:w-[24rem] lg:h-[24rem]
-  xl:w-[26rem] xl:h-[26rem]
-"
-          />
+        <div className="flex justify-center lg:justify-end w-full lg:w-auto mt-10 lg:mt-4 pt-20">
+          <GlassCard
+            displacementScale={20}
+            blurAmount={0.2}
+            cornerRadius={18}
+            padding="0"
+            className="overflow-hidden border border-white/20 bg-white/10
+                       w-[18rem] h-[18rem]
+                       sm:w-[22rem] sm:h-[22rem]
+                       md:w-[26rem] md:h-[26rem]
+                       lg:w-[28rem] lg:h-[28rem]
+                       xl:w-[32rem] xl:h-[32rem]"
+          >
+            <Image
+              src="/images/create-3.png"
+              alt="Example event 1"
+              width={500}
+              height={500}
+              className="object-cover w-full h-full"
+            />
+          </GlassCard>
         </div>
       </div>
 

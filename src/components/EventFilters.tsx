@@ -18,8 +18,8 @@ export default function EventFilters({
   const tabClass = (filter: FilterType) =>
     `rounded-md font-medium py-2.5 transition-all ${
       activeFilter === filter
-        ? 'bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-lg'
-        : 'text-white/80 hover:text-white hover:bg-white/10'
+        ? 'bg-white text-[#1B2A4A] shadow-lg'
+        : 'text-[#1B2A4A] hover:text-[#2A3F6C] hover:bg-white/20'
     }`
 
   return (
@@ -31,13 +31,13 @@ export default function EventFilters({
       >
         <TabsList
           className="
-    grid w-full grid-cols-4
-    bg-white/20 backdrop-blur-md
-    border border-white/30
-    p-1 rounded-xl
-    gap-1
-    min-h-[48px]
-  "
+          grid w-full grid-cols-4
+          bg-[#FFD4FC] backdrop-blur-md
+          border-2 border-white/90
+          p-1 rounded-xl
+          gap-1
+          min-h-[48px]
+        "
         >
           <TabsTrigger
             value="upcoming"
@@ -45,7 +45,7 @@ export default function EventFilters({
             onClick={() => onFilterChange('upcoming')}
           >
             <span className="flex items-center justify-center  gap-1.5">
-              <span className="px-2 py-0.5 text-xs rounded-full bg-white/20 text-white">
+              <span className="px-2 py-0.5 text-xs rounded-full bg-white text--[#1B2A4A]">
                 {counts.upcoming}
               </span>
               Upcoming
@@ -57,7 +57,7 @@ export default function EventFilters({
             onClick={() => onFilterChange('hosting')}
           >
             <span className="flex items-center justify-center gap-2">
-              <span className="px-2 py-0.5 text-xs rounded-full bg-white/20 text-white">
+              <span className="px-2 py-0.5 text-xs rounded-full bg-white text-[#1B2A4A]">
                 {counts.hosting}
               </span>
               Hosting
@@ -70,7 +70,7 @@ export default function EventFilters({
             onClick={() => onFilterChange('past')}
           >
             <span className="flex items-center justify-center  gap-2">
-              <span className="px-2 py-0.5 text-xs rounded-full bg-white/20 text-white">
+              <span className="px-2 py-0.5 text-xs rounded-full bg-white text-[#1B2A4A]">
                 {counts.past}
               </span>
               Past
@@ -83,7 +83,7 @@ export default function EventFilters({
             onClick={() => onFilterChange('declined')}
           >
             <span className="flex items-center justify-center  gap-2">
-              <span className="px-2 py-0.5 text-xs rounded-full bg-white/20 text-white">
+              <span className="px-2 py-0.5 text-xs rounded-full bg-white text-[#1B2A4A]">
                 {counts.declined}
               </span>
               Declined

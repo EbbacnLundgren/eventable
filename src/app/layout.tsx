@@ -3,8 +3,6 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import Providers from './providers'
 import LayoutWrapper from '@/components/LayoutWrapper'
-//import Iridescence from '@/components/Iridescence'
-//import MetallicBackground from '@/components/MetallicBackground' // NY FIL
 import Image from 'next/image'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
@@ -46,17 +44,22 @@ export default function RootLayout({
                 alt="Background"
                 fill
                 priority
-                className="object-cover"
+                className="object-cover scale-x-[-1]"
               />
+
+              {/* Overlay för mörkare topp*/}
+              <div className="absolute top-0 left-0 w-full h-[25%] pointer-events-none">
+                <div
+                  className="w-full h-full"
+                  style={{
+                    background:
+                      'linear-gradient(to bottom, rgba(35, 106, 168, 0.73), rgba(249, 198, 244, 0))',
+                    mixBlendMode: 'multiply',
+                  }}
+                />
+              </div>
             </div>
           </div>
-          {/* <MetallicBackground />  */}
-          {/* <Iridescence
-            color={[1.0, 0.7, 0.9]}
-            mouseReact={false}
-            amplitude={0.1}
-            speed={0.4}
-          /> */}
           <LayoutWrapper>{children}</LayoutWrapper>
         </Providers>
       </body>

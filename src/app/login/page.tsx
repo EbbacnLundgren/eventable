@@ -4,7 +4,7 @@ import LoginBox from '@/components/loginBox'
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-pink-100 relative">
+    <main className="min-h-screen flex flex-col items-center justify-center relative">
       {/*<Link
         href="/"
         className="absolute left-4 top-4 px-3 py-1.5 rounded border border-black/20 bg-white/80 text-black text-sm hover:bg-white"
