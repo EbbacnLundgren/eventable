@@ -40,12 +40,10 @@ export default function ProfileSettingsPage() {
         setPhone(profile.phone_nbr ?? '')
         setEmail(profile.email ?? session.user.email ?? '')
 
-
         if (profile.avatar_url) {
           setProfileImage(profile.avatar_url + '?t=' + Date.now())
         } else if (session.user.image) {
           setProfileImage(session.user.image)
-
         } else {
           setProfileImage('')
         }
@@ -57,7 +55,6 @@ export default function ProfileSettingsPage() {
 
     fetchUser()
   }, [session])
-
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return
@@ -91,9 +88,7 @@ export default function ProfileSettingsPage() {
       const cleanUrl = urlData.publicUrl
       const cacheBusted = cleanUrl + '?t=' + Date.now()
 
-
       setProfileImage(cacheBusted)
-
 
       const { error: updateError } = await supabase
         .from('google_users')
@@ -123,7 +118,7 @@ export default function ProfileSettingsPage() {
         .update({
           first_name: firstName,
           last_name: lastName,
-          phone_nbr: phone
+          phone_nbr: phone,
         })
         .eq('id', userId)
 
