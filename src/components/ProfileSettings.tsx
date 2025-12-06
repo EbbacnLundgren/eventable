@@ -11,93 +11,75 @@ export default function ProfileSettingsPage() {
   const router = useRouter()
   const { data: session } = useSession()
 
-  const [profileImage, setProfileImage] = useState<string>('/placeholder.svg')
+  const [profileImage, setProfileImage] = useState<string>('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [userId, setUserId] = useState<string | null>(null)
 
-  // Hämta profil när session finns
   useEffect(() => {
     const fetchUser = async () => {
       if (!session?.user?.email) return
 
-      try {
-        const { data: profile, error } = await supabase
-          .from('google_users')
-          .select('*')
-          .eq('email', session.user.email)
-          .single()
+      const { data: profile, error } = await supabase
+        .from('google_users')
+        .select('*')
+        .eq('email', session.user.email)
+        .single()
 
-        if (error && error.code !== 'PGRST116') {
-          console.error('Error fetching profile:', error)
-          return
-        }
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching profile:', error)
+        return
+      }
 
-        if (profile) {
-          setUserId(profile.id)
-          setFirstName(profile.first_name ?? '')
-          setLastName(profile.last_name ?? '')
-          setPhone(profile.phone_nbr ?? '')
-          setEmail(profile.email ?? session.user.email ?? '')
+      if (profile) {
+        setUserId(profile.id)
+        setFirstName(profile.first_name ?? '')
+        setLastName(profile.last_name ?? '')
+        setPhone(profile.phone_nbr ?? '')
+        setEmail(profile.email ?? session.user.email ?? '')
 
-          // VIKTIGT: använd avatar_url om den finns, inget startsWith eller fallback här
-          setProfileImage(
-            profile.avatar_url ?? session.user.image ?? '/placeholder.svg'
-          )
+
+        if (profile.avatar_url) {
+          setProfileImage(profile.avatar_url + '?t=' + Date.now())
+        } else if (session.user.image) {
+          setProfileImage(session.user.image)
+
         } else {
-          setEmail(session.user.email ?? '')
-          setProfileImage(session.user.image ?? '/placeholder.svg')
+          setProfileImage('')
         }
-      } catch (err) {
-        console.error('Unexpected error:', err)
+      } else {
+        setEmail(session.user.email ?? '')
+        setProfileImage('')
       }
     }
 
     fetchUser()
   }, [session])
 
-  // Ladda upp avatar
-  // ----------------------------
-  // Ändra bara denna funktion
-  // ----------------------------
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('--- handleImageUpload called ---')
-
-    if (!e.target.files?.[0]) {
-      console.log('No file selected')
-      return
-    }
+    if (!e.target.files?.[0]) return
     const file = e.target.files[0]
-    console.log('Selected file:', file)
 
-    if (!userId) {
-      console.log('No userId, cannot upload')
-      return
-    }
+    if (!userId) return
 
     try {
       const fileExt = file.name.split('.').pop()
       const fileName = `${userId}.${fileExt}`
       const filePath = fileName
 
-      console.log('fileName:', fileName)
-      console.log('filePath:', filePath)
-
-      // valfritt: ta bort gamla varianter
       await supabase.storage
         .from('avatars')
         .remove([`${userId}.jpeg`, `${userId}.png`, `${userId}.jpg`])
 
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file, {
-          upsert: true,
-        })
+        .upload(filePath, file, { upsert: true })
 
       if (uploadError) {
-        console.error('Upload error:', uploadError)
+        console.error(uploadError)
         alert('Failed to upload image')
         return
       }
@@ -106,33 +88,32 @@ export default function ProfileSettingsPage() {
         .from('avatars')
         .getPublicUrl(filePath)
 
-      const cacheBustedUrl = `${urlData.publicUrl}?t=${Date.now()}`
-      console.log('Public URL:', cacheBustedUrl)
+      const cleanUrl = urlData.publicUrl
+      const cacheBusted = cleanUrl + '?t=' + Date.now()
 
-      // 1) uppdatera bilden i UI direkt
-      setProfileImage(cacheBustedUrl)
 
-      // 2) spara samma URL i DB, så den överlever reload
+      setProfileImage(cacheBusted)
+
+
       const { error: updateError } = await supabase
         .from('google_users')
-        .update({ avatar_url: cacheBustedUrl })
+        .update({ avatar_url: cleanUrl })
         .eq('id', userId)
 
       if (updateError) {
-        console.error('Failed to update avatar_url in DB:', updateError)
-        alert('Image uploaded, but failed to save in profile')
-      } else {
-        alert('Image uploaded successfully!')
+        console.error('Failed to update avatar_url:', updateError)
+        alert('Image uploaded but failed to save in DB')
+        return
       }
-    } catch (err) {
-      console.error('Unexpected error uploading file:', err)
-      alert('Failed to upload image')
-    }
 
-    console.log('--- handleImageUpload finished ---')
+      alert('Image uploaded successfully!')
+    } catch (err) {
+      console.error(err)
+      alert('Unexpected error')
+    }
   }
 
-  // Spara profil
+  // SAVE PROFILE
   const handleSaveProfile = async () => {
     if (!userId) return alert('User not logged in')
 
@@ -142,15 +123,15 @@ export default function ProfileSettingsPage() {
         .update({
           first_name: firstName,
           last_name: lastName,
-          phone_nbr: phone,
-          avatar_url: profileImage,
+          phone_nbr: phone
         })
         .eq('id', userId)
 
       if (error) throw error
+
       alert('Profile saved!')
     } catch (error) {
-      console.error('Error saving profile:', error)
+      console.error(error)
       alert('Failed to save profile')
     }
   }
@@ -165,21 +146,21 @@ export default function ProfileSettingsPage() {
         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-pink-500 to-pink-700 bg-clip-text text-transparent">
           Profile Settings
         </h1>
-        <p className="text-gray-800">
-          Manage your account settings and preferences
-        </p>
 
-        {/* Profilkort */}
         <div className="bg-white shadow rounded-lg p-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="relative group">
-              <Image
-                src={profileImage}
-                alt="Profile"
-                width={40}
-                height={40}
-                className="w-24 h-24 rounded-full object-cover ring-4 ring-pink-200 group-hover:ring-pink-400 transition-all"
-              />
+              {profileImage ? (
+                <Image
+                  src={profileImage}
+                  alt="Profile"
+                  width={40}
+                  height={40}
+                  className="w-24 h-24 rounded-full object-cover ring-4 ring-pink-200"
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-gray-200 ring-4 ring-pink-200" />
+              )}
               <label
                 htmlFor="avatar-upload"
                 className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
@@ -197,76 +178,61 @@ export default function ProfileSettingsPage() {
 
             <div className="flex-1 space-y-4 w-full">
               <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-medium text-gray-900"
-                >
+                <label className="block text-sm font-medium text-gray-900">
                   First Name
                 </label>
                 <input
-                  id="firstName"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-pink-400 focus:outline-none"
+                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1"
                 />
               </div>
+
               <div>
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium text-gray-800"
-                >
+                <label className="block text-sm font-medium text-gray-900">
                   Last Name
                 </label>
                 <input
-                  id="lastName"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-pink-400 focus:outline-none"
+                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1"
                 />
               </div>
+
               <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-medium text-gray-800"
-                >
+                <label className="block text-sm font-medium text-gray-900">
                   Phone
                 </label>
                 <input
-                  id="phone"
-                  type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-pink-400 focus:outline-none"
+                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1"
                 />
               </div>
+
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-800"
-                >
+                <label className="block text-sm font-medium text-gray-900">
                   Email
                 </label>
                 <input
-                  id="email"
-                  type="email"
                   value={email}
                   disabled
-                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1 bg-gray-100 text-gray-500 cursor-not-allowed"
+                  className="mt-1 w-full border border-gray-300 rounded px-2 py-1 bg-gray-100"
                 />
               </div>
             </div>
           </div>
+
           <div className="flex justify-center">
             <button
               onClick={handleSaveProfile}
-              className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition"
+              className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600"
             >
               Save Changes
             </button>
           </div>
         </div>
 
-        {/* Logout */}
         <div className="bg-white shadow rounded-lg p-6 flex justify-center">
           <button
             className="bg-red-500 text-white px-4 py-2 rounded"
