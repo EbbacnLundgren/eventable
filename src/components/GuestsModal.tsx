@@ -137,6 +137,7 @@ export default function GuestsModal({
                         {p.avatar_url ? (
                           <img
                             src={p.avatar_url}
+                            alt={`${p.first_name} ${p.last_name}`}
                             className="w-full h-full object-cover"
                           />
                         ) : (

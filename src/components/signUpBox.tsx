@@ -94,7 +94,8 @@ export default function SignupBox() {
       >
         <ArrowLeft size={20} />
       </Link>
-      <div className="border px-12 py-10 rounded-2xl shadow-lg w-full max-w-md bg-white/80 backdrop-blur-xl border-pink-200">
+
+      <div className="border px-12 py-10 rounded-2xl shadow-lg w-full max-w-md min-w-[500px] min-h-[600px] bg-white/80 backdrop-blur-xl border-pink-200">
         <h1 className="text-5xl font-extrabold text-center text-pink-600 drop-shadow-sm tracking-tight mb-2">
           Eventable
         </h1>
@@ -106,10 +107,10 @@ export default function SignupBox() {
         <p className="mb-3 text-sm text-gray-800 text-center pb-3">
           Already have an account?{' '}
           <Link
-            href="/signin"
+            href="/login"
             className="text-pink-600 hover:text-pink-700 underline font-semibold"
           >
-            Sign in
+            Log in
           </Link>
         </p>
 
@@ -195,7 +196,7 @@ export default function SignupBox() {
           </p>
         )}
 
-        <p className="mt-4 text-sm text-center text-gray-800">
+        {/* <p className="mt-4 text-sm text-center text-gray-800">
           Already have an account?{' '}
           <Link
             href="/login"
@@ -203,7 +204,7 @@ export default function SignupBox() {
           >
             Log in
           </Link>
-        </p>
+        </p> */}
       </div>
     </main>
   )

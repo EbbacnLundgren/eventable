@@ -133,7 +133,7 @@ const EventsSection = ({
   const displayedEvents = filteredEvents
 
   return (
-    <section className="p-6 w-full">
+    <section className="p-6 w-full max-w-7xl mx-auto">
       {/* Filters */}
       <EventFilters
         activeFilter={activeFilter}
@@ -153,6 +153,7 @@ const EventsSection = ({
       />*/}
 
       {/* Event cards */}
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full">
         {displayedEvents.map((event) => {
           const eventDate = new Date(event.date)

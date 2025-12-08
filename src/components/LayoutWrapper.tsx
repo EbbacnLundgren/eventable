@@ -21,11 +21,9 @@ export default function LayoutWrapper({
 
   return (
     <>
-      {/* {!hideLayout && <Sidebar />} */}
       {!hideLayout && (
         <div className="flex flex-col min-h-screen">
           {' '}
-          {/* ml-24 för att ge plats åt sidebar */}
           <Header />
           <main className="flex-1">{children}</main>
         </div>

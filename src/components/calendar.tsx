@@ -172,7 +172,7 @@ const CalendarComponent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex justify-center items-start p-4 pl-10 pr-10 pt-20">
+    <div className="min-h-screen flex justify-center items-start p-4 pt-20">
       <div className="relative flex p-4 shadow-lg bg-white rounded-3xl border border-gray-200 max-w-[2000px] w-full mx-auto overflow-hidden">
         {/* Week numbers */}
         <div className="flex flex-col items-center pt-[6rem]">

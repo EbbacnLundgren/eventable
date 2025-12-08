@@ -95,7 +95,6 @@ export default function Stack({
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
-
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < mobileBreakpoint)
@@ -198,7 +197,8 @@ export default function Stack({
     >
       {stack.map((card, index) => {
         //const randomRotate = randomRotation ? Math.random() * 10 - 5 : 0
-        const randomRotate = mounted && randomRotation ? Math.random() * 10 - 5 : 0
+        const randomRotate =
+          mounted && randomRotation ? Math.random() * 10 - 5 : 0
 
         return (
           <CardRotate

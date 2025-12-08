@@ -85,7 +85,8 @@ export default function LoginBox() {
       >
         <ArrowLeft size={20} />
       </Link>
-      <div className="border px-20 py-8 rounded-2xl shadow-lg w-full max-w-md bg-white/80 backdrop-blur-xl border-pink-200">
+
+      <div className="border px-12 py-10 rounded-2xl shadow-lg w-full max-w-md min-w-[500px] min-h-[600px] bg-white/80 backdrop-blur-xl bg-white border-pink-200">
         {/* <Image
         src="/images/icon.png"
         alt="Eventable logo"
@@ -98,7 +99,7 @@ export default function LoginBox() {
         <h1 className="text-5xl font-extrabold text-center text-pink-600 drop-shadow-sm tracking-tight">
           Eventable
         </h1>
-        <p className="text-gray-700 text-center font-medium -mt-1 pb-3">
+        <p className="text-gray-700 text-center font-medium -mt-1 pb-3 pt-3">
           Log in to your account
         </p>
 
