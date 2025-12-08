@@ -12,6 +12,12 @@ import DynamicBackground from '@/components/DynamicBackground'
 import ImageSelector from '@/components/ImageSelector' //Hanterar bildval
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
+
+const RichTextEditorClient = dynamic(
+  () => import('@/components/RichTextEditorClient'),
+  { ssr: false } // bara körs på klienten
+)
 
 //import ImageCropper from '@/components/ImageAdjust'
 //import ImageAdjust from '@/components/ImageAdjust' //Justare placering och zooma av bild
@@ -488,7 +494,7 @@ export default function CreateEventPage() {
         />
 
         <label className={`font-sans ${labelColorClass}`}>Description</label>
-        <textarea
+        {/* <textarea
           name="description"
           value={formData.description}
           onChange={(e) => {
@@ -499,6 +505,13 @@ export default function CreateEventPage() {
           rows={3}
           className="text-black p-3 pt-1 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none overflow-hidden"
           placeholder="Add a description..."
+        /> */}
+
+        <RichTextEditorClient
+          value={formData.description}
+          onChange={(value) =>
+            setFormData((prev) => ({ ...prev, description: value }))
+          }
         />
 
         <div className="mt-4 flex items-center gap-3">
