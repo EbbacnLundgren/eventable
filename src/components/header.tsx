@@ -32,7 +32,8 @@ export default function Header() {
   }, [])
 
   return (
-    <header className="w-full flex justify-between items-center p-4 text-white">
+    // <header className="w-full flex justify-between items-center p-4 text-white">
+    <header className="fixed top-0 left-0 w-full flex justify-between items-center p-4 text-white z-50">
       {/* Left: Image button to main */}
       <button
         onClick={() => router.push('/main')}

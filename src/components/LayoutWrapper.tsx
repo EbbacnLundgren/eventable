@@ -13,8 +13,8 @@ export default function LayoutWrapper({
   const hideLayout =
     pathname === '/' ||
     pathname === '/login' ||
-    pathname.startsWith('/events/') ||
-    pathname === '/createEvent' ||
+    //pathname.startsWith('/events/') ||
+    //pathname === '/createEvent' ||
     pathname === '/signup' ||
     pathname === '/reset-password' ||
     pathname === '/update-password'
@@ -22,10 +22,12 @@ export default function LayoutWrapper({
   return (
     <>
       {!hideLayout && (
-        <div className="flex flex-col min-h-screen">
+        // s<div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen relative">
           {' '}
           <Header />
-          <main className="flex-1">{children}</main>
+          {/* <main className="flex-1">{children}</main> */}
+          <main className="flex-1 pt-[70px]">{children}</main>
         </div>
       )}
       {hideLayout && <main className="flex-1">{children}</main>}
