@@ -50,7 +50,7 @@ export default function UpdatePasswordPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-pink-100 px-4">
+    <main className="min-h-screen flex items-center justify-center px-4">
       <Link
         href={`/`}
         className="fixed top-4 left-4 z-50 flex items-center gap-1

@@ -13,6 +13,7 @@ declare global {
 
 interface VantaEffect {
   destroy: () => void
+  setOptions?: (options: any) => void
 }
 
 interface VantaFogOptions {
@@ -34,15 +35,16 @@ interface VantaFogOptions {
 
 interface DynamicBackgroundProps {
   imageUrl: string
+  colorOverride?: string // valfri färg från panelen
 }
 
 export default function DynamicBackground({
   imageUrl,
+  colorOverride,
 }: DynamicBackgroundProps) {
   const vantaRef = useRef<HTMLDivElement>(null)
   const effectRef = useRef<VantaEffect | null>(null)
 
-  // Utility: convert RGB array → hex number
   function rgbToHexNumber([r, g, b]: number[]) {
     return (r << 16) + (g << 8) + b
   }
@@ -69,22 +71,13 @@ export default function DynamicBackground({
         })
       }
 
-      type ColorThiefClass = {
-        new (): {
-          getColor: (img: HTMLImageElement) => number[]
-        }
-      }
-
-      // Dynamically import ColorThief on the client to avoid server-side bundling issues
-      let ColorThief: ColorThiefClass | null = null
+      let ColorThief: any = null
       try {
-        ColorThief = (await import('colorthief'))
-          .default as unknown as ColorThiefClass
+        ColorThief = (await import('colorthief')).default
       } catch (e) {
         console.error('Could not load colorthief:', e)
       }
 
-      // Extract main color from image (if ColorThief loaded)
       const img = new Image()
       img.crossOrigin = 'Anonymous'
       img.src = imageUrl
@@ -92,15 +85,18 @@ export default function DynamicBackground({
         let baseColor = 0x000000
         if (ColorThief) {
           try {
-            const colorThief = new ColorThief()
-            const color = colorThief.getColor(img)
+            const color = new ColorThief().getColor(img)
             baseColor = rgbToHexNumber(color)
           } catch (err) {
             console.error('ColorThief failed:', err)
           }
         }
 
-        // Recreate the VANTA effect each time image changes
+        // Använd färg från panelen om den finns
+        const finalColor = colorOverride
+          ? parseInt(colorOverride.replace('#', ''), 16)
+          : baseColor
+
         if (effectRef.current) effectRef.current.destroy()
 
         if (vantaRef.current && window.VANTA?.FOG) {
@@ -112,9 +108,9 @@ export default function DynamicBackground({
             minHeight: 200,
             minWidth: 200,
             highlightColor: 0xffffff,
-            midtoneColor: baseColor,
-            lowlightColor: baseColor,
-            baseColor: baseColor,
+            midtoneColor: finalColor,
+            lowlightColor: finalColor,
+            baseColor: finalColor,
             blurFactor: 0.64,
             speed: 1.7,
             zoom: 0.4,
@@ -129,7 +125,7 @@ export default function DynamicBackground({
     return () => {
       effectRef.current?.destroy()
     }
-  }, [imageUrl])
+  }, [imageUrl, colorOverride])
 
   return (
     <div

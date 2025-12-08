@@ -13,6 +13,7 @@ import ImageSelector from '@/components/ImageSelector' //Hanterar bildval
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import BackgroundPicker from '@/components/BackgroundPicker'
 
 const RichTextEditorClient = dynamic(
   () => import('@/components/RichTextEditorClient'),
@@ -50,6 +51,8 @@ export default function CreateEventPage() {
   //Hantering av ImageAdjust-modal
   const [, setShowAdjust] = useState(false)
   const [, setTempImage] = useState<string | null>(null)
+  const [bgColor, setBgColor] = useState<string>('')
+  const [imageBaseColor, setImageBaseColor] = useState('#ffffff')
 
   useEffect(() => {
     let cancelled = false
@@ -58,16 +61,14 @@ export default function CreateEventPage() {
       if (!url) return 'text-gray-800'
 
       try {
-        // Return a promise that resolves when the image is loaded and analyzed
         const cls = await new Promise<string>((resolve) => {
           const img = new Image()
-          // allow same-origin images and blob URLs; crossOrigin helps for public images
           img.crossOrigin = 'Anonymous'
           img.src = url
 
           img.onload = () => {
             const canvas = document.createElement('canvas')
-            const size = 40 // small sample
+            const size = 40
             canvas.width = size
             canvas.height = size
             const ctx = canvas.getContext('2d')
@@ -76,18 +77,14 @@ export default function CreateEventPage() {
             const data = ctx.getImageData(0, 0, size, size).data
 
             let totalL = 0
-            const step = 4 * 2 // sample every 2nd pixel to speed up
+            const step = 4 * 2
             for (let i = 0; i < data.length; i += step) {
               const r = data[i]
               const g = data[i + 1]
               const b = data[i + 2]
-              // relative luminance (Rec. 709)
-              const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
-              totalL += lum
+              totalL += 0.2126 * r + 0.7152 * g + 0.0722 * b
             }
-            const samples = data.length / step
-            const avg = totalL / Math.max(1, samples)
-            // threshold ~128 (0-255) - dark background -> white text
+            const avg = totalL / (data.length / step)
             resolve(avg < 128 ? 'text-white' : 'text-gray-800')
           }
 
@@ -100,9 +97,39 @@ export default function CreateEventPage() {
       }
     }
 
+    async function getBaseColor(url: string | null) {
+      if (!url) return '#ffffff'
+      return new Promise<string>((resolve) => {
+        const img = new Image()
+        img.crossOrigin = 'Anonymous'
+        img.src = url
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          canvas.width = 1
+          canvas.height = 1
+          const ctx = canvas.getContext('2d')
+          if (!ctx) return resolve('#ffffff')
+          ctx.drawImage(img, 0, 0, 1, 1)
+          const data = ctx.getImageData(0, 0, 1, 1).data
+          const hex =
+            '#' +
+            ((1 << 24) + (data[0] << 16) + (data[1] << 8) + data[2])
+              .toString(16)
+              .slice(1)
+          resolve(hex)
+        }
+        img.onerror = () => resolve('#ffffff')
+      })
+    }
+
     ;(async () => {
       const cls = await getContrastClassForImage(selectedImage)
-      if (!cancelled) setLabelColorClass(cls)
+      const baseHex = await getBaseColor(selectedImage)
+      if (!cancelled) {
+        setLabelColorClass(cls)
+        setImageBaseColor(baseHex)
+        setBgColor(baseHex) // <--- lägg till detta så bakgrunden alltid uppdateras
+      }
     })()
 
     return () => {
@@ -291,8 +318,18 @@ export default function CreateEventPage() {
     !hasInvalidEnd
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-200 to-pink-100 p-6">
-      <DynamicBackground imageUrl={selectedImage} />
+    <main className="min-h-screen flex items-center justify-center p-6">
+      <DynamicBackground
+        imageUrl={selectedImage}
+        colorOverride={bgColor || undefined}
+      />
+
+      {imageBaseColor && (
+        <BackgroundPicker
+          defaultColor={bgColor || imageBaseColor}
+          onChange={(color) => setBgColor(color)}
+        />
+      )}
 
       <Link
         href={`/main`}

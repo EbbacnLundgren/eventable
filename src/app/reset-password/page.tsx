@@ -31,7 +31,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-pink-100 px-4">
+    <main className="min-h-screen flex items-center justify-center px-4">
       <div className="flex flex-col items-center">
         <Link
           href={`/`}

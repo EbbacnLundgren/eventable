@@ -67,7 +67,7 @@ export default function AdvancedFilters({
         <Filter size={16} />
         Filters
         {activeFilterCount > 0 && (
-          <span className="ml-1 px-2 py-0.5 text-xs bg-pink-500 text-white rounded-full">
+          <span className="ml-1 px-2 py-0.5 text-xs text-white rounded-full">
             {activeFilterCount}
           </span>
         )}

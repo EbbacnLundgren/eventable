@@ -13,9 +13,23 @@ export default function Header() {
   const [showMenu, setShowMenu] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    function handleScroll() {
+      setScrolled(window.scrollY > 10) // trigga blur om man scrollar mer än 10px
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Close popup when clicking outside
   useEffect(() => {
+    function handleScroll() {
+      setScrolled(window.scrollY > 10)
+    }
+
     function handleClickOutside(e: MouseEvent) {
       if (
         menuRef.current &&
@@ -27,13 +41,23 @@ export default function Header() {
       }
     }
 
+    window.addEventListener('scroll', handleScroll)
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
   }, [])
 
   return (
     // <header className="w-full flex justify-between items-center p-4 text-white">
-    <header className="fixed top-0 left-0 w-full flex justify-between items-center p-4 text-white z-50">
+    //<header className="fixed top-0 left-0 w-full flex justify-between items-center p-4 text-white z-50">
+    <header
+      className={`fixed top-0 left-0 w-full flex justify-between items-center p-4 text-white z-50
+    transition-all duration-300
+    ${scrolled ? 'bg-white/20 backdrop-blur-md' : 'bg-transparent'}`}
+    >
       {/* Left: Image button to main */}
       <button
         onClick={() => router.push('/main')}
