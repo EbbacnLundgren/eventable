@@ -37,6 +37,7 @@ function getDayOfWeek(dateStr: string): string {
 }
 
 function applyFilters(events: Event[], filters: AdvancedFilterState) {
+  console.log('Applying filters:', AdvancedFilters)
   return events.filter((event) => {
     // --- City filter ---
     if (filters.city && event.location) {
