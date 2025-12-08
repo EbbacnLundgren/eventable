@@ -6,9 +6,9 @@ import Link from 'next/link'
 import { formatEventDuration } from '@/lib/formatEventDuration'
 import { MapPin, Calendar, Clock, User } from 'lucide-react'
 import EventFilters, { FilterType } from '@/components/EventFilters'
-/*import AdvancedFilters, {
+import AdvancedFilters, {
   AdvancedFilterState,
-} from '@/components/AdvancedFilters'*/
+} from '@/components/AdvancedFilters'
 
 interface EventsSectionProps {
   events: Event[]
@@ -17,30 +17,22 @@ interface EventsSectionProps {
   onDeclineInvite?: (eventId: number) => void
   onMaybeInvite?: (eventId: number) => void
   ownEventIds?: number[]
+  advancedFilters: AdvancedFilterState
+  setAdvancedFilters: (f: AdvancedFilterState) => void
 }
 
 const EventsSection = ({
   events,
+  pendingIds,
   onAcceptInvite,
   onDeclineInvite,
   onMaybeInvite,
   ownEventIds = [],
+  advancedFilters,
+  setAdvancedFilters,
 }: EventsSectionProps) => {
-  //const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
   const today = new Date()
   const [activeFilter, setActiveFilter] = useState<FilterType>('upcoming')
-
-  /*const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilterState>({
-    city: '',
-    dateFrom: '',
-    dateTo: '',
-    dayOfWeek: '',
-    host: '',
-    keyword: '',
-  })*/
-
-  // --- Filter events based on activeFilter + advancedFilters ---
-
   const t = new Date()
 
   const upcomingEvents = events.filter(
@@ -64,10 +56,7 @@ const EventsSection = ({
   )
 
   const declinedEvents = events.filter((event) => event.status === 'declined')
-
   const filteredEvents = events.filter((event) => {
-    //const eventDate = new Date(event.date)
-
     let matchesFilter = true
     switch (activeFilter) {
       case 'upcoming':
@@ -97,36 +86,6 @@ const EventsSection = ({
         matchesFilter = true
     }
 
-    /*if (advancedFilters.city) {
-      matchesFilter =
-        matchesFilter &&
-        event.location
-          .toLowerCase()
-          .includes(advancedFilters.city.toLowerCase())
-    }
-
-    if (advancedFilters.dateFrom) {
-      matchesFilter =
-        matchesFilter &&
-        new Date(event.date).toISOString().split('T')[0] ===
-          advancedFilters.dateFrom
-    }
-
-    if (advancedFilters.host) {
-      matchesFilter =
-        matchesFilter &&
-        (event.hostLabel
-          ?.toLowerCase()
-          .includes(advancedFilters.host.toLowerCase()) ??
-          false)
-    }
-
-    if (advancedFilters.keyword) {
-      matchesFilter =
-        matchesFilter &&
-        event.name.toLowerCase().includes(advancedFilters.keyword.toLowerCase())
-    }*/
-
     return matchesFilter
   })
 
@@ -146,14 +105,12 @@ const EventsSection = ({
         }}
       />
 
-      {/*
       <AdvancedFilters
         filters={advancedFilters}
         onFiltersChange={setAdvancedFilters}
-      />*/}
+      />
 
       {/* Event cards */}
-
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full">
         {displayedEvents.map((event) => {
           const eventDate = new Date(event.date)
