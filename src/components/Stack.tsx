@@ -92,6 +92,9 @@ export default function Stack({
 }: StackProps) {
   const [isMobile, setIsMobile] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
 
   useEffect(() => {
     const checkMobile = () => {
@@ -194,7 +197,9 @@ export default function Stack({
       onMouseLeave={() => pauseOnHover && setIsPaused(false)}
     >
       {stack.map((card, index) => {
-        const randomRotate = randomRotation ? Math.random() * 10 - 5 : 0
+        //const randomRotate = randomRotation ? Math.random() * 10 - 5 : 0
+        const randomRotate = mounted && randomRotation ? Math.random() * 10 - 5 : 0
+
         return (
           <CardRotate
             key={card.id}
