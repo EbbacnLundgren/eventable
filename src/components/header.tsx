@@ -77,19 +77,25 @@ export default function Header() {
       {/* Spacer pushes icons to the right */}
       <div className="ml-auto flex items-center gap-6">
         {/* Friends and Calendar */}
-        <nav className="flex items-center gap-6">
+        <nav className="flex items-center gap-3">
           <Link
             href="/friends"
-            className="text-white hover:text-pink-200 transition-colors"
+            className={`
+              relative flex items-center justify-center h-10 w-10 rounded-full transition-colors duration-300
+              ${scrolled ? 'bg-blue-900/50 hover:bg-blue-900/70' : 'bg-transparent hover:bg-blue-900/70'}
+            `}
           >
-            <UserStar className="h-6 w-6" />
+            <UserStar className="h-6 w-6 text-white transition-colors duration-300" />
           </Link>
 
           <Link
             href="/calendar"
-            className="text-white hover:text-pink-200 transition-colors"
+            className={`
+              relative flex items-center justify-center h-10 w-10 rounded-full transition-colors duration-300
+              ${scrolled ? 'bg-blue-900/50 hover:bg-blue-900/70' : 'bg-transparent hover:bg-blue-900/70'}
+            `}
           >
-            <CalendarDays className="h-6 w-6" />
+            <CalendarDays className="h-6 w-6 text-white transition-colors duration-300" />
           </Link>
         </nav>
 
