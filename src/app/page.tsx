@@ -3,6 +3,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { GlassCard } from '@developer-hub/liquid-glass'
+import Stack from '../components/Stack'
+
+const images = [
+  '/images/create-3.png',
+  '/images/create-3.png',
+  '/images/create-3.png',
+  '/images/create-3.png',
+]
 
 export default function Home() {
   return (
@@ -57,7 +65,7 @@ export default function Home() {
       </div>
 
       {/* HERO */}
-      <div className="flex flex-col lg:flex-row items-center justify-center gap-12 px-6 sm:px-20 pt-24">
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-12 px-6 sm:px-20 lg:pt-12">
         {/* LEFT SIDE: LOGO + TEXT */}
         <div className="flex flex-col items-center text-center">
           <Image
@@ -67,36 +75,29 @@ export default function Home() {
             height={900}
             priority
             className="drop-shadow-xl object-cover object-center
-                       w-[700px] sm:w-[750px] md:w-[900px] lg:w-[1050px] xl:w-[1200px] h-auto"
+               w-full max-w-[600px] sm:max-w-[700px] md:max-w-[900px] lg:max-w-[1050px] h-auto"
           />
 
-          <p className="text-2xl sm:text-3xl md:text-4xl font-semibold font-sans text-[#1B0D6B] -mt-20">
+          <p className="relative -top-12 text-base sm:text-lg md:text-2xl lg:text-3xl xl:text-4xl font-semibold font-sans text-[#1B0D6B]">
             A seamless way to create, find and explore events. Enjoy!
           </p>
         </div>
 
-        {/* RIGHT SIDE IMAGE */}
-        <div className="flex justify-center lg:justify-end w-full lg:w-auto mt-10 lg:mt-4 pt-20">
-          <GlassCard
-            displacementScale={20}
-            blurAmount={0.2}
-            cornerRadius={18}
-            padding="0"
-            className="overflow-hidden border border-white/20 bg-white/10
-                       w-[18rem] h-[18rem]
-                       sm:w-[22rem] sm:h-[22rem]
-                       md:w-[26rem] md:h-[26rem]
-                       lg:w-[28rem] lg:h-[28rem]
-                       xl:w-[32rem] xl:h-[32rem]"
-          >
-            <Image
-              src="/images/create-3.png"
-              alt="Example event 1"
-              width={500}
-              height={500}
-              className="object-cover w-full h-full"
-            />
-          </GlassCard>
+        {/* RIGHT SIDE STACK */}
+        <div className="w-[80vw] max-w-[32rem] aspect-[5/6] mt-12 lg:mt-24">
+          <Stack
+            randomRotation={true}
+            sensitivity={180}
+            sendToBackOnClick={true}
+            cards={images.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt={`card-${i + 1}`}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            ))}
+          />
         </div>
       </div>
 
