@@ -12,13 +12,15 @@ interface VantaEffect {
   destroy: () => void
 }
 
-interface VantaGlobal {
-  FOG?: (options: Record<string, unknown>) => VantaEffect
+interface VantaEffect {
+  destroy: () => void
 }
 
 declare global {
   interface Window {
-    VANTA?: VantaGlobal
+    VANTA?: {
+      FOG?: (options: unknown) => VantaEffect
+    }
     THREE?: unknown
   }
 }
