@@ -4,7 +4,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Image as ImageIcon, Shuffle } from 'lucide-react'
+import { Image as Shuffle, Upload } from 'lucide-react'
 
 interface Props {
   selectedImage: string
@@ -43,6 +43,11 @@ export default function ImageSelector({ selectedImage, onImageSelect }: Props) {
     }
   }
 
+  //const glassButtonStyle = 'flex items-center justify-center w-10 h-10 rounded-lg border border-black text-black bg-white backdrop-blur-sm hover:bg-black/10 transition-all duration-300'
+  //const glassButtonStyle ='border border-black text-black bg-transparent px-4 py-2 rounded-lg hover:bg-black/10 flex items-center gap-2'
+  const glassButtonStyle =
+    'flex items-center justify-center w-10 h-10 rounded-lg border border-black text-black bg-white/80 shadow-sm hover:bg-gray-100 transition-all duration-300'
+
   return (
     <div className="relative h-48 w-full overflow-hidden rounded-2xl">
       <img
@@ -55,17 +60,17 @@ export default function ImageSelector({ selectedImage, onImageSelect }: Props) {
         <button
           type="button"
           onClick={handleRandomize}
-          className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-lg hover:scale-105"
+          className={glassButtonStyle}
           title="Randomize image"
         >
           <Shuffle size={20} />
         </button>
 
         <label
-          className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-lg hover:scale-105"
+          className={`${glassButtonStyle} cursor-pointer`}
           title="Upload image"
         >
-          <ImageIcon size={20} />
+          <Upload size={20} />
           <input
             type="file"
             accept="image/*"
