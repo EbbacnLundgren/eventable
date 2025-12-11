@@ -13,7 +13,7 @@ declare global {
 
 interface VantaEffect {
   destroy: () => void
-  setOptions?: (options: any) => void
+  setOptions?: (options: Record<string, unknown>) => void
 }
 
 interface VantaFogOptions {
@@ -31,6 +31,10 @@ interface VantaFogOptions {
   speed?: number
   zoom?: number
   backgroundAlpha?: number
+}
+
+interface ColorThiefModule {
+  getColor: (image: HTMLImageElement) => number[]
 }
 
 interface DynamicBackgroundProps {
@@ -71,9 +75,10 @@ export default function DynamicBackground({
         })
       }
 
-      let ColorThief: any = null
+      let ColorThief: ColorThiefModule | null = null
       try {
-        ColorThief = (await import('colorthief')).default
+        const ColorThiefClass = (await import('colorthief')).default
+        ColorThief = new ColorThiefClass()
       } catch (e) {
         console.error('Could not load colorthief:', e)
       }
@@ -85,7 +90,7 @@ export default function DynamicBackground({
         let baseColor = 0x000000
         if (ColorThief) {
           try {
-            const color = new ColorThief().getColor(img)
+            const color = ColorThief.getColor(img)
             baseColor = rgbToHexNumber(color)
           } catch (err) {
             console.error('ColorThief failed:', err)
