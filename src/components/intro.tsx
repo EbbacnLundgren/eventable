@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { Globe, Mail } from 'lucide-react'
+import { Mail } from 'lucide-react'
 
 interface IntroModalProps {
   open: boolean
