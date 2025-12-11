@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { GlassCard } from '@developer-hub/liquid-glass'
+import { useState } from 'react'
+import Intro from '@/components/intro'
 import Stack from '../components/Stack'
 
 const images = [
@@ -13,6 +15,7 @@ const images = [
 ]
 
 export default function Home() {
+  const [openIntro, setOpenIntro] = useState(false)
   return (
     <div className="relative flex flex-col min-h-screen text-white overflow-hidden">
       {/* Background */}
@@ -81,6 +84,34 @@ export default function Home() {
           <p className="relative -top-12 text-base sm:text-lg md:text-2xl lg:text-3xl xl:text-4xl font-semibold font-sans text-[#1B0D6B]">
             A seamless way to create, find and explore events. Enjoy!
           </p>
+
+          <GlassCard
+            displacementScale={80}
+            blurAmount={0.3}
+            cornerRadius={12}
+            padding="16px 24px"
+            className="border border-white/40 bg-white/20 hover:bg-white/50 mt-8 cursor-pointer"
+            onClick={() => setOpenIntro(true)}
+          >
+            <span className="text-white text-lg font-semibold">About us</span>
+          </GlassCard>
+        </div>
+
+        {/* RIGHT SIDE STACK */}
+        <div className="w-[80vw] max-w-[32rem] aspect-[5/6] mt-12 lg:mt-24">
+          <Stack
+            randomRotation={true}
+            sensitivity={180}
+            sendToBackOnClick={true}
+            cards={images.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt={`card-${i + 1}`}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            ))}
+          />
         </div>
 
         {/* RIGHT SIDE STACK */}
@@ -105,6 +136,7 @@ export default function Home() {
       <div className="mt-auto pb-4 text-center text-xs text-white/50">
         © {new Date().getFullYear()} Eventable
       </div>
+      <Intro open={openIntro} onClose={() => setOpenIntro(false)} />
     </div>
   )
 }
