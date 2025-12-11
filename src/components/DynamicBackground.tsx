@@ -8,13 +8,28 @@ interface DynamicBackgroundProps {
   moving?: boolean
 }
 
+interface VantaEffect {
+  destroy: () => void
+}
+
+interface VantaGlobal {
+  FOG?: (options: Record<string, unknown>) => VantaEffect
+}
+
+declare global {
+  interface Window {
+    VANTA?: VantaGlobal
+    THREE?: unknown
+  }
+}
+
 export default function DynamicBackground({
   imageUrl,
   colorOverride,
   moving = true,
 }: DynamicBackgroundProps) {
   const vantaRef = useRef<HTMLDivElement>(null)
-  const effectRef = useRef<any>(null)
+  const effectRef = useRef<VantaEffect | null>(null)
 
   useEffect(() => {
     if (!moving) {
