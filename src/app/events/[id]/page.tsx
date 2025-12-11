@@ -171,7 +171,11 @@ export default async function EventDetailsPage({
 
   return (
     <main className="min-h-screen  text-white py-10 px-6">
-      <DynamicBackground imageUrl={event.image} />
+      <DynamicBackground
+        imageUrl={event.image}
+        colorOverride={event.background_color ?? undefined}
+        moving={event.background_moving ?? true}
+      />
       {/*
        */}
 

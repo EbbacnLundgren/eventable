@@ -244,6 +244,8 @@ export default function CreateEventPage() {
       user_id: userId,
       rsvp_date: formData.rsvpDate || null,
       rsvp_time: formData.rsvpTime || null,
+      background_color: bgColor,
+      background_moving: moving,
     }
 
     //dubbelkolla ås tiden stämmer (inte i dåtiden)
