@@ -41,7 +41,7 @@ export default function Home() {
       </div>
 
       {/* Navigation */}
-      <div className="absolute top-0 right-0 m-5 flex gap-4 z-20">
+      <div className="absolute top-0 right-0 m-5 flex gap-4 z-[9999]">
         <GlassCard
           displacementScale={80}
           blurAmount={0.3}
@@ -81,7 +81,7 @@ export default function Home() {
                w-full max-w-[600px] sm:max-w-[700px] md:max-w-[900px] lg:max-w-[1050px] h-auto"
           />
 
-          <p className="relative -top-12 text-base sm:text-lg md:text-2xl lg:text-3xl xl:text-4xl font-semibold font-sans text-[#1B0D6B]">
+          <p className="relative -top-20 text-base sm:text-lg md:text-2xl lg:text-3xl xl:text-4xl font-semibold font-sans text-[#1B0D6B]">
             A seamless way to create, find and explore events. Enjoy!
           </p>
 
@@ -90,7 +90,7 @@ export default function Home() {
             blurAmount={0.3}
             cornerRadius={12}
             padding="16px 24px"
-            className="border border-white/40 bg-white/20 hover:bg-white/50 mt-8 cursor-pointer"
+            className="border border-white/40 bg-white/20 hover:bg-white/50 mt-[-2rem] cursor-pointer"
             onClick={() => setOpenIntro(true)}
           >
             <span className="text-white text-lg font-semibold">About us</span>
