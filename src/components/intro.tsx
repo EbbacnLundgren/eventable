@@ -24,9 +24,7 @@ export default function Intro({ open, onClose }: IntroModalProps) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
           >
-            <h2 className="text-2xl font-bold mb-4 text-center">
-              About us
-            </h2>
+            <h2 className="text-2xl font-bold mb-4 text-center">About us</h2>
 
             <div className="space-y-4 text-sm">
               <p className="pt-2 text-center text-gray-600">
@@ -37,7 +35,8 @@ export default function Intro({ open, onClose }: IntroModalProps) {
               <p className="pt-2 text-center text-gray-600">
                 We wanted a clear and structured website where we could gather
                 all the different events in life. We had two demands: it needed
-                to be easy to use and it should make you feel inspired and excited!
+                to be easy to use and it should make you feel inspired and
+                excited!
               </p>
 
               <p className="pt-2 text-center text-gray-600">
@@ -45,7 +44,6 @@ export default function Intro({ open, onClose }: IntroModalProps) {
               </p>
 
               <div className="flex justify-center gap-6 pt-2">
-
                 <a
                   href="mailto:Contacteventable@gmail.com"
                   className="flex items-center gap-2 hover:text-blue-600"
@@ -54,8 +52,6 @@ export default function Intro({ open, onClose }: IntroModalProps) {
                   Email
                 </a>
               </div>
-
-
             </div>
 
             <button

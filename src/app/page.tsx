@@ -93,9 +93,7 @@ export default function Home() {
             className="border border-white/40 bg-white/20 hover:bg-white/50 mt-8 cursor-pointer"
             onClick={() => setOpenIntro(true)}
           >
-            <span className="text-white text-lg font-semibold">
-              About us
-            </span>
+            <span className="text-white text-lg font-semibold">About us</span>
           </GlassCard>
         </div>
 
