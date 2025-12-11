@@ -15,7 +15,6 @@
     "@fullcalendar/interaction": "^6.1.19",
     "@fullcalendar/react": "^6.1.19",
     "@mantine/core": "^5.10.5",
-    "@mantine/rte": "^3.4.3",
     "@navega/nominatim-client": "^1.0.8",
     "@stream-io/stream-chat-css": "^5.16.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
