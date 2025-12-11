@@ -34,7 +34,7 @@ export default function ResetPasswordPage() {
     <main className="min-h-screen flex items-center justify-center px-4">
       <div className="flex flex-col items-center">
         <Link
-          href={`/`}
+          href={`/login`}
           className="fixed top-4 left-4 z-50 flex items-center gap-1
              text-white hover:text-pink-200
              bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
