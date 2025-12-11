@@ -218,10 +218,11 @@ export default function AddFriendsPage() {
             onClick={() => setActiveTab('add')}
             className={`
         px-5 py-2 rounded-xl transition 
-        ${activeTab === 'add'
-                ? ' bg-[#1B2A4A] text-white shadow-lg'
-                : 'bg-white/80 backdrop-blur-md border border-white/40'
-              }
+        ${
+          activeTab === 'add'
+            ? ' bg-[#1B2A4A] text-white shadow-lg'
+            : 'bg-white/80 backdrop-blur-md border border-white/40'
+        }
       `}
           >
             Add Friends
@@ -231,10 +232,11 @@ export default function AddFriendsPage() {
             onClick={() => setActiveTab('list')}
             className={`
         px-5 py-2 rounded-xl transition pl-6
-        ${activeTab === 'list'
-                ? ' bg-[#1B2A4A] text-white shadow-lg'
-                : 'bg-white/80 backdrop-blur-md border border-white/40'
-              }
+        ${
+          activeTab === 'list'
+            ? ' bg-[#1B2A4A] text-white shadow-lg'
+            : 'bg-white/80 backdrop-blur-md border border-white/40'
+        }
       `}
           >
             My Friends
@@ -369,7 +371,7 @@ export default function AddFriendsPage() {
                 ))}
               </ul>
             ) : (
-                <p className="text-center text-[#1B2A4A]/70 mt-6">
+              <p className="text-center text-[#1B2A4A]/70 mt-6">
                 You have no friends yet 😢
               </p>
             )}
