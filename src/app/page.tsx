@@ -86,7 +86,7 @@ export default function Home() {
             onClick={() => setOpenIntro(true)}
           >
             <span className="text-white text-lg font-semibold">
-              What is Eventable?
+              About us
             </span>
           </GlassCard>
         </div>

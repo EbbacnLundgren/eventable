@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
+import { Globe, Mail } from 'lucide-react'
 
 interface IntroModalProps {
   open: boolean
@@ -24,7 +25,7 @@ export default function Intro({ open, onClose }: IntroModalProps) {
             exit={{ scale: 0.9, opacity: 0 }}
           >
             <h2 className="text-2xl font-bold mb-4 text-center">
-              What is Eventable?
+              About us
             </h2>
 
             <div className="space-y-4 text-sm">
@@ -36,18 +37,25 @@ export default function Intro({ open, onClose }: IntroModalProps) {
               <p className="pt-2 text-center text-gray-600">
                 We wanted a clear and structured website where we could gather
                 all the different events in life. We had two demands: it needed
-                to be easy to use and it should make you happy and excited!
+                to be easy to use and it should make you feel inspired and excited!
               </p>
 
-              <div className="pt-2 text-center text-gray-600 space-y-1">
-                <p>Try it for yourself!</p>
-                <p>1. Create an account and log in</p>
-                <p>
-                  2. Design and publish your event (you are the only one who
-                  sees it if you do not invite anyone)
-                </p>
-                <p>3. Share the event with your friends</p>
+              <p className="pt-2 text-center text-gray-600">
+                Feel free to contact us for further questions.
+              </p>
+
+              <div className="flex justify-center gap-6 pt-2">
+
+                <a
+                  href="mailto:Contacteventable@gmail.com"
+                  className="flex items-center gap-2 hover:text-blue-600"
+                >
+                  <Mail className="w-5 h-5" />
+                  Email
+                </a>
               </div>
+
+
             </div>
 
             <button
