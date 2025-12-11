@@ -1,46 +1,71 @@
-//Flyttade koden från createEvent till egen konponent
-//hanterar att välja bild antingen genom att ladda upp eller slumpa fram en från defaultbilderna
-
 'use client'
 
 import { useState } from 'react'
-import { Image as Shuffle, Upload } from 'lucide-react'
+import { Image as Shuffle, Upload, X } from 'lucide-react'
 
 interface Props {
   selectedImage: string
   onImageSelect: (file: File | null, url: string | null) => void
 }
 
-export default function ImageSelector({ selectedImage, onImageSelect }: Props) {
-  const defaultImages = [
+const themedImages = {
+  all: [
+    '/images/party1.jpg',
+    '/images/party2.jpg',
+    '/images/christmas1.jpg',
+    '/images/christmas2.jpg',
+    '/images/christmas3.jpg',
+    '/images/christmas4.jpg',
+    '/images/christmas5.jpg',
+    '/images/christmas6.jpg',
+    '/images/christmas7.jpg',
     '/images/default1.jpg',
     '/images/default2.jpg',
     '/images/default3.jpg',
     '/images/default4.jpg',
     '/images/default5.jpg',
-  ]
+  ],
+  christmas: [
+    '/images/christmas1.jpg',
+    '/images/christmas2.jpg',
+    '/images/christmas3.jpg',
+    '/images/christmas4.jpg',
+    '/images/christmas5.jpg',
+    '/images/christmas6.jpg',
+    '/images/christmas7.jpg',
+  ],
+  party: ['/images/party1.jpg', '/images/party2.jpg'],
+  food: ['/images/food1.jpg', '/images/food2.jpg'],
+}
 
+export default function ImageSelector({ selectedImage, onImageSelect }: Props) {
   const [currentImage, setCurrentImage] = useState(selectedImage)
-
-  const handleRandomize = () => {
-    let random = currentImage
-    while (random === currentImage) {
-      random = defaultImages[Math.floor(Math.random() * defaultImages.length)]
-    }
-    setCurrentImage(random)
-    console.log('Randomized image selected:', random)
-
-    onImageSelect(null, random)
-  }
+  const [popupOpen, setPopupOpen] = useState(false)
+  const [selectedPopupImage, setSelectedPopupImage] = useState<string | null>(
+    null
+  )
+  const [activeTheme, setActiveTheme] = useState('all')
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       const url = URL.createObjectURL(file)
       setCurrentImage(url)
-      console.log('Uploaded image selected:', file, url) // <- logga här
       onImageSelect(file, url)
     }
+  }
+
+  const openPopup = () => {
+    setSelectedPopupImage(currentImage)
+    setPopupOpen(true)
+  }
+
+  const confirmSelection = () => {
+    if (selectedPopupImage) {
+      setCurrentImage(selectedPopupImage)
+      onImageSelect(null, selectedPopupImage)
+    }
+    setPopupOpen(false)
   }
 
   //const glassButtonStyle = 'flex items-center justify-center w-10 h-10 rounded-lg border border-black text-black bg-white backdrop-blur-sm hover:bg-black/10 transition-all duration-300'
@@ -59,9 +84,9 @@ export default function ImageSelector({ selectedImage, onImageSelect }: Props) {
       <div className="absolute top-3 right-3 flex gap-2">
         <button
           type="button"
-          onClick={handleRandomize}
+          onClick={openPopup}
           className={glassButtonStyle}
-          title="Randomize image"
+          title="Choose image"
         >
           <Shuffle size={20} />
         </button>
@@ -79,6 +104,63 @@ export default function ImageSelector({ selectedImage, onImageSelect }: Props) {
           />
         </label>
       </div>
+
+      {/* Popup */}
+      {popupOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center z-50">
+          <div className="bg-white rounded-xl w-11/12 max-w-6xl p-6 flex flex-col gap-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold">Choose an image</h2>
+              <button onClick={() => setPopupOpen(false)}>
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Theme menu */}
+            <div className="flex gap-4 overflow-x-auto pb-2">
+              {Object.keys(themedImages).map((theme) => (
+                <button
+                  key={theme}
+                  onClick={() => setActiveTheme(theme)}
+                  className={`px-4 py-2 rounded-full border ${activeTheme === theme
+                      ? 'bg-pink-500 text-white'
+                      : 'bg-gray-200'
+                    }`}
+                >
+                  {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                </button>
+              ))}
+            </div>
+
+            {/* Image gallery med 2 bilder per rad */}
+            <div className="grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+              {themedImages[activeTheme as keyof typeof themedImages].map(
+                (img) => (
+                  <img
+                    key={img}
+                    src={img}
+                    alt={img}
+                    className={`cursor-pointer w-full h-48 object-cover rounded-lg border-4 ${selectedPopupImage === img
+                        ? 'border-pink-500'
+                        : 'border-transparent'
+                      }`}
+                    onClick={() => setSelectedPopupImage(img)}
+                  />
+                )
+              )}
+            </div>
+
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={confirmSelection}
+                className="px-6 py-2 rounded-lg bg-pink-500 text-white font-bold hover:bg-pink-600"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
