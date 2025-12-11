@@ -103,6 +103,11 @@ export default function RSVPButtons({
     )
   if (!internalUserId) return null
 
+  // If the current user is the host, do not render the buttons
+  if (eventUserId && String(eventUserId) === String(internalUserId)) {
+    return null
+  }
+
   // Helper to display current status text
   const statusDisplay = status
     ? status.charAt(0).toUpperCase() + status.slice(1)
