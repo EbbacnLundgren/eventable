@@ -6,7 +6,7 @@ interface VantaEffect {
   destroy: () => void
 }
 
-interface VantaFogOptions {
+/*interface VantaFogOptions {
   el: HTMLElement
   mouseControls?: boolean
   touchControls?: boolean
@@ -21,7 +21,7 @@ interface VantaFogOptions {
   speed?: number
   zoom?: number
   backgroundAlpha?: number
-}
+}*/
 
 export default function MovingBackground() {
   const vantaRef = useRef<HTMLDivElement>(null)
