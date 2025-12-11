@@ -122,10 +122,11 @@ export default function ImageSelector({ selectedImage, onImageSelect }: Props) {
                 <button
                   key={theme}
                   onClick={() => setActiveTheme(theme)}
-                  className={`px-4 py-2 rounded-full border ${activeTheme === theme
+                  className={`px-4 py-2 rounded-full border ${
+                    activeTheme === theme
                       ? 'bg-pink-500 text-white'
                       : 'bg-gray-200'
-                    }`}
+                  }`}
                 >
                   {theme.charAt(0).toUpperCase() + theme.slice(1)}
                 </button>
@@ -140,10 +141,11 @@ export default function ImageSelector({ selectedImage, onImageSelect }: Props) {
                     key={img}
                     src={img}
                     alt={img}
-                    className={`cursor-pointer w-full h-48 object-cover rounded-lg border-4 ${selectedPopupImage === img
+                    className={`cursor-pointer w-full h-48 object-cover rounded-lg border-4 ${
+                      selectedPopupImage === img
                         ? 'border-pink-500'
                         : 'border-transparent'
-                      }`}
+                    }`}
                     onClick={() => setSelectedPopupImage(img)}
                   />
                 )
