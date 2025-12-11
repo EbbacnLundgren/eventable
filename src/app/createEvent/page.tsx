@@ -14,6 +14,7 @@ import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import BackgroundPicker from '@/components/BackgroundPicker'
+import DOMPurify from 'isomorphic-dompurify'
 
 const RichTextEditorClient = dynamic(
   () => import('@/components/RichTextEditorClient'),
@@ -228,6 +229,9 @@ export default function CreateEventPage() {
       imageUrl = selectedImage
     }
 
+    // förhindra cross-site scripting
+    const cleanDescription = DOMPurify.sanitize(formData.description)
+
     // 3. Förbered data för insert
     const insertData = {
       name: formData.name,
@@ -236,7 +240,7 @@ export default function CreateEventPage() {
       time: formData.time || null,
       end_date: formData.endDate || null,
       end_time: formData.endTime || null,
-      description: formData.description,
+      description: cleanDescription,
       image: imageUrl,
       user_id: userId,
       rsvp_date: formData.rsvpDate || null,
