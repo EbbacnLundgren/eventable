@@ -2,20 +2,11 @@
 
 import { useEffect, useRef } from 'react'
 
-declare global {
-  interface Window {
-    THREE?: typeof import('three')
-    VANTA?: {
-      FOG?: (options: VantaFogOptions) => VantaEffect
-    }
-  }
-}
-
 interface VantaEffect {
   destroy: () => void
 }
 
-interface VantaFogOptions {
+/*interface VantaFogOptions {
   el: HTMLElement
   mouseControls?: boolean
   touchControls?: boolean
@@ -30,7 +21,7 @@ interface VantaFogOptions {
   speed?: number
   zoom?: number
   backgroundAlpha?: number
-}
+}*/
 
 export default function MovingBackground() {
   const vantaRef = useRef<HTMLDivElement>(null)
@@ -75,6 +66,9 @@ export default function MovingBackground() {
           zoom: 0.4,
           backgroundAlpha: 0,
         })
+
+        const canvas = vantaRef.current.querySelector('canvas')
+        if (canvas) canvas.style.pointerEvents = 'none'
       }
     }
 
