@@ -109,7 +109,7 @@ export default function RSVPButtons({
     : 'Unanswered'
 
   return (
-    <div className="py-4 border-t border-gray-300/50 mt-4">
+    <div className="py-4 mt-4">
       <div className="flex items-center gap-2 mb-3">
         <h3 className="text-base font-semibold text-gray-700">
           Your Response:
