@@ -194,72 +194,102 @@ export default function AddFriendsPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center  text-white p-8">
-      <div className="bg-gradient-to-r from-pink-500 to-orange-400 shadow-lg backdrop-blur-md rounded-3xl p-8 w-full sm:max-w-md shadow-lg border border-white/30">
-        <h1 className="text-2xl font-bold mb-6 text-center">Friends</h1>
+    <main className="min-h-screen flex flex-col items-center justify-center   p-8">
+      <div
+        className="
+  w-full sm:max-w-lg 
+  p-10
+  rounded-3xl 
+  bg-white/40 
+  backdrop-blur-md 
+  border-2 border-white/30 
+  shadow-[0_0_40px_rgba(255,255,255,0.2)]
+  text-[#1B2A4A]
+  font-semibold
+"
+      >
+        <h1 className="text-3xl font-bold mb-8 text-center drop-shadow-lg ">
+          Friends
+        </h1>
 
-        {/* 🔹 Flikar */}
-        <div className="flex justify-center gap-4 mb-6">
+        {/* Tabs */}
+        <div className="flex justify-center gap-4 mb-8">
           <button
             onClick={() => setActiveTab('add')}
-            className={`px-4 py-2 rounded ${activeTab === 'add' ? 'bg-yellow-500' : 'bg-white/20'}`}
+            className={`
+        px-5 py-2 rounded-xl transition 
+        ${activeTab === 'add'
+                ? ' bg-[#1B2A4A] text-white shadow-lg'
+                : 'bg-white/80 backdrop-blur-md border border-white/40'
+              }
+      `}
           >
-            ➕ Add Friends
+            Add Friends
           </button>
+
           <button
             onClick={() => setActiveTab('list')}
-            className={`px-4 py-2 rounded ${activeTab === 'list' ? 'bg-yellow-500' : 'bg-white/20'}`}
+            className={`
+        px-5 py-2 rounded-xl transition pl-6
+        ${activeTab === 'list'
+                ? ' bg-[#1B2A4A] text-white shadow-lg'
+                : 'bg-white/80 backdrop-blur-md border border-white/40'
+              }
+      `}
           >
-            👯 My Friends
+            My Friends
           </button>
         </div>
 
-        {/* 🔹 Add Friends-tabben */}
+        {/* ADD FRIENDS TAB */}
         {activeTab === 'add' && (
           <>
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-3 mb-6 text-[#1B2A4A]">
               <input
                 type="text"
-                placeholder="Search by email"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex-1 p-2 rounded text-black"
+                placeholder="Search by email"
+                className="flex-1 p-3 rounded-xl bg-white/70 text-[#1B2A4A] placeholder-gray-500"
               />
               <button
                 onClick={handleSearch}
-                className="px-4 py-2 bg-yellow-500 rounded hover:bg-yellow-600"
+                className="px-5 py-2 rounded-xl bg-[#1B2A4A] text-white hover:bg-[#24375C]"
               >
                 Search
               </button>
             </div>
 
             {loading && (
-              <p className="text-center text-sm text-white/70">Searching...</p>
-            )}
-
-            {!loading && results.length === 0 && query && (
-              <p className="text-center text-sm text-white/70">
-                No users found for “{query}”
+              <p className="text-center text-sm text-[#1B2A4A]/70">
+                Searching...
               </p>
             )}
 
-            <ul className="mt-4 space-y-3">
+            {!loading && results.length === 0 && query && (
+              <p className="text-center text-sm text-[#1B2A4A]/70">
+                No users found
+              </p>
+            )}
+
+            {/* Search results */}
+            <ul className="space-y-4 mt-4">
               {results.map((user) => (
                 <li
                   key={user.id}
-                  className="flex justify-between items-center bg-white/10 p-3 rounded-lg"
+                  className="flex justify-between items-center bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20"
                 >
                   <div>
-                    <span className="font-medium">{user.email}</span>
+                    <p className="font-semibold text-[#1B2A4A]">{user.email}</p>
                     {user.first_name && (
-                      <span className="block text-white/70 text-sm">
-                        {user.first_name} {user.last_name || ''}
-                      </span>
+                      <p className="text-[#1B2A4A]/70 text-sm">
+                        {user.first_name} {user.last_name}
+                      </p>
                     )}
                   </div>
                   <button
                     onClick={() => sendRequest(user.id)}
-                    className="px-3 py-1 bg-yellow-500 rounded hover:bg-yellow-600 text-sm"
+                    className="px-4 py-2 rounded-xl bg-[#1B2A4A] text-white hover:bg-[#24375C]"
                   >
                     Add
                   </button>
@@ -267,33 +297,35 @@ export default function AddFriendsPage() {
               ))}
             </ul>
 
-            {/* 📨 Pending friend requests */}
+            {/* Friend requests */}
             {requests.length > 0 && (
               <div className="mt-10">
-                <h2 className="text-xl font-semibold mb-3 text-center">
+                <h2 className="text-xl font-semibold text-center text-[#1B2A4A] mb-4">
                   Friend Requests
                 </h2>
-                <ul className="space-y-3">
+
+                <ul className="space-y-4">
                   {requests.map((req) => (
                     <li
                       key={req.id}
-                      className="flex justify-between items-center bg-white/10 p-3 rounded-lg"
+                      className="flex justify-between items-center bg-white/10 p-4 rounded-xl border border-white/20"
                     >
-                      <span>
+                      <span className="text-[#1B2A4A]">
                         {req.google_users.first_name
-                          ? `${req.google_users.first_name} ${req.google_users.last_name || ''}`
+                          ? `${req.google_users.first_name} ${req.google_users.last_name ?? ''}`
                           : req.google_users.email}
                       </span>
+
                       <div className="flex gap-2">
                         <button
                           onClick={() => respondToRequest(req.id, 'accepted')}
-                          className="px-3 py-1 bg-green-500 rounded hover:bg-green-600 text-sm"
+                          className="px-3 py-1 rounded bg-green-600 text-[#1B2A4A] hover:bg-green-700"
                         >
                           Accept
                         </button>
                         <button
                           onClick={() => respondToRequest(req.id, 'declined')}
-                          className="px-3 py-1 bg-red-500 rounded hover:bg-red-600 text-sm"
+                          className="px-3 py-1 rounded bg-red-500 text-[#1B2A4A] hover:bg-red-600"
                         >
                           Decline
                         </button>
@@ -306,28 +338,30 @@ export default function AddFriendsPage() {
           </>
         )}
 
-        {/* 🔹 My Friends-tabben */}
+        {/* MY FRIENDS TAB */}
         {activeTab === 'list' && (
           <div>
             {friends.length > 0 ? (
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 {friends.map((friend) => (
                   <li
                     key={friend.id}
-                    className="flex justify-between items-center bg-white/10 p-3 rounded-lg"
+                    className="flex justify-between items-center bg-white/10 p-4 rounded-xl border border-white/20 backdrop-blur-sm"
                   >
                     <div>
-                      <span className="font-medium">{friend.email}</span>
+                      <p className="font-semibold text-[#1B2A4A]">
+                        {friend.email}
+                      </p>
                       {friend.first_name && (
-                        <span className="block text-white/70 text-sm">
-                          {friend.first_name} {friend.last_name || ''}
-                        </span>
+                        <p className="text-[#1B2A4A]/70 text-sm">
+                          {friend.first_name} {friend.last_name}
+                        </p>
                       )}
                     </div>
+
                     <button
                       onClick={() => unfriend(friend.id)}
-                      className="text-red-400 hover:text-red-600 text-lg"
-                      title="Remove friend"
+                      className="text-red-400 hover:text-red-500 text-xl"
                     >
                       ❌
                     </button>
@@ -335,7 +369,7 @@ export default function AddFriendsPage() {
                 ))}
               </ul>
             ) : (
-              <p className="text-center text-sm text-white/70 mt-4">
+                <p className="text-center text-[#1B2A4A]/70 mt-6">
                 You have no friends yet 😢
               </p>
             )}
