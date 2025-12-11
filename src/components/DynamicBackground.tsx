@@ -16,15 +16,6 @@ interface VantaEffect {
   destroy: () => void
 }
 
-declare global {
-  interface Window {
-    VANTA?: {
-      FOG?: (options: unknown) => VantaEffect
-    }
-    THREE?: unknown
-  }
-}
-
 export default function DynamicBackground({
   imageUrl,
   colorOverride,
