@@ -278,9 +278,10 @@ export default async function EventDetailsPage({
                     Information about the event
                   </h2>
 
-                  <div className="bg-white rounded-xl shadow p-4 leading-relaxed">
-                    {event.description}
-                  </div>
+                  <div
+                    className="bg-white rounded-xl shadow p-4 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: event.description }}
+                  />
                 </div>
               )}
 
