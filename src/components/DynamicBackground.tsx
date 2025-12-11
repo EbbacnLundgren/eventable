@@ -2,15 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 
-declare global {
-  interface Window {
-    THREE?: typeof import('three')
-    VANTA?: {
-      FOG?: (options: VantaFogOptions) => VantaEffect
-    }
-  }
-}
-
 interface VantaEffect {
   destroy: () => void
   setOptions?: (options: Record<string, unknown>) => void
