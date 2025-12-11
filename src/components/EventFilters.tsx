@@ -18,8 +18,8 @@ export default function EventFilters({
   const tabClass = (filter: FilterType) =>
     `rounded-md font-medium py-2.5 transition-all ${
       activeFilter === filter
-        ? 'bg-white text-[#1B2A4A] shadow-lg'
-        : 'text-[#1B2A4A] hover:text-[#2A3F6C] hover:bg-white/20'
+        ? 'bg-white/60 text-blue-900 shadow-lg'
+        : 'text-blue-900 hover:text-[#2A3F6C] hover:bg-white/30'
     }`
 
   return (
@@ -32,8 +32,8 @@ export default function EventFilters({
         <TabsList
           className="
           grid w-full grid-cols-4
-          bg-[#FFD4FC] backdrop-blur-md
-          border-2 border-white/90
+          bg-white/20 backdrop-blur-md
+          border-2 border-white/40
           p-1 rounded-xl
           gap-1
           min-h-[48px]

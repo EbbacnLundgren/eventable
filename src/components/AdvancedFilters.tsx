@@ -59,10 +59,15 @@ export default function AdvancedFilters({
 
   return (
     <div className="relative mb-6">
-      {/* Trigger Button */}
+      {/* Trigger Filter Button */}
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 text-white text-sm font-medium text-stone-900 bg-white/20 border border-white/30 rounded-lg hover:bg-white/30 transition-all"
+        className={`
+          flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg
+          bg-white/60 text-blue-900 border border-white/50
+          hover:bg-white/90 hover:text-blue-800 transition-colors duration-300
+          focus:outline-none focus:bg-white/10 focus:text-blue-800
+        `}
       >
         <Filter size={16} />
         Filters
