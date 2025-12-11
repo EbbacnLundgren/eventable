@@ -425,9 +425,6 @@ export default function MainPage() {
       <EventSection
         events={events}
         pendingIds={pendingIds}
-        onAcceptInvite={handleAcceptInvite}
-        onDeclineInvite={handleDeclineInvite}
-        onMaybeInvite={handleMaybeInvite}
         ownEventIds={ownEventIds}
         advancedFilters={filters}
         setAdvancedFilters={setFilters}
