@@ -7,7 +7,7 @@ interface VantaEffect {
   setOptions?: (options: Record<string, unknown>) => void
 }
 
-interface VantaFogOptions {
+/*interface VantaFogOptions {
   el: HTMLElement
   mouseControls?: boolean
   touchControls?: boolean
@@ -22,7 +22,7 @@ interface VantaFogOptions {
   speed?: number
   zoom?: number
   backgroundAlpha?: number
-}
+}*/
 
 interface ColorThiefModule {
   getColor: (image: HTMLImageElement) => number[]
