@@ -108,7 +108,7 @@ export default function Header() {
              shadow-lg font-semibold rounded-lg text-lg px-6 py-3 
              transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl"
           >
-            <Plus className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
+            <Plus className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-90 text--[#1B2A4A]" />
             Create Event
           </Link>
 
