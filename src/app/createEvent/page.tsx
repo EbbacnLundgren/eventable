@@ -625,8 +625,12 @@ export default function CreateEventPage() {
         <button
           type="submit"
           disabled={!isFormComplete}
-          className={`group mx-auto w-fit inline-flex items-center justify-center font-semibold rounded-lg text-lg px-8 py-4 transition-all duration-300 ease-out
-            ${isFormComplete ? 'text-white bg-gradient-to-r from-pink-500 to-orange-400 shadow-lg hover:scale-105 hover:shadow-2xl' : 'text-gray-400 bg-gray-200 cursor-not-allowed'}`}
+          className={`group mx-auto w-fit inline-flex items-center justify-center font-semibold rounded-lg text-lg px-8 py-4 transition-all duration-300 ease-out border
+            ${
+              isFormComplete
+                ? 'bg-white/80 border-black text-black hover:bg-gray-100 shadow-sm hover:shadow-md'
+                : 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed'
+            }`}
         >
           Create Event
         </button>
