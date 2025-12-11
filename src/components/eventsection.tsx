@@ -190,13 +190,14 @@ const EventsSection = ({
                       </div>
 
                       {/* Right: Status Badge */}
-                      {!ownEventIds.includes(event.id) && event.status && (
+                      {!ownEventIds.includes(event.id) && (
                         <span
                           className={`
                 shrink-0 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border leading-none shadow-sm
                 ${event.status === 'accepted' ? 'bg-green-50 text-green-700 border-green-200' : ''}
                 ${event.status === 'declined' ? 'bg-red-50 text-red-700 border-red-200' : ''}
                 ${event.status === 'maybe' ? 'bg-orange-50 text-orange-700 border-orange-200' : ''}
+                ${event.status === 'pending' ? 'bg-zinc-100 text-black border-slate-300' : ''}
               `}
                         >
                           <span
@@ -204,9 +205,10 @@ const EventsSection = ({
                 ${event.status === 'accepted' ? 'bg-green-500' : ''}
                 ${event.status === 'declined' ? 'bg-red-500' : ''}
                 ${event.status === 'maybe' ? 'bg-orange-500' : ''}
+                ${event.status === 'pending' ? 'bg-zinc-600' : ''}
               `}
                           ></span>
-                          {event.status}
+                          {event.status || 'No response'}
                         </span>
                       )}
                     </div>
