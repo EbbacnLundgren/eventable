@@ -31,18 +31,17 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center relative px-4">
-      {/* Tillbaka-knapp – ligger UTANFÖR kortet */}
+    <main className="min-h-screen flex items-center justify-center px-4">
       <Link
-        href="/"
+        href="/login"
         className="fixed top-4 left-4 z-50 flex items-center gap-1
-                 text-white hover:text-pink-200
-                 bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
+           text-white hover:text-pink-200
+           bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
       >
         <ArrowLeft size={20} />
       </Link>
 
-      <div className="border px-12 py-10 rounded-2xl shadow-lg w-full max-w-md min-w-[500px] min-h-[300px] bg-white/80 backdrop-blur-xl border-pink-200">
+      <div className="border px-12 py-10 rounded-2xl shadow-lg w-full max-w-md bg-white/80 backdrop-blur-xl border-pink-200">
         <h1 className="text-5xl font-extrabold text-center text-pink-600 drop-shadow-sm tracking-tight mb-1">
           Eventable
         </h1>
@@ -77,9 +76,9 @@ export default function ResetPasswordPage() {
           <button
             type="submit"
             className={`
-              w-full p-2 mt-2 rounded-xl border border-pink-400 font-semibold transition
-              bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white
-            `}
+        w-full p-2 mt-2 rounded-xl border border-pink-400 font-semibold transition
+        bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white
+      `}
           >
             Send reset link
           </button>
@@ -88,9 +87,9 @@ export default function ResetPasswordPage() {
         {message && (
           <p
             className={`
-              mt-4 text-center text-sm
-              ${status === 'success' ? 'text-green-600' : 'text-red-500'}
-            `}
+        mt-4 text-center text-sm
+        ${status === 'success' ? 'text-green-600' : 'text-red-500'}
+      `}
           >
             {message}
           </p>
