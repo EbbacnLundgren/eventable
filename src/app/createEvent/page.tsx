@@ -333,16 +333,6 @@ export default function CreateEventPage() {
         />
       )}
 
-      {/*
-      <Link
-        href={`/main`}
-        className="fixed top-4 left-4 z-50 flex items-center gap-1
-             text-white hover:text-pink-200
-             bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
-      >
-        <ArrowLeft size={20} />
-        <span className="font-semibold"></span>
-      </Link> */}
       <form
         onSubmit={handleSubmit}
         onKeyDown={(e) => {
