@@ -113,23 +113,6 @@ export default function Home() {
             ))}
           />
         </div>
-
-        {/* RIGHT SIDE STACK */}
-        <div className="w-[80vw] max-w-[32rem] aspect-[5/6] mt-12 lg:mt-24">
-          <Stack
-            randomRotation={true}
-            sensitivity={180}
-            sendToBackOnClick={true}
-            cards={images.map((src, i) => (
-              <img
-                key={i}
-                src={src}
-                alt={`card-${i + 1}`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            ))}
-          />
-        </div>
       </div>
 
       {/* FOOTER */}
