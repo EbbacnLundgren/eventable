@@ -8,10 +8,9 @@ import Intro from '@/components/intro'
 import Stack from '../components/Stack'
 
 const images = [
-  '/images/create-3.png',
-  '/images/create-3.png',
-  '/images/create-3.png',
-  '/images/create-3.png',
+  '/images/invite-image.png',
+  '/images/events-image.png',
+  '/images/create.png',
 ]
 
 export default function Home() {
@@ -98,20 +97,26 @@ export default function Home() {
         </div>
 
         {/* RIGHT SIDE STACK */}
-        <div className="w-[80vw] max-w-[32rem] aspect-[5/6] mt-12 lg:mt-24">
-          <Stack
-            randomRotation={true}
-            sensitivity={180}
-            sendToBackOnClick={true}
-            cards={images.map((src, i) => (
-              <img
-                key={i}
-                src={src}
-                alt={`card-${i + 1}`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            ))}
-          />
+        <div className="w-[80vw] max-w-[32rem] aspect-[5/6] mt-12 lg:mt-24 rounded-3xl overflow-hidden">
+          <div className="w-full h-full rounded-3xl overflow-hidden">
+            <Stack
+              randomRotation={true}
+              sensitivity={180}
+              sendToBackOnClick={true}
+              cards={images.map((src, i) => (
+                <div
+                  key={i}
+                  className="w-full h-full rounded-3xl overflow-hidden"
+                >
+                  <img
+                    src={src}
+                    alt={`card-${i + 1}`}
+                    className="w-full h-full object-contain rounded-3xl"
+                  />
+                </div>
+              ))}
+            />
+          </div>
         </div>
       </div>
 
