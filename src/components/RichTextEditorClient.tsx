@@ -6,14 +6,38 @@ import StarterKit from '@tiptap/starter-kit'
 import { TextStyle } from '@tiptap/extension-text-style'
 import Color from '@tiptap/extension-color'
 import FontFamily from '@tiptap/extension-font-family'
-import { Bold, Italic, Strikethrough, Code, Smile } from 'lucide-react'
+import {
+  Bold,
+  Italic,
+  Strikethrough,
+  Code,
+  Smile,
+  List,
+  ListOrdered,
+} from 'lucide-react'
 
 interface Props {
   value: string
   onChange: (value: string) => void
 }
 
-const EMOJIS = ['😊', '😂', '😍', '👍', '🎉', '❤️', '🥳', '😎', '🥂', '🍻']
+const EMOJIS = [
+  '😊',
+  '😂',
+  '😍',
+  '👍',
+  '🎉',
+  '❤️',
+  '🥳',
+  '😎',
+  '🥂',
+  '🍻',
+  '⭐️',
+  '🤩',
+  '🫶',
+  '🥳',
+  '👀',
+]
 
 export default function RichTextEditorClient({ value, onChange }: Props) {
   const [isMounted, setIsMounted] = useState(false)
@@ -44,7 +68,7 @@ export default function RichTextEditorClient({ value, onChange }: Props) {
     editorProps: {
       attributes: {
         class:
-          'min-h-[120px] p-3 text-black bg-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400',
+          'min-h-[120px] p-3 text-black bg-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5',
       },
     },
     immediatelyRender: false,
@@ -110,6 +134,12 @@ export default function RichTextEditorClient({ value, onChange }: Props) {
           .insertContent(val || '😊')
           .run()
         break
+      case 'bulletList':
+        editor.chain().focus().toggleBulletList().run()
+        break
+      case 'orderedList':
+        editor.chain().focus().toggleOrderedList().run()
+        break
     }
   }
 
@@ -147,6 +177,23 @@ export default function RichTextEditorClient({ value, onChange }: Props) {
           className={getButtonClass(editor?.isActive('code'))}
         >
           <Code size={18} />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => toggleMark('bulletList')}
+          className={getButtonClass(editor?.isActive('bulletList'))}
+          title="Bullet List"
+        >
+          <List size={18} />
+        </button>
+        <button
+          type="button"
+          onClick={() => toggleMark('orderedList')}
+          className={getButtonClass(editor?.isActive('orderedList'))}
+          title="Ordered List"
+        >
+          <ListOrdered size={18} />
         </button>
 
         <input
