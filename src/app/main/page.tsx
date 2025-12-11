@@ -333,6 +333,7 @@ export default function MainPage() {
     return gUser?.id ?? supaUser?.id ?? null
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleAcceptInvite = async (eventId: number) => {
     const currentUserId = await resolveCurrentUserId()
     if (!currentUserId) return
@@ -363,6 +364,7 @@ export default function MainPage() {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDeclineInvite = async (eventId: number) => {
     const currentUserId = await resolveCurrentUserId()
     if (!currentUserId) return
@@ -391,6 +393,7 @@ export default function MainPage() {
     )
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleMaybeInvite = async (eventId: number) => {
     const currentUserId = await resolveCurrentUserId()
     if (!currentUserId) return
