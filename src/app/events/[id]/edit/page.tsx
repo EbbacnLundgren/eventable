@@ -285,21 +285,20 @@ export default function EditEventPage() {
     <main className="relative min-h-screen text-white py-10 px-6 flex items-center justify-center">
       <DynamicBackground imageUrl={selectedImage} />
 
-      <Link
-        href={`/events/${id}`}
-        className="fixed top-4 left-4 z-50 flex items-center gap-1
-             text-white hover:text-pink-200
-             bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
-      >
-        <ArrowLeft size={20} />
-        <span className="font-semibold"></span>
-      </Link>
-
       {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className="relative w-full max-w-2xl flex flex-col gap-5 p-8 rounded-3xl bg-white/20 backdrop-blur-lg border border-white/30 shadow-2xl z-10"
+        className="relative w-full max-w-2xl flex flex-col gap-5 p-8 pt-16 rounded-3xl bg-white/20 backdrop-blur-lg border border-white/30 shadow-2xl z-10"
       >
+        <Link
+          href={`/events/${id}`}
+          className="fixed top-4 left-8 z-50 flex items-center gap-1
+             text-white hover:text-pink-200
+             bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
+        >
+          <ArrowLeft size={20} />
+          <span className="font-semibold"></span>
+        </Link>
         {/* Image */}
         <div className="relative h-48 w-full overflow-hidden rounded-2xl">
           {selectedImage ? (

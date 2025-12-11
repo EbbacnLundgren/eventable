@@ -169,22 +169,24 @@ export default async function EventDetailsPage({
   return (
     <main className="min-h-screen  text-white py-10 px-6">
       <DynamicBackground imageUrl={event.image} />
-      <Link
-        href={`/main`}
-        className="fixed top-4 left-4 z-50 flex items-center gap-1
-             text-white hover:text-pink-200
-             bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
-      >
-        <ArrowLeft size={20} />
-        <span className="font-semibold"></span>
-      </Link>
+      {/*
+       */}
 
-      <div className="max-w-5xl mx-auto flex gap-6 items-start">
+      <div className="max-w-5xl mx-auto flex gap-6 pt-4 items-start">
         {/* --- Left: Box containing event details --- */}
-        <div className="flex-1 bg-white/20 backdrop-blur-md rounded-3xl p-8 shadow-lg border border-white/30">
+        <div className="flex-1 bg-white/20 backdrop-blur-md rounded-3xl pt-10 p-8 shadow-lg border border-white/30">
           <div className="mb-6 flex justify-end">
             <EditEventButton eventUserId={event.user_id} eventId={event.id} />
           </div>
+          <Link
+            href={`/main`}
+            className="fixed top-4 left-7 z-50  flex items-center gap-1
+             text-white hover:text-pink-200
+             bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
+          >
+            <ArrowLeft size={20} />
+            <span className="font-semibold"></span>
+          </Link>
 
           {event.image && (
             <div className="relative w-full h-64 mb-6">
