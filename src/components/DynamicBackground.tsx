@@ -112,6 +112,9 @@ export default function DynamicBackground({
             zoom: 0.4,
             backgroundAlpha: 0,
           })
+
+          const canvas = vantaRef.current.querySelector('canvas')
+          if (canvas) canvas.style.pointerEvents = 'none'
         }
       }
     }
