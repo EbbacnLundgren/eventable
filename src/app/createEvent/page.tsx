@@ -6,12 +6,10 @@ import { supabase } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import TimePicker from '@/components/timePicker'
 import { useSession } from 'next-auth/react'
-//import { ArrowLeft } from 'lucide-react'
-//import Link from 'next/link'
 import DynamicBackground from '@/components/DynamicBackground'
 import ImageSelector from '@/components/ImageSelector' //Hanterar bildval
-import { ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
+//import { ArrowLeft } from 'lucide-react'
+//import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import BackgroundPicker from '@/components/BackgroundPicker'
 import DOMPurify from 'isomorphic-dompurify'
@@ -335,6 +333,7 @@ export default function CreateEventPage() {
         />
       )}
 
+      {/*
       <Link
         href={`/main`}
         className="fixed top-4 left-4 z-50 flex items-center gap-1
@@ -343,7 +342,7 @@ export default function CreateEventPage() {
       >
         <ArrowLeft size={20} />
         <span className="font-semibold"></span>
-      </Link>
+      </Link> */}
       <form
         onSubmit={handleSubmit}
         onKeyDown={(e) => {
