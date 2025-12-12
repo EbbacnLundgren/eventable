@@ -12,7 +12,7 @@ const themedImages = {
   all: [
     '/images/food1.jpg',
     '/images/food2.jpg',
-    '/images/food3.jpg',
+    '/images/Food3.jpg',
     '/images/christmas1.jpg',
     '/images/christmas2.jpg',
     '/images/christmas3.jpg',
@@ -29,9 +29,9 @@ const themedImages = {
     '/images/default3.jpg',
     '/images/default4.jpg',
     '/images/default5.jpg',
-    '/images/animals1.jpg',
-    '/images/animals2.jpg',
-    '/images/animals3.jpg',
+    '/images/Animals1.jpg',
+    '/images/Animals2.jpg',
+    '/images/Animals3.jpg',
   ],
   christmas: [
     '/images/christmas1.jpg',
@@ -48,12 +48,12 @@ const themedImages = {
     '/images/party3.jpg',
     '/images/party4.jpg',
   ],
-  food: ['/images/food1.jpg', '/images/food2.jpg', '/images/food3.jpg'],
+  food: ['/images/food1.jpg', '/images/food2.jpg', '/images/Food3.jpg'],
 
   animals: [
-    '/images/animals1.jpg',
-    '/images/animals2.jpg',
-    '/images/animals3.jpg',
+    '/images/Animals1.jpg',
+    '/images/Animals2.jpg',
+    '/images/Animals3.jpg',
   ],
 }
 
