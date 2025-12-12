@@ -61,6 +61,11 @@ export default function AddFriendsPage() {
 
   // sök efter användare
   const handleSearch = async () => {
+    if (!query.trim()) {
+      setResults([]) // töm eventuella gamla resultat
+      return // avbryt funktionen
+    }
+
     setLoading(true)
     const currentUserId = await resolveCurrentUserId()
     if (!currentUserId) {
@@ -200,15 +205,15 @@ export default function AddFriendsPage() {
   w-full sm:max-w-lg 
   p-10
   rounded-3xl 
-  bg-white/40 
+  bg-white/40
   backdrop-blur-md 
   border-2 border-white/30 
   shadow-[0_0_40px_rgba(255,255,255,0.2)]
-  text-[#1B2A4A]
+
   font-semibold
 "
       >
-        <h1 className="text-3xl font-bold mb-8 text-center drop-shadow-lg ">
+        <h1 className="text-3xl font-bold mb-8 text-center drop-shadow-lg  text-[#1B2A4A]">
           Friends
         </h1>
 
@@ -282,7 +287,6 @@ export default function AddFriendsPage() {
                   className="flex justify-between items-center bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20"
                 >
                   <div>
-                    <p className="font-semibold text-[#1B2A4A]">{user.email}</p>
                     {user.first_name && (
                       <p className="text-[#1B2A4A]/70 text-sm">
                         {user.first_name} {user.last_name}
@@ -351,9 +355,6 @@ export default function AddFriendsPage() {
                     className="flex justify-between items-center bg-white/10 p-4 rounded-xl border border-white/20 backdrop-blur-sm"
                   >
                     <div>
-                      <p className="font-semibold text-[#1B2A4A]">
-                        {friend.email}
-                      </p>
                       {friend.first_name && (
                         <p className="text-[#1B2A4A]/70 text-sm">
                           {friend.first_name} {friend.last_name}
