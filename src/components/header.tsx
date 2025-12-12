@@ -8,6 +8,7 @@ import { supabase } from '@/lib/client'
 import { Plus } from 'lucide-react'
 import { User, UserCog, LogOut, UserStar, CalendarDays } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 export default function Header() {
   const router = useRouter()
@@ -52,6 +53,31 @@ export default function Header() {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
+
+  const { data: session } = useSession()
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      if (!session?.user?.email) return
+
+      // 1. Check database for custom uploaded avatar
+      const { data } = await supabase
+        .from('google_users')
+        .select('avatar_url')
+        .eq('email', session.user.email)
+        .single()
+
+      // 2. Logic: Custom DB Image > Google Account Image > Null
+      if (data?.avatar_url) {
+        setAvatarUrl(data.avatar_url)
+      } else if (session.user.image) {
+        setAvatarUrl(session.user.image)
+      }
+    }
+
+    fetchAvatar()
+  }, [session])
 
   return (
     // <header className="w-full flex justify-between items-center p-4 text-white">
@@ -120,11 +146,22 @@ export default function Header() {
             <button
               ref={buttonRef}
               onClick={() => setShowMenu(!showMenu)}
+              // Added "overflow-hidden" to ensure square images are clipped to circles
               className="h-12 w-12 flex items-center justify-center rounded-full
-                 bg-white bg-opacity-20 backdrop-blur-md
-                 hover:bg-white hover:bg-opacity-30 transition"
+     bg-white bg-opacity-20 backdrop-blur-md
+     hover:bg-white hover:bg-opacity-30 transition overflow-hidden p-0"
             >
-              <User className="h-6 w-6 text-white" />
+              {avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt="Profile"
+                  width={48}
+                  height={48}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <User className="h-6 w-6 text-white" />
+              )}
             </button>
 
             {showMenu && (

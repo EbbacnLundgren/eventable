@@ -52,6 +52,7 @@ export default function CreateEventPage() {
   const [, setTempImage] = useState<string | null>(null)
   const [bgColor, setBgColor] = useState<string>('')
   const [imageBaseColor, setImageBaseColor] = useState('#ffffff')
+  const [moving, setMoving] = useState(true)
 
   useEffect(() => {
     let cancelled = false
@@ -243,6 +244,8 @@ export default function CreateEventPage() {
       user_id: userId,
       rsvp_date: formData.rsvpDate || null,
       rsvp_time: formData.rsvpTime || null,
+      background_color: bgColor,
+      background_moving: moving,
     }
 
     //dubbelkolla ås tiden stämmer (inte i dåtiden)
@@ -324,12 +327,15 @@ export default function CreateEventPage() {
       <DynamicBackground
         imageUrl={selectedImage}
         colorOverride={bgColor || undefined}
+        moving={moving}
       />
 
       {imageBaseColor && (
         <BackgroundPicker
-          defaultColor={bgColor || imageBaseColor}
-          onChange={(color) => setBgColor(color)}
+          defaultColor="#ffffff"
+          defaultMoving={true}
+          onChange={(c) => setBgColor(c)}
+          onToggleMoving={(m) => setMoving(m)}
         />
       )}
 

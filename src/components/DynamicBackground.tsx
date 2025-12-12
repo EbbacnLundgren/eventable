@@ -2,49 +2,35 @@
 
 import { useEffect, useRef } from 'react'
 
-interface VantaEffect {
-  destroy: () => void
-  setOptions?: (options: Record<string, unknown>) => void
-}
-
-/*interface VantaFogOptions {
-  el: HTMLElement
-  mouseControls?: boolean
-  touchControls?: boolean
-  gyroControls?: boolean
-  minHeight?: number
-  minWidth?: number
-  highlightColor?: number
-  midtoneColor?: number
-  lowlightColor?: number
-  baseColor?: number
-  blurFactor?: number
-  speed?: number
-  zoom?: number
-  backgroundAlpha?: number
-}*/
-
-interface ColorThiefModule {
-  getColor: (image: HTMLImageElement) => number[]
-}
-
 interface DynamicBackgroundProps {
   imageUrl: string
-  colorOverride?: string // valfri färg från panelen
+  colorOverride?: string
+  moving?: boolean
+}
+
+interface VantaEffect {
+  destroy: () => void
+}
+
+interface VantaEffect {
+  destroy: () => void
 }
 
 export default function DynamicBackground({
   imageUrl,
   colorOverride,
+  moving = true,
 }: DynamicBackgroundProps) {
   const vantaRef = useRef<HTMLDivElement>(null)
   const effectRef = useRef<VantaEffect | null>(null)
 
-  function rgbToHexNumber([r, g, b]: number[]) {
-    return (r << 16) + (g << 8) + b
-  }
-
   useEffect(() => {
+    if (!moving) {
+      effectRef.current?.destroy()
+      effectRef.current = null
+      return
+    }
+
     const loadVanta = async () => {
       if (!window.THREE) {
         await new Promise<void>((resolve) => {
@@ -66,71 +52,55 @@ export default function DynamicBackground({
         })
       }
 
-      let ColorThief: ColorThiefModule | null = null
-      try {
-        const ColorThiefClass = (await import('colorthief')).default
-        ColorThief = new ColorThiefClass()
-      } catch (e) {
-        console.error('Could not load colorthief:', e)
-      }
+      effectRef.current?.destroy()
 
-      const img = new Image()
-      img.crossOrigin = 'Anonymous'
-      img.src = imageUrl
-      img.onload = () => {
-        let baseColor = 0x000000
-        if (ColorThief) {
-          try {
-            const color = ColorThief.getColor(img)
-            baseColor = rgbToHexNumber(color)
-          } catch (err) {
-            console.error('ColorThief failed:', err)
-          }
-        }
+      const finalColor = colorOverride
+        ? parseInt(colorOverride.replace('#', ''), 16)
+        : 0xffffff
 
-        // Använd färg från panelen om den finns
-        const finalColor = colorOverride
-          ? parseInt(colorOverride.replace('#', ''), 16)
-          : baseColor
+      if (vantaRef.current && window.VANTA?.FOG) {
+        effectRef.current = window.VANTA.FOG({
+          el: vantaRef.current,
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200,
+          minWidth: 200,
+          highlightColor: 0xffffff,
+          midtoneColor: finalColor,
+          lowlightColor: finalColor,
+          baseColor: finalColor,
+          blurFactor: 0.64,
+          speed: 1.7,
+          zoom: 0.4,
+          backgroundAlpha: 0,
+        })
 
-        if (effectRef.current) effectRef.current.destroy()
-
-        if (vantaRef.current && window.VANTA?.FOG) {
-          effectRef.current = window.VANTA.FOG({
-            el: vantaRef.current,
-            mouseControls: true,
-            touchControls: true,
-            gyroControls: false,
-            minHeight: 200,
-            minWidth: 200,
-            highlightColor: 0xffffff,
-            midtoneColor: finalColor,
-            lowlightColor: finalColor,
-            baseColor: finalColor,
-            blurFactor: 0.64,
-            speed: 1.7,
-            zoom: 0.4,
-            backgroundAlpha: 0,
-          })
-
-          const canvas = vantaRef.current.querySelector('canvas')
-          if (canvas) canvas.style.pointerEvents = 'none'
-        }
+        const canvas = vantaRef.current.querySelector('canvas')
+        if (canvas) canvas.style.pointerEvents = 'none'
       }
     }
 
     loadVanta()
 
-    return () => {
-      effectRef.current?.destroy()
-    }
-  }, [imageUrl, colorOverride])
+    return () => effectRef.current?.destroy()
+  }, [moving, imageUrl, colorOverride])
+
+  if (!moving) {
+    return (
+      <div
+        className="fixed top-0 left-0 w-full h-full z-0"
+        style={{
+          backgroundColor: colorOverride || '#ffffff',
+        }}
+      />
+    )
+  }
 
   return (
     <div
       ref={vantaRef}
       className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none"
-      style={{ backgroundColor: 'transparent' }}
     />
   )
 }

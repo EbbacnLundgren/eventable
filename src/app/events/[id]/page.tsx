@@ -10,6 +10,8 @@ import AutoAddInvite from '@/components/AutoAddInvite'
 //import InviteForm from '@/components/InviteForm'
 import GuestsModal from '@/components/GuestsModal'
 
+import RSVPButtons from '@/components/RSVPbuttons'
+
 import {
   MapPin,
   Calendar,
@@ -35,6 +37,7 @@ export default async function EventDetailsPage({
   // Await works for both Promise and non-Promise values at runtime.
   const resolvedParams = params ? await params : undefined
   const id = resolvedParams?.id
+
   if (!id) {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-white">
@@ -168,7 +171,11 @@ export default async function EventDetailsPage({
 
   return (
     <main className="min-h-screen  text-white py-10 px-6">
-      <DynamicBackground imageUrl={event.image} />
+      <DynamicBackground
+        imageUrl={event.image}
+        colorOverride={event.background_color ?? undefined}
+        moving={event.background_moving ?? true}
+      />
       {/*
        */}
 
@@ -272,6 +279,14 @@ export default async function EventDetailsPage({
                 pendingIds={pendingIds}
                 maybeIds={maybeIds}
                 invitedProfiles={invitedProfiles}
+              />
+
+              {/* --- New buttons --- */}
+              <RSVPButtons
+                eventId={event.id}
+                rsvpDate={event.rsvp_date}
+                rsvpTime={event.rsvp_time}
+                eventUserId={event.user_id}
               />
 
               {event.description && (

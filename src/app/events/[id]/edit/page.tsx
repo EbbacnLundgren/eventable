@@ -9,6 +9,7 @@ import Link from 'next/link'
 import TimePicker from '@/components/timePicker'
 import DynamicBackground from '@/components/DynamicBackground'
 import DeleteEventButton from '@/components/DeleteButtonEvent'
+import BackgroundColorPicker from '@/components/BackgroundPicker'
 
 export default function EditEventPage() {
   const router = useRouter()
@@ -19,6 +20,8 @@ export default function EditEventPage() {
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
   const [eventUserId, setEventUserId] = useState<string>('')
+  const [bgColor, setBgColor] = useState<string>('#ffffff')
+  const [moving, setMoving] = useState<boolean>(true)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -137,6 +140,8 @@ export default function EditEventPage() {
         setShowEndFields(!!(data.end_date || data.end_time))
         setShowRSVPFields(!!(data.rsvp_date || data.rsvp_time))
         setEventUserId(data.user_id)
+        setBgColor(data.background_color ?? '#ffffff')
+        setMoving(data.background_moving ?? true)
       }
       setLoading(false)
     }
@@ -240,6 +245,8 @@ export default function EditEventPage() {
         image: imageUrl,
         rsvp_date: formData.rsvpDate || null,
         rsvp_time: formData.rsvpTime || null,
+        background_color: bgColor,
+        background_moving: moving,
       })
       .eq('id', Number(id))
 
@@ -283,7 +290,18 @@ export default function EditEventPage() {
 
   return (
     <main className="relative min-h-screen text-white py-10 px-6 flex items-center justify-center">
-      <DynamicBackground imageUrl={selectedImage} />
+      <DynamicBackground
+        imageUrl={selectedImage}
+        colorOverride={bgColor}
+        moving={moving}
+      />
+
+      <BackgroundColorPicker
+        defaultColor={bgColor}
+        defaultMoving={moving}
+        onChange={(c) => setBgColor(c)}
+        onToggleMoving={(v) => setMoving(v)}
+      />
 
       {/* Form */}
       <form
