@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Image as Shuffle, Upload, X } from 'lucide-react'
+import Portal from './Portal'
 
 interface Props {
   selectedImage: string
@@ -128,63 +129,70 @@ export default function ImageSelector({ selectedImage, onImageSelect }: Props) {
         </label>
       </div>
 
-      {/* Popup */}
       {popupOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center z-50">
-          <div className="bg-white rounded-xl w-11/12 max-w-6xl p-6 flex flex-col gap-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold">Choose an image</h2>
-              <button onClick={() => setPopupOpen(false)}>
-                <X size={24} />
-              </button>
-            </div>
-
-            {/* Theme menu */}
-            <div className="flex gap-4 overflow-x-auto pb-2">
-              {Object.keys(themedImages).map((theme) => (
-                <button
-                  key={theme}
-                  onClick={() => setActiveTheme(theme)}
-                  className={`px-4 py-2 rounded-full border ${
-                    activeTheme === theme
-                      ? 'bg-pink-500 text-white'
-                      : 'bg-gray-200'
-                  }`}
-                >
-                  {theme.charAt(0).toUpperCase() + theme.slice(1)}
+        <Portal>
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center z-[9999]"
+            onClick={() => setPopupOpen(false)} // 1. Close modal when clicking backdrop
+          >
+            <div
+              className="bg-white rounded-xl w-11/12 max-w-6xl p-6 flex flex-col gap-4 relative"
+              onClick={(e) => e.stopPropagation()} // 2. Stop click from closing modal when clicking inside
+            >
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold">Choose an image</h2>
+                <button onClick={() => setPopupOpen(false)}>
+                  <X size={24} />
                 </button>
-              ))}
-            </div>
+              </div>
 
-            {/* Image gallery med 2 bilder per rad */}
-            <div className="grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-              {themedImages[activeTheme as keyof typeof themedImages].map(
-                (img) => (
-                  <img
-                    key={img}
-                    src={img}
-                    alt={img}
-                    className={`cursor-pointer w-full h-48 object-cover rounded-lg border-4 ${
-                      selectedPopupImage === img
-                        ? 'border-pink-500'
-                        : 'border-transparent'
+              {/* Theme menu */}
+              <div className="flex gap-4 overflow-x-auto pb-2">
+                {Object.keys(themedImages).map((theme) => (
+                  <button
+                    key={theme}
+                    onClick={() => setActiveTheme(theme)}
+                    className={`px-4 py-2 rounded-full border whitespace-nowrap ${
+                      activeTheme === theme
+                        ? 'bg-pink-500 text-white'
+                        : 'bg-gray-200'
                     }`}
-                    onClick={() => setSelectedPopupImage(img)}
-                  />
-                )
-              )}
-            </div>
+                  >
+                    {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                  </button>
+                ))}
+              </div>
 
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={confirmSelection}
-                className="px-6 py-2 rounded-lg bg-pink-500 text-white font-bold hover:bg-pink-600"
-              >
-                Confirm
-              </button>
+              {/* Image gallery */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto">
+                {themedImages[activeTheme as keyof typeof themedImages].map(
+                  (img) => (
+                    <img
+                      key={img}
+                      src={img}
+                      alt={img}
+                      className={`cursor-pointer w-full h-48 object-cover rounded-lg border-4 ${
+                        selectedPopupImage === img
+                          ? 'border-pink-500'
+                          : 'border-transparent'
+                      }`}
+                      onClick={() => setSelectedPopupImage(img)}
+                    />
+                  )
+                )}
+              </div>
+
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={confirmSelection}
+                  className="px-6 py-2 rounded-lg bg-pink-500 text-white font-bold hover:bg-pink-600"
+                >
+                  Confirm
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </Portal>
       )}
     </div>
   )
