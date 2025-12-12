@@ -322,24 +322,22 @@ export default function EditEventPage() {
         />
       )}
 
-      {/* Back Button */}
-      <Link
-        href={`/events/${id}`}
-        className="fixed top-4 left-8 z-50 flex items-center gap-1
-             text-white hover:text-pink-200
-             bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
-      >
-        <ArrowLeft size={20} />
-        <span className="font-semibold">Back</span>
-      </Link>
-
       <form
         onSubmit={handleSubmit}
         onKeyDown={(e) => {
           if (e.key === 'Enter') e.preventDefault()
         }}
-        className="w-full max-w-2xl flex flex-col gap-2 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
+        className="w-full max-w-2xl flex flex-col gap-2 p-8 pt-16 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
       >
+        <Link
+          href={`/events/${id}`}
+          className="fixed top-4 left-8 z-50 flex items-center gap-1
+             text-white hover:text-pink-200
+             bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
+        >
+          <ArrowLeft size={20} />
+          <span className="font-semibold"></span>
+        </Link>
         {/* IMAGE SELECTOR */}
         <ImageSelector
           selectedImage={selectedImage}
