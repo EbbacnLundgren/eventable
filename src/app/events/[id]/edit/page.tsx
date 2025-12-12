@@ -4,25 +4,40 @@ import { useEffect, useState, FormEvent, ChangeEvent } from 'react'
 import { supabase } from '@/lib/client'
 import { uploadEventImage } from '@/lib/uploadEventImage'
 import { useRouter, useParams } from 'next/navigation'
-import { ArrowLeft, Image as ImageIcon, Shuffle } from 'lucide-react'
-import Link from 'next/link'
 import TimePicker from '@/components/timePicker'
 import DynamicBackground from '@/components/DynamicBackground'
 import DeleteEventButton from '@/components/DeleteButtonEvent'
-import BackgroundColorPicker from '@/components/BackgroundPicker'
+import BackgroundPicker from '@/components/BackgroundPicker' // Updated component name to match Create
+import ImageSelector from '@/components/ImageSelector' // New component
+import DOMPurify from 'isomorphic-dompurify'
+import dynamic from 'next/dynamic'
+import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
+
+// Dynamic import for the Rich Text Editor
+const RichTextEditorClient = dynamic(
+  () => import('@/components/RichTextEditorClient'),
+  { ssr: false }
+)
 
 export default function EditEventPage() {
   const router = useRouter()
   const params = useParams()
   const id = params?.id as string
 
+  // State
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
   const [eventUserId, setEventUserId] = useState<string>('')
+
+  // Background & Style State
   const [bgColor, setBgColor] = useState<string>('#ffffff')
   const [moving, setMoving] = useState<boolean>(true)
+  const [imageBaseColor, setImageBaseColor] = useState('#ffffff')
+  const [labelColorClass, setLabelColorClass] = useState('text-gray-600')
 
+  // Form Data
   const [formData, setFormData] = useState({
     name: '',
     location: '',
@@ -31,147 +46,17 @@ export default function EditEventPage() {
     endDate: '',
     endTime: '',
     description: '',
-    image: '' as string | File,
+    image: null as File | null, // Changed to handle File object primarily
     rsvpDate: '',
     rsvpTime: '',
   })
+
   const [selectedImage, setSelectedImage] = useState<string>('')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
   const [showEndFields, setShowEndFields] = useState(false)
   const [showRSVPFields, setShowRSVPFields] = useState(false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [labelColorClass, setLabelColorClass] = useState('text-gray-600')
 
-  const defaultImages = [
-    '/images/default1.jpg',
-    '/images/default2.jpg',
-    '/images/default3.jpg',
-    '/images/default4.jpg',
-  ]
-
-  useEffect(() => {
-    console.log('FormData:', formData)
-  }, [formData])
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function getContrastClassForImage(url: string | null) {
-      if (!url) return 'text-gray-800'
-
-      try {
-        const cls = await new Promise<string>((resolve) => {
-          const img = new Image()
-
-          img.crossOrigin = 'Anonymous'
-          img.src = url
-
-          img.onload = () => {
-            const canvas = document.createElement('canvas')
-            const size = 40
-            canvas.width = size
-            canvas.height = size
-            const ctx = canvas.getContext('2d')
-            if (!ctx) return resolve('text-gray-800')
-            ctx.drawImage(img, 0, 0, size, size)
-            const data = ctx.getImageData(0, 0, size, size).data
-
-            let totalL = 0
-            const step = 4 * 2 // sample every 2nd pixel to speed up
-            for (let i = 0; i < data.length; i += step) {
-              const r = data[i]
-              const g = data[i + 1]
-              const b = data[i + 2]
-              // relative luminance (Rec. 709)
-              const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
-              totalL += lum
-            }
-            const samples = data.length / step
-            const avg = totalL / Math.max(1, samples)
-            // threshold ~128 (0-255) - dark background -> white text
-            resolve(avg < 128 ? 'text-white' : 'text-gray-800')
-          }
-
-          img.onerror = () => resolve('text-gray-800')
-        })
-
-        return cls
-      } catch {
-        return 'text-gray-800'
-      }
-    }
-
-    ;(async () => {
-      const cls = await getContrastClassForImage(selectedImage)
-      if (!cancelled) setLabelColorClass(cls)
-    })()
-
-    return () => {
-      cancelled = true
-    }
-  }, [selectedImage])
-
-  useEffect(() => {
-    async function fetchEvent() {
-      const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .eq('id', Number(id))
-        .single()
-
-      if (error || !data) {
-        setMessage('Failed to load event.')
-        setStatus('error')
-      } else {
-        setFormData({
-          name: data.name ?? '',
-          location: data.location ?? '',
-          date: data.date ?? '',
-          time: data.time ?? '',
-          endDate: data.end_date ?? '',
-          endTime: data.end_time ?? '',
-          description: data.description ?? '',
-          image: data.image ?? '',
-          rsvpDate: data.rsvp_date ?? '',
-          rsvpTime: data.rsvp_time ?? '',
-        })
-        setSelectedImage(data.image ?? defaultImages[0])
-        setShowEndFields(!!(data.end_date || data.end_time))
-        setShowRSVPFields(!!(data.rsvp_date || data.rsvp_time))
-        setEventUserId(data.user_id)
-        setBgColor(data.background_color ?? '#ffffff')
-        setMoving(data.background_moving ?? true)
-      }
-      setLoading(false)
-    }
-    fetchEvent()
-  }, [id])
-
-  function handleInputChange(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  function handleImageUpload(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (file) {
-      setFormData((prev) => ({ ...prev, image: file }))
-      setSelectedImage(URL.createObjectURL(file))
-    }
-  }
-
-  function handleRandomize() {
-    let random = selectedImage
-    while (random === selectedImage) {
-      random = defaultImages[Math.floor(Math.random() * defaultImages.length)]
-    }
-    setSelectedImage(random)
-    setFormData((prev) => ({ ...prev, image: random }))
-  }
-
+  // --- Helpers for Time ---
   function getNextHour() {
     const now = new Date()
     if (now.getMinutes() > 0) {
@@ -194,15 +79,158 @@ export default function EditEventPage() {
     return `${newHours}:${newMinutes}`
   }
 
-  // checkar för create event knappen ska gå från grå till klickbar
+  // --- 1. Fetch Event Data on Load ---
+  useEffect(() => {
+    async function fetchEvent() {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .eq('id', Number(id))
+        .single()
+
+      if (error || !data) {
+        setMessage('Failed to load event.')
+        setStatus('error')
+      } else {
+        // Populate form
+        setFormData({
+          name: data.name ?? '',
+          location: data.location ?? '',
+          date: data.date ?? '',
+          time: data.time ?? '',
+          endDate: data.end_date ?? '',
+          endTime: data.end_time ?? '',
+          description: data.description ?? '',
+          image: null, // We keep the file object null, we use selectedImage for preview
+          rsvpDate: data.rsvp_date ?? '',
+          rsvpTime: data.rsvp_time ?? '',
+        })
+
+        // UI State
+        setSelectedImage(data.image ?? '')
+        setShowEndFields(!!(data.end_date || data.end_time))
+        setShowRSVPFields(!!(data.rsvp_date || data.rsvp_time))
+        setEventUserId(data.user_id)
+
+        // Background State
+        setBgColor(data.background_color ?? '#ffffff')
+        setImageBaseColor(data.background_color ?? '#ffffff') // Initialize base color
+        setMoving(data.background_moving ?? true)
+      }
+      setLoading(false)
+    }
+    fetchEvent()
+  }, [id])
+
+  // --- 2. Color Analysis Effect (From Create Event) ---
+  useEffect(() => {
+    let cancelled = false
+
+    async function getContrastClassForImage(url: string | null) {
+      if (!url) return 'text-gray-800'
+
+      try {
+        const cls = await new Promise<string>((resolve) => {
+          const img = new Image()
+          img.crossOrigin = 'Anonymous'
+          img.src = url
+          img.onload = () => {
+            const canvas = document.createElement('canvas')
+            const size = 40
+            canvas.width = size
+            canvas.height = size
+            const ctx = canvas.getContext('2d')
+            if (!ctx) return resolve('text-gray-800')
+            ctx.drawImage(img, 0, 0, size, size)
+            const data = ctx.getImageData(0, 0, size, size).data
+
+            let totalL = 0
+            const step = 4 * 2
+            for (let i = 0; i < data.length; i += step) {
+              const r = data[i]
+              const g = data[i + 1]
+              const b = data[i + 2]
+              totalL += 0.2126 * r + 0.7152 * g + 0.0722 * b
+            }
+            const avg = totalL / (data.length / step)
+            resolve(avg < 128 ? 'text-white' : 'text-gray-800')
+          }
+          img.onerror = () => resolve('text-gray-800')
+        })
+        return cls
+      } catch {
+        return 'text-gray-800'
+      }
+    }
+
+    async function getBaseColor(url: string | null) {
+      if (!url) return '#ffffff'
+      return new Promise<string>((resolve) => {
+        const img = new Image()
+        img.crossOrigin = 'Anonymous'
+        img.src = url
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          canvas.width = 1
+          canvas.height = 1
+          const ctx = canvas.getContext('2d')
+          if (!ctx) return resolve('#ffffff')
+          ctx.drawImage(img, 0, 0, 1, 1)
+          const data = ctx.getImageData(0, 0, 1, 1).data
+          const hex =
+            '#' +
+            ((1 << 24) + (data[0] << 16) + (data[1] << 8) + data[2])
+              .toString(16)
+              .slice(1)
+          resolve(hex)
+        }
+        img.onerror = () => resolve('#ffffff')
+      })
+    }
+
+    ;(async () => {
+      // Only run analysis if selectedImage changed.
+      // Note: On initial load, we might want to respect the DB saved color,
+      // but if the user changes the image, we want to update the color.
+      if (selectedImage) {
+        const cls = await getContrastClassForImage(selectedImage)
+        if (!cancelled) setLabelColorClass(cls)
+
+        // Only update base color if user picks a NEW image (logic can be refined based on preference)
+        // For now, we update it to match the create experience
+        const baseHex = await getBaseColor(selectedImage)
+        if (!cancelled) {
+          setImageBaseColor(baseHex)
+          // Only override bgColor automatically if we are not loading for the first time
+          // or if you prefer the Create Event behavior:
+          // setBgColor(baseHex)
+        }
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [selectedImage])
+
+  // --- Handlers ---
+  function handleInputChange(
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    setTouched((prev) => ({ ...prev, [name]: true }))
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setStatus('idle')
     setMessage('')
 
-    let imageUrl = typeof formData.image === 'string' ? formData.image : null
+    // 1. Image Logic
+    let imageUrl = selectedImage // Default to existing URL
 
+    // If a new file was uploaded
     if (formData.image instanceof File) {
       try {
         imageUrl = await uploadEventImage(formData.image, Date.now())
@@ -214,6 +242,7 @@ export default function EditEventPage() {
       }
     }
 
+    // 2. Validation
     const startDateTime = new Date(
       `${formData.date}T${formData.time || '00:00'}`
     )
@@ -230,8 +259,9 @@ export default function EditEventPage() {
       return
     }
 
-    //console.log('Submitting changes:', formData)
+    const cleanDescription = DOMPurify.sanitize(formData.description)
 
+    // 3. Update Supabase
     const { error } = await supabase
       .from('events')
       .update({
@@ -239,9 +269,9 @@ export default function EditEventPage() {
         location: formData.location,
         date: formData.date,
         time: formData.time || null,
-        end_date: formData.endDate || null, // ändrat
-        end_time: formData.endTime || null, // ändrat
-        description: formData.description,
+        end_date: formData.endDate || null,
+        end_time: formData.endTime || null,
+        description: cleanDescription,
         image: imageUrl,
         rsvp_date: formData.rsvpDate || null,
         rsvp_time: formData.rsvpTime || null,
@@ -262,6 +292,7 @@ export default function EditEventPage() {
     setTimeout(() => router.push(`/events/${id}`), 1000)
   }
 
+  // --- Render Loading ---
   if (loading)
     return (
       <main className="flex items-center justify-center min-h-screen text-white">
@@ -269,88 +300,79 @@ export default function EditEventPage() {
       </main>
     )
 
-  // Form validation (same rules as createEvent)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const isValidDate =
-    formData.date &&
-    new Date(formData.date) >= new Date(new Date().toDateString())
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // --- Validation Checks ---
   const isValidTime = /^([01]\d|2[0-3]):([0-5]\d)$/.test(formData.time)
   const isValidEndTime =
     formData.endTime === '' ||
     /^([01]\d|2[0-3]):([0-5]\d)$/.test(formData.endTime)
-
   const hasPartialEnd =
     (formData.endDate && !formData.endTime) ||
     (!formData.endDate && formData.endTime)
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const hasInvalidEnd =
-    (formData.endDate && formData.endTime && !isValidEndTime) || hasPartialEnd
+  // Is form valid enough to save?
+  const isFormComplete =
+    formData.name && formData.location && isValidTime && !hasPartialEnd
 
   return (
-    <main className="relative min-h-screen text-white py-10 px-6 flex items-center justify-center">
+    <main className="min-h-screen flex items-center justify-center p-6">
       <DynamicBackground
         imageUrl={selectedImage}
-        colorOverride={bgColor}
+        colorOverride={bgColor || undefined}
         moving={moving}
       />
 
-      <BackgroundColorPicker
-        defaultColor={bgColor}
-        defaultMoving={moving}
-        onChange={(c) => setBgColor(c)}
-        onToggleMoving={(v) => setMoving(v)}
-      />
+      {imageBaseColor && (
+        <BackgroundPicker
+          defaultColor={bgColor} // Use the current bgColor state
+          defaultMoving={moving}
+          onChange={(c) => setBgColor(c)}
+          onToggleMoving={(m) => setMoving(m)}
+        />
+      )}
 
-      {/* Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="relative w-full max-w-2xl flex flex-col gap-5 p-8 pt-16 rounded-3xl bg-white/20 backdrop-blur-lg border border-white/30 shadow-2xl z-10"
-      >
-        <Link
-          href={`/events/${id}`}
-          className="fixed top-4 left-8 z-50 flex items-center gap-1
+      {/* Back Button */}
+      <Link
+        href={`/events/${id}`}
+        className="fixed top-4 left-8 z-50 flex items-center gap-1
              text-white hover:text-pink-200
              bg-black/40 backdrop-blur-md px-3 py-2 rounded-full shadow-lg"
-        >
-          <ArrowLeft size={20} />
-          <span className="font-semibold"></span>
-        </Link>
-        {/* Image */}
-        <div className="relative h-48 w-full overflow-hidden rounded-2xl">
-          {selectedImage ? (
-            <img
-              key={selectedImage}
-              src={selectedImage}
-              alt="Event banner"
-              className="object-cover w-full h-full transition-all duration-300"
-            />
-          ) : (
-            <div className="w-full h-full bg-gray-200" />
+      >
+        <ArrowLeft size={20} />
+        <span className="font-semibold">Back</span>
+      </Link>
+
+      <form
+        onSubmit={handleSubmit}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') e.preventDefault()
+        }}
+        className="w-full max-w-2xl flex flex-col gap-2 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
+      >
+        {/* IMAGE SELECTOR (New Component) */}
+        <ImageSelector
+          selectedImage={selectedImage}
+          onImageSelect={(file, url) => {
+            if (file) {
+              setFormData((prev) => ({ ...prev, image: file }))
+              if (url) {
+                setSelectedImage(url)
+                // Optionally update background color immediately on new image pick:
+                // setBgColor(imageBaseColor)
+              }
+            } else if (url) {
+              // Default image selected
+              setSelectedImage(url)
+              setFormData((prev) => ({ ...prev, image: null })) // Clear file if default picked
+            }
+          }}
+        />
+
+        <label className={`font-sans pt-1 ${labelColorClass}`}>
+          Event name{' '}
+          {touched.name && !formData.name && (
+            <span className="text-red-500">*</span>
           )}
-
-          <div className="absolute top-3 right-3 flex gap-2">
-            <button
-              type="button"
-              onClick={handleRandomize}
-              className="bg-white/40 hover:bg-white/60 text-black rounded-full p-2 backdrop-blur-md shadow-md transition"
-            >
-              <Shuffle size={20} />
-            </button>
-            <label className="bg-white/40 hover:bg-white/60 text-black rounded-full p-2 backdrop-blur-md cursor-pointer shadow-md transition">
-              <ImageIcon size={20} />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-            </label>
-          </div>
-        </div>
-
-        <label className="text-black font-medium">Event name</label>
+        </label>
         <input
           type="text"
           name="name"
@@ -359,31 +381,23 @@ export default function EditEventPage() {
           onBlur={(e) =>
             setTouched((prev) => ({ ...prev, [e.target.name]: true }))
           }
-          className="text-black p-3 rounded-xl bg-white/80 border border-white/50"
+          className={`text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border 
+          ${touched.name && !formData.name ? 'border-red-500' : 'border-white/50'}
+          focus:outline-none focus:ring-2 focus:ring-pink-400`}
           required
         />
 
-        <label className="text-black font-medium">Location</label>
-        <input
-          type="text"
-          name="location"
-          value={formData.location}
-          onChange={handleInputChange}
-          onBlur={(e) =>
-            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
-          }
-          className="text-black p-3 rounded-xl bg-white/80 border border-white/50"
-          required
-        />
-
-        <label className="text-black font-medium">Date and time</label>
+        <label className={`font-sans pt-1 ${labelColorClass}`}>
+          Start date and time
+        </label>
         <div className="flex gap-2">
           <input
             type="date"
             name="date"
             value={formData.date}
+            // Removed min date restriction for Edit, in case event is in past
             onChange={handleInputChange}
-            className="text-black flex-1 p-3 rounded-xl bg-white/80 border border-white/50"
+            className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
             required
           />
           <TimePicker
@@ -391,7 +405,13 @@ export default function EditEventPage() {
             onChange={(v) => setFormData((prev) => ({ ...prev, time: v }))}
           />
         </div>
+        {formData.time && !isValidTime && (
+          <p className="text-red-500 text-sm">
+            Please enter a valid start time (HH:MM).
+          </p>
+        )}
 
+        {/* End Date Toggle */}
         <div className="flex items-center gap-3 pt-1">
           <button
             type="button"
@@ -417,7 +437,8 @@ export default function EditEventPage() {
               }
             }}
             aria-label="Toggle end date and time"
-            className="relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 hover:scale-105"
+            className="relative w-10 h-5 flex items-center rounded-full transition-colors duration-300 
+            hover:scale-105"
           >
             <div
               className={`absolute inset-0 rounded-full transition-colors duration-300 ${
@@ -430,17 +451,19 @@ export default function EditEventPage() {
               }`}
             />
           </button>
-          <label className="text-black font-medium">End date and time</label>
+          <label className={`font-sans pt-1 ${labelColorClass}`}>
+            End date and time
+          </label>
         </div>
         {showEndFields && (
           <div className="flex gap-2">
             <input
               type="date"
               name="endDate"
-              //max={formData.date}
+              min={formData.date}
               value={formData.endDate || ''}
               onChange={handleInputChange}
-              className="text-black flex-1 p-3 rounded-xl bg-white/80 border border-white/50"
+              className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
             />
             <TimePicker
               value={formData.endTime || ''}
@@ -448,21 +471,57 @@ export default function EditEventPage() {
             />
           </div>
         )}
+        {hasPartialEnd && (
+          <p className="text-red-500 text-sm">
+            Please provide both end date and end time.
+          </p>
+        )}
+        {formData.endTime && !isValidEndTime && (
+          <p className="text-red-500 text-sm">
+            Please enter a valid end time (HH:MM).
+          </p>
+        )}
 
-        <label className="text-black font-medium">Description</label>
-        <textarea
-          name="description"
-          value={formData.description}
+        <label className={`font-sans pt-1 ${labelColorClass} `}>
+          Location{' '}
+          {touched.location && !formData.location && (
+            <span className="text-red-500">*</span>
+          )}
+        </label>
+        <input
+          type="text"
+          name="location"
+          value={formData.location}
           onChange={handleInputChange}
-          className="text-black p-3 rounded-xl bg-white/80 border border-white/50 resize-none"
+          onBlur={(e) =>
+            setTouched((prev) => ({ ...prev, [e.target.name]: true }))
+          }
+          className={`text-black p-3 rounded-xl bg-white/40 backdrop-blur-md border 
+          ${touched.location && !formData.location ? 'border-red-500' : 'border-white/50'}
+          focus:outline-none focus:ring-2 focus:ring-pink-400`}
+          required
         />
 
-        <div className="flex items-center gap-3 pt-1">
+        <label className={`font-sans ${labelColorClass}`}>Description</label>
+
+        <RichTextEditorClient
+          value={formData.description}
+          onChange={(value) =>
+            setFormData((prev) => ({ ...prev, description: value }))
+          }
+        />
+
+        {/* RSVP Toggle */}
+        <div className="mt-4 flex items-center gap-3">
           <button
             type="button"
             onClick={() => {
               if (showRSVPFields) {
-                setFormData((prev) => ({ ...prev, rsvpDate: '', rsvpTime: '' }))
+                setFormData((prev) => ({
+                  ...prev,
+                  rsvpDate: '',
+                  rsvpTime: '',
+                }))
                 setShowRSVPFields(false)
               } else {
                 const defaultRSVPDate = formData.date
@@ -489,8 +548,11 @@ export default function EditEventPage() {
             />
           </button>
 
-          <label className="text-black font-medium">RSVP date and time</label>
+          <label className={`font-sans pt-2 ${labelColorClass}`}>
+            RSVP date and time
+          </label>
         </div>
+
         {showRSVPFields && (
           <div className="flex gap-2">
             <input
@@ -499,7 +561,7 @@ export default function EditEventPage() {
               max={formData.date}
               value={formData.rsvpDate || ''}
               onChange={handleInputChange}
-              className="text-black flex-1 p-3 rounded-xl bg-white/80 border border-white/50"
+              className="text-black pt-1 flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
             />
             <TimePicker
               value={formData.rsvpTime || ''}
@@ -512,20 +574,26 @@ export default function EditEventPage() {
 
         <button
           type="submit"
-          className="group mx-auto w-fit inline-flex items-center justify-center font-semibold rounded-lg text-lg px-8 py-4 transition-all duration-300 ease-out
-    text-white bg-gradient-to-r from-pink-500 to-orange-400 shadow-lg hover:scale-105 hover:shadow-2xl"
+          disabled={!isFormComplete}
+          className={`group mx-auto w-fit inline-flex items-center justify-center font-semibold rounded-lg text-lg px-8 py-4 transition-all duration-300 ease-out border
+            ${
+              isFormComplete
+                ? 'bg-white/80 border-black text-black hover:bg-gray-100 shadow-sm hover:shadow-md'
+                : 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed'
+            }`}
         >
           Save Changes
         </button>
 
         <div className="mt-6 flex justify-center">
+          {/* Kept the delete button as requested */}
           <DeleteEventButton eventUserId={eventUserId} eventId={Number(id)} />
         </div>
 
         {message && (
           <p
             className={`text-center text-sm mt-2 ${
-              status === 'success' ? 'text-green-200' : 'text-yellow-200'
+              status === 'success' ? 'text-green-600' : 'text-red-500'
             }`}
           >
             {message}
