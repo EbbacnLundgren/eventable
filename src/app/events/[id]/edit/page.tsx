@@ -7,8 +7,8 @@ import { useRouter, useParams } from 'next/navigation'
 import TimePicker from '@/components/timePicker'
 import DynamicBackground from '@/components/DynamicBackground'
 import DeleteEventButton from '@/components/DeleteButtonEvent'
-import BackgroundPicker from '@/components/BackgroundPicker' // Updated component name to match Create
-import ImageSelector from '@/components/ImageSelector' // New component
+import BackgroundPicker from '@/components/BackgroundPicker'
+import ImageSelector from '@/components/ImageSelector'
 import DOMPurify from 'isomorphic-dompurify'
 import dynamic from 'next/dynamic'
 import { ArrowLeft } from 'lucide-react'
@@ -32,7 +32,8 @@ export default function EditEventPage() {
   const [eventUserId, setEventUserId] = useState<string>('')
 
   // Background & Style State
-  const [bgColor, setBgColor] = useState<string>('#ffffff')
+  // FIX 1: Initialize as empty string so it doesn't force a white background immediately
+  const [bgColor, setBgColor] = useState<string>('')
   const [moving, setMoving] = useState<boolean>(true)
   const [imageBaseColor, setImageBaseColor] = useState('#ffffff')
   const [labelColorClass, setLabelColorClass] = useState('text-gray-600')
@@ -46,7 +47,7 @@ export default function EditEventPage() {
     endDate: '',
     endTime: '',
     description: '',
-    image: null as File | null, // Changed to handle File object primarily
+    image: null as File | null,
     rsvpDate: '',
     rsvpTime: '',
   })
@@ -97,13 +98,14 @@ export default function EditEventPage() {
           name: data.name ?? '',
           location: data.location ?? '',
           date: data.date ?? '',
-          time: data.time ?? '',
+          // FIX 2: Slice the seconds off the time strings (HH:MM:SS -> HH:MM)
+          time: data.time ? data.time.slice(0, 5) : '',
           endDate: data.end_date ?? '',
-          endTime: data.end_time ?? '',
+          endTime: data.end_time ? data.end_time.slice(0, 5) : '',
           description: data.description ?? '',
-          image: null, // We keep the file object null, we use selectedImage for preview
+          image: null,
           rsvpDate: data.rsvp_date ?? '',
-          rsvpTime: data.rsvp_time ?? '',
+          rsvpTime: data.rsvp_time ? data.rsvp_time.slice(0, 5) : '',
         })
 
         // UI State
@@ -113,8 +115,9 @@ export default function EditEventPage() {
         setEventUserId(data.user_id)
 
         // Background State
-        setBgColor(data.background_color ?? '#ffffff')
-        setImageBaseColor(data.background_color ?? '#ffffff') // Initialize base color
+        // FIX 3: Default to '' instead of white if no color exists
+        setBgColor(data.background_color ?? '')
+        setImageBaseColor(data.background_color ?? '#ffffff')
         setMoving(data.background_moving ?? true)
       }
       setLoading(false)
@@ -122,7 +125,7 @@ export default function EditEventPage() {
     fetchEvent()
   }, [id])
 
-  // --- 2. Color Analysis Effect (From Create Event) ---
+  // --- 2. Color Analysis Effect ---
   useEffect(() => {
     let cancelled = false
 
@@ -189,21 +192,13 @@ export default function EditEventPage() {
     }
 
     ;(async () => {
-      // Only run analysis if selectedImage changed.
-      // Note: On initial load, we might want to respect the DB saved color,
-      // but if the user changes the image, we want to update the color.
       if (selectedImage) {
         const cls = await getContrastClassForImage(selectedImage)
         if (!cancelled) setLabelColorClass(cls)
 
-        // Only update base color if user picks a NEW image (logic can be refined based on preference)
-        // For now, we update it to match the create experience
         const baseHex = await getBaseColor(selectedImage)
         if (!cancelled) {
           setImageBaseColor(baseHex)
-          // Only override bgColor automatically if we are not loading for the first time
-          // or if you prefer the Create Event behavior:
-          // setBgColor(baseHex)
         }
       }
     })()
@@ -228,9 +223,8 @@ export default function EditEventPage() {
     setMessage('')
 
     // 1. Image Logic
-    let imageUrl = selectedImage // Default to existing URL
+    let imageUrl = selectedImage
 
-    // If a new file was uploaded
     if (formData.image instanceof File) {
       try {
         imageUrl = await uploadEventImage(formData.image, Date.now())
@@ -292,7 +286,6 @@ export default function EditEventPage() {
     setTimeout(() => router.push(`/events/${id}`), 1000)
   }
 
-  // --- Render Loading ---
   if (loading)
     return (
       <main className="flex items-center justify-center min-h-screen text-white">
@@ -309,7 +302,6 @@ export default function EditEventPage() {
     (formData.endDate && !formData.endTime) ||
     (!formData.endDate && formData.endTime)
 
-  // Is form valid enough to save?
   const isFormComplete =
     formData.name && formData.location && isValidTime && !hasPartialEnd
 
@@ -323,7 +315,7 @@ export default function EditEventPage() {
 
       {imageBaseColor && (
         <BackgroundPicker
-          defaultColor={bgColor} // Use the current bgColor state
+          defaultColor={bgColor}
           defaultMoving={moving}
           onChange={(c) => setBgColor(c)}
           onToggleMoving={(m) => setMoving(m)}
@@ -348,7 +340,7 @@ export default function EditEventPage() {
         }}
         className="w-full max-w-2xl flex flex-col gap-2 p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-2xl"
       >
-        {/* IMAGE SELECTOR (New Component) */}
+        {/* IMAGE SELECTOR */}
         <ImageSelector
           selectedImage={selectedImage}
           onImageSelect={(file, url) => {
@@ -356,13 +348,10 @@ export default function EditEventPage() {
               setFormData((prev) => ({ ...prev, image: file }))
               if (url) {
                 setSelectedImage(url)
-                // Optionally update background color immediately on new image pick:
-                // setBgColor(imageBaseColor)
               }
             } else if (url) {
-              // Default image selected
               setSelectedImage(url)
-              setFormData((prev) => ({ ...prev, image: null })) // Clear file if default picked
+              setFormData((prev) => ({ ...prev, image: null }))
             }
           }}
         />
@@ -395,7 +384,6 @@ export default function EditEventPage() {
             type="date"
             name="date"
             value={formData.date}
-            // Removed min date restriction for Edit, in case event is in past
             onChange={handleInputChange}
             className="text-black flex-1 p-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50"
             required
@@ -586,7 +574,6 @@ export default function EditEventPage() {
         </button>
 
         <div className="mt-6 flex justify-center">
-          {/* Kept the delete button as requested */}
           <DeleteEventButton eventUserId={eventUserId} eventId={Number(id)} />
         </div>
 
