@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/client'
 import { Plus } from 'lucide-react'
 import { User, UserCog, LogOut, UserStar, CalendarDays } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
 export default function Header() {
   const router = useRouter()
@@ -14,6 +15,8 @@ export default function Header() {
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
+  const isNotMain = pathname !== '/main'
 
   useEffect(() => {
     function handleScroll() {
@@ -82,8 +85,8 @@ export default function Header() {
             href="/friends"
             className={`
               relative flex items-center justify-center h-10 w-10 rounded-full transition-colors duration-300
-              ${scrolled ? 'bg-blue-900/50 hover:bg-blue-900/70' : 'bg-transparent hover:bg-blue-900/70'}
-            `}
+              ${isNotMain ? 'bg-blue-900/50 hover:bg-blue-900/70' : scrolled ? 'bg-blue-900/50 hover:bg-blue-900/70' : 'bg-transparent hover:bg-blue-900/70'}
+`}
           >
             <UserStar className="h-6 w-6 text-white transition-colors duration-300" />
           </Link>
@@ -92,8 +95,8 @@ export default function Header() {
             href="/calendar"
             className={`
               relative flex items-center justify-center h-10 w-10 rounded-full transition-colors duration-300
-              ${scrolled ? 'bg-blue-900/50 hover:bg-blue-900/70' : 'bg-transparent hover:bg-blue-900/70'}
-            `}
+              ${isNotMain ? 'bg-blue-900/50 hover:bg-blue-900/70' : scrolled ? 'bg-blue-900/50 hover:bg-blue-900/70' : 'bg-transparent hover:bg-blue-900/70'}
+`}
           >
             <CalendarDays className="h-6 w-6 text-white transition-colors duration-300" />
           </Link>

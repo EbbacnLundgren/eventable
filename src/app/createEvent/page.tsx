@@ -40,7 +40,7 @@ export default function CreateEventPage() {
     rsvpTime: '',
   })
   //const [selectedImage, setSelectedImage] = useState(defaultImages[0])
-  const [selectedImage, setSelectedImage] = useState('/images/default1.jpg')
+  const [selectedImage, setSelectedImage] = useState('/images/christmas3.jpg')
   const [showEndFields, setShowEndFields] = useState(false)
   const [showRSVPFields, setShowRSVPFields] = useState(false)
   const [message, setMessage] = useState('')

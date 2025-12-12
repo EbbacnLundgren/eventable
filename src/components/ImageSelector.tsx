@@ -10,8 +10,9 @@ interface Props {
 
 const themedImages = {
   all: [
-    '/images/party1.jpg',
-    '/images/party2.jpg',
+    '/images/food1.jpg',
+    '/images/food2.jpg',
+    '/images/food3.jpg',
     '/images/christmas1.jpg',
     '/images/christmas2.jpg',
     '/images/christmas3.jpg',
@@ -19,11 +20,18 @@ const themedImages = {
     '/images/christmas5.jpg',
     '/images/christmas6.jpg',
     '/images/christmas7.jpg',
+    '/images/party1.jpg',
+    '/images/party2.jpg',
+    '/images/party3.jpg',
+    '/images/party4.jpg',
     '/images/default1.jpg',
     '/images/default2.jpg',
     '/images/default3.jpg',
     '/images/default4.jpg',
     '/images/default5.jpg',
+    '/images/animals1.jpg',
+    '/images/animals2.jpg',
+    '/images/animals3.jpg',
   ],
   christmas: [
     '/images/christmas1.jpg',
@@ -34,8 +42,19 @@ const themedImages = {
     '/images/christmas6.jpg',
     '/images/christmas7.jpg',
   ],
-  party: ['/images/party1.jpg', '/images/party2.jpg'],
-  food: ['/images/food1.jpg', '/images/food2.jpg'],
+  party: [
+    '/images/party1.jpg',
+    '/images/party2.jpg',
+    '/images/party3.jpg',
+    '/images/party4.jpg',
+  ],
+  food: ['/images/food1.jpg', '/images/food2.jpg', '/images/food3.jpg'],
+
+  animals: [
+    '/images/animals1.jpg',
+    '/images/animals2.jpg',
+    '/images/animals3.jpg',
+  ],
 }
 
 export default function ImageSelector({ selectedImage, onImageSelect }: Props) {
